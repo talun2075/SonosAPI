@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Jahresuhr</title>
+    <meta charset="utf-8"/>
+    <script>
+        function YearClock(id) {
+            //id = Element, wo das Ergebnis dargestellt werden soll
+            var Year = new Date().getFullYear();
+            var firstDay = new Date("Jan 01, " + Year + " 01:00:00");
+            var lastDay = new Date("Dec 31, " + Year + " 23:59:59");
+            var timeThisYear = lastDay.valueOf() - firstDay.valueOf();
+            function GetTimeHappend() {
+                return new Date() - firstDay.valueOf();
+            }
+            this.Run = function () {
+                var elem = document.getElementById(id);
+                if (elem !== null && typeof elem !== "undefined") {
+                    var percent = GetTimeHappend() * 100 / timeThisYear;
+                    elem.innerHTML = percent.toFixed(8);
+                } else {
+                    console.warn("Übergebenes DOM Element nicht gefunden");
+                }
+
+            }
+        }
+        var clock = null;
+        document.addEventListener("DOMContentLoaded", function () {
+            //do work
+            clock = new YearClock("ClockCounter");
+            setInterval("clock.Run()", 100);
+        });
+    </script>
+    <style>
+        #Clock {
+            display: inline-flex;
+            font-size: 3em;
+            margin-top:25%;
+			margin-left: 15%
+        }
+
+
+    </style>
+</head>
+<body>
+    <div id="Clock">
+        <label>Jahres Fortschritt:&nbsp;&nbsp; </label>
+        <div id="ClockCounter"></div>
+        <div>%</div>
+    </div>
+</body>
+</html>

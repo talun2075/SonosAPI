@@ -1,0 +1,312 @@
+﻿<!doctype html>
+<html>
+	<head>
+        <title>Sonos API Controller</title>
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+	    <link rel="stylesheet" href="/Content/jquery-ui.min.css" media="all" />
+		<link rel="stylesheet" href="/Content/Site.css" media="all" />
+	    <link rel="stylesheet" href="/Content/AlarmClock.css" media="all"/>
+        <link rel="stylesheet" href="/Content/media.css" media="screen" />
+        <script src="/Scripts/jquery-2.1.4.min.js" type="text/javascript"></script>
+        <script src="/Scripts/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="/Scripts/jquery.ui.touch-punch.min.js" type="text/javascript"></script>
+        <script src="/Scripts/jquery.lazyload.min.js" type="text/javascript"></script>
+	    <script src="/Scripts/JSVariablen.js" type="text/javascript"></script>
+        <script src="/Scripts/JSSonosAjax.js" type="text/javascript"></script>
+	    <script src="/Scripts/JSCurrentTrack.js" type="text/javascript"></script>
+        <script src="/Scripts/JSPlayList.js" type="text/javascript"></script>
+	    <script src="/Scripts/JSSonosZone.js" type="text/javascript"></script>
+        <script src="/Scripts/JSSonosZones.js" type="text/javascript"></script>
+        <script src="/Scripts/JSSonosEvent.js" type="text/javascript"></script>
+        <script src="/Scripts/JSControl.js" type="text/javascript"></script>
+	    <script src="/Scripts/AlarmClock.js" type="text/javascript"></script>
+	</head>
+<body>
+<div id="Bodydiv">
+<div id="Devices" class="devices">
+    <div id="DeviceWrapper" class="deviceWrapper"><img alt="Device Loader" id="Loader" src="/Images/ajax-loader2.gif"/>
+    </div>
+    <div onclick="GroupDeviceShow()" id="GroupDeviceShow">>></div>
+</div>
+<div id="Ratingerrors" onclick="ShowRatingErrorNames()"></div>
+<div id="RatingerrorsList"></div>
+<div id="Play" class="mediabutton" onclick="PlayPress();"></div>
+<div id="Next" class="mediabutton"></div>
+<div id="Pre" class="mediabutton"></div>
+<div id="Shuffle" class="mediabutton" onclick="SetPlaymode('Shuffle');"></div>
+<div id="Repeat" class="mediabutton" onclick="SetPlaymode('Repeat');"></div>
+<div id="Fade" class="mediabutton" onclick="SetFade();"></div>
+<div id="SetMute" class="mediabuttonring" onclick="SetMute();"></div>
+<div id="Debug" class="mediabutton" onClick="WroteDebugInfos()">Debug</div>
+<div id="Browse" class="mediabuttonring" onclick="BrowsePress();"></div>
+<div id="Bewertungsfilter" class="mediabuttonring"></div>
+<div id="Browsebox" class="box_browse">
+    <img id="BrowseLoader" src="/Images/ajax-loader2.gif" alt=""/>
+    <div id="Ankerlist"></div>
+    <div id="Browseback" class="font34" onclick="LoadBrowse('bb')">&lArr;</div>
+    <div id="BrowsePlaylist" class="font13" onclick="LoadBrowse('A:PLAYLISTS')">Playlist</div>
+    <div id="BrowseArtist" class="font13" onclick="LoadBrowse('A:ALBUMARTIST')">Interpreten</div>
+    <div id="BrowseGenre" class="font13" onclick="LoadBrowse('A:GENRE')">Genre</div>
+    <div id="BrowseFavorites" class="font13" onclick="LoadBrowse('FV:2')">Favoriten</div>
+    <div id="Browseboxwrapper"></div>
+</div>
+<div id="Lyric" class="mediabuttonring"></div>
+<div id="Lyricbox" class="arrow_box">
+    <div class="righttopclose" onclick="ShowPlaylistLyricCurrent();">X</div>
+    <div id="Lyricboxwrapper"></div>
+</div>
+<div id="Settings" class="mediabuttonring"></div>
+<div id="Settingsbox" class="box_settings">
+    <div id="MusikIndex"><b>Musikindex Aktualisieren</b> <img alt="Musikindex aktualisieren loader" id="MusikIndexLoader" src="/Images/ajax-loader2.gif"/><img id="MIUCheck"
+                                                                                                                                                               src="/Images/check.png"/>
+    </div>
+    <div id="Settingsboxwrapper">
+        <p><b>Wiedergabeliste:</b><input id="SaveQueue" placeholder="Wiedergabeliste speichern als..." type="text"/><input type="text" name="Suggestion" disabled="disabled" id="Suggestion"/><img alt="Wiedergabeliste Speichern" id="SaveQueueLoader" src="/Images/ajax-loader2.gif"/><img src="/Images/save_red.png" alt="Playliste exportieren" id="SaveQueueImg" onclick="SaveQueue();"/>
+        </p>
+        <div id="onoffswitchWrapper">Exportieren:
+            <div class="onoffswitch">
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch"/>
+                <label class="onoffswitch-label" for="myonoffswitch">
+                    <div class="onoffswitch-inner"></div>
+                    <div class="onoffswitch-switch"></div>
+                </label>
+            </div>
+        </div>
+        <div id="curonoffswitchWrapper">Nur Currentrating:
+            <div class="curonoffswitch">
+                <input type="checkbox" name="curonoffswitch" class="curonoffswitch-checkbox" id="curmyonoffswitch"/>
+                <label class="curonoffswitch-label" for="curmyonoffswitch">
+                    <div class="curonoffswitch-inner"></div>
+                    <div class="curonoffswitch-switch"></div>
+                </label>
+            </div>
+        </div>
+        <div id="apps">
+            Apps:
+            <ul>
+                <li><a target="_blank" href="/apps/clock.html">Clock</a></li>
+                <li><a target="_blank" href="/apps/dash.html">Dash Buttons</a></li>
+            </ul>
+        </div>
+    </div>
+    Version:2.0
+</div>
+<img id="Cover" alt="Cover" src="/Images/no-cover.png" onclick="ShowCurrentRating('show');"/>
+<div id="NextSongWrapper">
+    <img id="Nextcover" alt="Next Song Cover" src="/Images/no-cover.png"/>
+    <div id="Nextsong"></div>
+</div>
+<div id="AktSongInfo">
+    <div id="CurrentMeta"></div>
+    <div id="Akttitle" onClick="ShowCurrentSongMeta()" class="akt"></div>
+    <div id="Aktartist" onClick="ShowCurrentSongMeta()" class="akt"></div>
+</div>
+<div id="AudioIn" class="mediabutton" onclick="SetAudioIn();"></div>
+<div id="Slider"></div>
+<div id="Volumedown" class="mediabuttonring" onclick="SetVolume(0);"></div>
+<div id="Volumeup" class="mediabuttonring" onclick="SetVolume(1);"></div>
+<div id="Volume"></div><label for="Volume" id="LabelVolume"></label>
+<div id="SleepModeButton" class="mediabuttonring" onclick="ShowSleepMode();"></div>
+<div id="SleepMode">
+    <div id="SleepModeWrapper"><select id="SleepModeSelection"><option value="aus">Aus</option><option value="00:15:00">15 Minuten</option><option value="00:20:00">20 Minuten</option><option value="00:25:00">25 Minuten</option><option value="00:30:00">30 Minuten</option><option value="00:35:00">35 Minuten</option><option value="00:45:00">45 Minuten</option><option value="01:00:00">1 Stunde</option><option value="01:30:00">1,5 Stunden</option><option value="02:00:00">2 Stunden</option><option value="03:00:00">3 Stunden</option></select><br/>
+        <div id="SleepModeSave" onclick="SetSleepModeState()">Set</div>
+        <div id="SleepModeState"></div>
+    </div>
+</div>
+<div id="MultiVolume"></div>
+<div id="Playlist"><img alt="GlobalPlaylist Loader" id="GlobalPlaylistLoader" src="/Images/ajax-loader2.gif"/>
+    <div id="Playlistwrapper"></div>
+</div>
+<div id="PlaylistCount">
+    <div id="PlaylistCountAkt"></div>
+    <div id="PlaylistCountSlash">&nbsp;/&nbsp;</div>
+    <div id="PlaylistCountTotal"></div>
+</div>
+<div id="Currentplaylist"><img alt="Current Playlist Loader" id="PlaylistLoader" src="/Images/ajax-loader2.gif"/>
+    <div id="Currentplaylistwrapper"></div>
+</div>
+<div id="CurrentBomb" onclick="ShowCurrentRating('show');"><img src="/Images/bombe.png" alt="Currentbomb"/>
+</div>
+<div onclick="ShowCurrentRating('show');" id="BewertungN">
+    <div id="BewertungL" style="width: 0;"></div>
+</div>
+<div id="LyricPlaylist"></div>
+<div id="CurrentSongRuntime">
+    <div id="CurrentSongRuntimeRelTime"></div>
+    <div id="CurrentSongRuntimeSlash">&nbsp;/&nbsp;</div>
+    <div id="CurrentSongRuntimeDuration"></div>
+</div>
+<div id="Ratinglist">
+    <div id="Gelegenheitendiv">Gelegenheiten:<br>
+        <div id="gelegenheit_0" onclick="SetSituation('0');return false;"></div>
+        <div id="gelegenheit_1" onclick="SetSituation('1');return false;"></div>
+        <div id="gelegenheit_2" onclick="SetSituation('2');return false;"></div>
+        <div id="gelegenheit_3" onclick="SetSituation('3');return false;"></div>
+        <div id="gelegenheit_4" onclick="SetSituation('4');return false;"></div>
+    </div>
+    <div id="Geschwindigkeitendiv">Geschwindigkeit:<br>
+        <div id="geschwindigkeit_0" onclick="SetGeschwindigkeit('0');return false;"></div>
+        <div id="geschwindigkeit_1" onclick="SetGeschwindigkeit('1');return false;"></div>
+        <div id="geschwindigkeit_2" onclick="SetGeschwindigkeit('2');return false;"></div>
+        <div id="geschwindigkeit_3" onclick="SetGeschwindigkeit('3');return false;"></div>
+        <div id="geschwindigkeit_4" onclick="SetGeschwindigkeit('4');return false;"></div>
+        <div id="geschwindigkeit_5" onclick="SetGeschwindigkeit('5');return false;"></div>
+    </div>
+    <div id="Stimmungendiv">Stimmung:<br>
+        <div id="stimmung_0" onclick="SetStimmung(0);return false;"></div>
+        <div id="stimmung_1" onclick="SetStimmung(1);return false;"></div>
+        <div id="stimmung_2" onclick="SetStimmung(2);return false;"></div>
+        <div id="stimmung_3" onclick="SetStimmung(3);return false;"></div>
+        <div id="stimmung_4" onclick="SetStimmung(4);return false;"></div>
+        <div id="stimmung_5" onclick="SetStimmung(5);return false;"></div>
+    </div>
+    <div id="aufweckenonoffswitchWrapper">Aufwecken:
+        <div class="aufweckenonoffswitch">
+            <input type="checkbox" name="aufweckenonoffswitch" class="aufweckenonoffswitch-checkbox" id="aufweckenmyonoffswitch"/>
+            <label class="aufweckenonoffswitch-label" for="aufweckenmyonoffswitch">
+                <div class="aufweckenonoffswitch-inner"></div>
+                <div class="aufweckenonoffswitch-switch"></div>
+            </label>
+        </div>
+    </div><br>
+    <div id="artistplaylistonoffswitchWrapper">Artist-Playlist:
+        <div class="artistplaylistonoffswitch">
+            <input type="checkbox" name="artistplaylistonoffswitch" class="artistplaylistonoffswitch-checkbox" id="artistplaylistmyonoffswitch"/>
+            <label class="artistplaylistonoffswitch-label" for="artistplaylistmyonoffswitch">
+                <div class="artistplaylistonoffswitch-inner"></div>
+                <div class="artistplaylistonoffswitch-switch"></div>
+            </label>
+        </div>
+    </div><br>
+    <div id="RatingMine">Rating Mine: <select id="RatingMineSelector"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+    </div>
+    <div class="rating_bar_bomb" id="rating_id_bomb" onclick="ChangeRating(-1)"><img src="/Images/bombe.png" alt="RatingBomb"/>
+    </div>
+
+    <div class="rating_bar" id="rating_id_0" onclick="ChangeRating(0)">
+        <div style="width: 0;"></div>
+    </div>
+    <div class="rating_bar" id="rating_id_10" onclick="ChangeRating(10)">
+        <div style="width: 10%;"></div>
+    </div>
+    <div class="rating_bar" id="rating_id_20" onclick="ChangeRating(20)">
+        <div style="width: 20%;"></div>
+    </div>
+    <div class="rating_bar" id="rating_id_30" onclick="ChangeRating(30)">
+        <div style="width: 30%;"></div>
+    </div>
+    <div class="rating_bar" id="rating_id_40" onclick="ChangeRating(40)">
+        <div style="width: 40%;"></div>
+    </div>
+    <div class="rating_bar" id="rating_id_50" onclick="ChangeRating(50)">
+        <div style="width: 50%;"></div>
+    </div>
+    <div class="rating_bar" id="rating_id_60" onclick="ChangeRating(60)">
+        <div style="width: 60%;"></div>
+    </div>
+    <div class="rating_bar" id="rating_id_70" onclick="ChangeRating(70)">
+        <div style="width: 70%;"></div>
+    </div>
+    <div class="rating_bar" id="rating_id_80" onclick="ChangeRating(80)">
+        <div style="width: 80%;"></div>
+    </div>
+    <div class="rating_bar" id="rating_id_90" onclick="ChangeRating(90)">
+        <div style="width: 90%;"></div>
+    </div>
+    <div class="rating_bar" id="rating_id_100" onclick="ChangeRating(100)">
+        <div style="width: 100%;"></div>
+    </div>
+    <div id="Setrating" onclick="SetRatingLyric();return false;">
+        <div>>>Done<<<img id="RatingCheck" src="/Images/check.png"/>
+        </div>
+    </div>
+    <div class="close_bar" onclick="ShowCurrentRating('hide');">Close</div>
+</div>
+<div id="Filterlist">
+    <strong>Filter</strong>
+    <div id="FilterGelegenheitendiv">
+        Gelegenheiten:<br>
+        <div id="Filtergelegenheit_0" onclick="SetRatingFilter('Gelegenheit', 0); return false;"></div>
+        <div id="Filtergelegenheit_1" onclick="SetRatingFilter('Gelegenheit', 1); return false;"></div>
+        <div id="Filtergelegenheit_2" onclick="SetRatingFilter('Gelegenheit', 2); return false;"></div>
+        <div id="Filtergelegenheit_3" onclick="SetRatingFilter('Gelegenheit', 3); return false;"></div>
+        <div id="Filtergelegenheit_4" onclick="SetRatingFilter('Gelegenheit', 4); return false;"></div>
+    </div>
+    <div id="FilterGeschwindigkeitendiv">
+        Geschwindigkeit:<br>
+        <div id="Filtergeschwindigkeit_0" onclick="SetRatingFilter('Geschwindigkeit', 0); return false;"></div>
+        <div id="Filtergeschwindigkeit_1" onclick="SetRatingFilter('Geschwindigkeit', 1); return false;"></div>
+        <div id="Filtergeschwindigkeit_2" onclick="SetRatingFilter('Geschwindigkeit', 2); return false;"></div>
+        <div id="Filtergeschwindigkeit_3" onclick="SetRatingFilter('Geschwindigkeit', 3); return false;"></div>
+        <div id="Filtergeschwindigkeit_4" onclick="SetRatingFilter('Geschwindigkeit', 4); return false;"></div>
+        <div id="Filtergeschwindigkeit_5" onclick="SetRatingFilter('Geschwindigkeit', 5); return false;"></div>
+    </div>
+    <div id="FilterStimmungendiv">
+        Stimmung:<br>
+        <div id="Filterstimmung_0" onclick="SetRatingFilter('Stimmung', 0); return false;"></div>
+        <div id="Filterstimmung_1" onclick="SetRatingFilter('Stimmung', 1); return false;"></div>
+        <div id="Filterstimmung_2" onclick="SetRatingFilter('Stimmung', 2); return false;"></div>
+        <div id="Filterstimmung_3" onclick="SetRatingFilter('Stimmung', 3); return false;"></div>
+        <div id="Filterstimmung_4" onclick="SetRatingFilter('Stimmung', 4); return false;"></div>
+        <div id="Filterstimmung_5" onclick="SetRatingFilter('Stimmung', 5); return false;"></div>
+    </div>
+    <div id="Artistplaylistfilter">
+        Artist-Playlist:<br/>
+        <div onclick="SetRatingFilter('AlbpumInterpretFilter', 'true'); return false;" id="AlbumArtisttrue"></div>
+        <div onclick="SetRatingFilter('AlbpumInterpretFilter', 'false'); return false;" id="AlbumArtistfalse"></div>
+        <br/><br/>
+    </div>
+    <br/>
+    <div class="rating_bar_bomb" id="filter_rating_bar_bomb" onclick="SetRatingFilter('Rating',-1)"><img src="/Images/bombe.png" alt="RatingBomb"/>
+    </div>
+    <div class="rating_bar" id="filter_rating_bar_0" onclick="SetRatingFilter('Rating', 0)">
+        <div style="width: 0;"></div>
+    </div>
+    <div class="rating_bar" id="filter_rating_bar_10" onclick="SetRatingFilter('Rating', 10)">
+        <div style="width: 10%;"></div>
+    </div>
+    <div class="rating_bar" id="filter_rating_bar_20" onclick="SetRatingFilter('Rating', 20)">
+        <div style="width: 20%;"></div>
+    </div>
+    <div class="rating_bar" id="filter_rating_bar_30" onclick="SetRatingFilter('Rating', 30)">
+        <div style="width: 30%;"></div>
+    </div>
+    <div class="rating_bar" id="filter_rating_bar_40" onclick="SetRatingFilter('Rating', 40)">
+        <div style="width: 40%;"></div>
+    </div>
+    <div class="rating_bar" id="filter_rating_bar_50" onclick="SetRatingFilter('Rating', 50)">
+        <div style="width: 50%;"></div>
+    </div>
+    <div class="rating_bar" id="filter_rating_bar_60" onclick="SetRatingFilter('Rating', 60)">
+        <div style="width: 60%;"></div>
+    </div>
+    <div class="rating_bar" id="filter_rating_bar_70" onclick="SetRatingFilter('Rating', 70)">
+        <div style="width: 70%;"></div>
+    </div>
+    <div class="rating_bar" id="filter_rating_bar_80" onclick="SetRatingFilter('Rating', 80)">
+        <div style="width: 80%;"></div>
+    </div>
+    <div class="rating_bar" id="filter_rating_bar_90" onclick="SetRatingFilter('Rating', 90)">
+        <div style="width: 90%;"></div>
+    </div>
+    <div class="rating_bar" id="filter_rating_bar_100" onclick="SetRatingFilter('Rating', 100)">
+        <div style="width: 100%;"></div>
+    </div>
+    <div class="close_bar" onclick="SetRatingFilter('hide',0);">Close</div>
+    <div class="resetFilter" onclick="SetRatingFilter('Reset',0);">Reset</div>
+</div>
+<div id="SetGroupMembers"></div>
+<div id="Overlay" onclick="SonosWindows('overlay');"></div>
+</div>
+<div id="EventErrorDiv">
+    <div>Der Server ist nicht erreichbar.</div>
+</div>
+<div id="test" style="display: none; background-color: white; top: 40px; position: absolute; left: 250px; z-index: 999;">blub</div>
+</body>
+</html>
+
+
+
+

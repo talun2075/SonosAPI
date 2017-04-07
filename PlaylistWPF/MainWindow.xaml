@@ -1,0 +1,55 @@
+﻿<Window x:Class="PlaylistWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Playlistkonfigurator" Height="403" Width="974" Icon="/PlaylistWPF;component/Images/music.ico" Background="Black" MinWidth="974" MaxWidth="974" MaxHeight="403" MinHeight="403" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Loaded="Window_Loaded" Closing="Window_Closing">
+
+    <Grid Visibility="Visible" Height="374" Width="959">
+        <Button Content="Hinzufügen" Height="24" HorizontalAlignment="Left" Margin="20,333,0,0" Name="btnAdd" VerticalAlignment="Top" Width="79" Click="btnAdd_Click" />
+        <Button Content="Löschen" Height="24" HorizontalAlignment="Left" Margin="169,333,0,0" Name="btndelete" VerticalAlignment="Top" Width="48" IsEnabled="False" Click="btndelete_Click" />
+        <Button Content="Ändern" Height="24" HorizontalAlignment="Left" Margin="105,333,0,0" Name="btnEditPlaylist" VerticalAlignment="Top" Width="58" Click="btnEditPlaylist_Click" IsEnabled="False" />
+        <ListBox Style="{StaticResource myListboxStyle}" Height="293" HorizontalAlignment="Left" Margin="12,33,0,0" Name="lbPlaylist" VerticalAlignment="Top" Width="213" SelectionChanged="lbPlaylist_SelectionChanged" />
+        <Label Content="Wiedergabelisten" Height="28" HorizontalAlignment="Left" Margin="14,12,0,0" Name="label1" VerticalAlignment="Top" Foreground="White" />
+        <Grid Name="gridconditionlist" Height="362" HorizontalAlignment="Left" Margin="231,0,0,0" VerticalAlignment="Top" Width="215" Visibility="Hidden">
+            <ListBox Style="{StaticResource myListboxStyle}" Height="293" HorizontalAlignment="Left" Margin="0,32,0,0" Name="lbConditionList" VerticalAlignment="Top" Width="212" SelectionChanged="lbConditionList_SelectionChanged" GotFocus="lbConditionList_GotFocus" />
+            <Button Content="Hinzufügen" Height="24" HorizontalAlignment="Left" Margin="15,330,0,0" Name="btnAddConditionGroup" VerticalAlignment="Top" Width="79" Click="btnAddConditionGroup_Click" IsEnabled="False" />
+            <Button Content="Löschen" Height="24" HorizontalAlignment="Right" Margin="0,330,3,0" Name="btnDeleteConditionGroup" VerticalAlignment="Top" Width="48" IsEnabled="False" Click="btnDeleteConditionGroup_Click" />
+            <Label Content="Bedingungsgruppen"  Height="24" HorizontalAlignment="Left" Margin="0,12,0,0" Name="label5" VerticalAlignment="Top" Foreground="White" />
+            <Button Content="Ändern" Height="24" HorizontalAlignment="Left" Margin="100,330,0,0" Name="btnEditConditionGroup" VerticalAlignment="Top" Width="58" Click="btnEditConditionGroup_Click" IsEnabled="False" />
+        </Grid>
+        <Grid Name="gridlbfelder" Margin="461,0,281,12" Visibility="Hidden">
+            <ListBox Style="{StaticResource myListboxStyle}" Height="228" HorizontalAlignment="Left" Name="lbFelder" VerticalAlignment="Top" Width="209" SelectionChanged="lbFelder_SelectionChanged" Margin="0,98,0,0" />
+            <Button Content="Hinzufügen" Height="24" HorizontalAlignment="Left" Margin="78,332,0,0" Name="btnAddField" VerticalAlignment="Top" Width="79" IsEnabled="False" Click="btnAddField_Click" />
+            <Button Content="Löschen" Height="23" HorizontalAlignment="Right" Margin="0,332,0,0" Name="btnDeleteField" VerticalAlignment="Top" Width="48" IsEnabled="False" Click="btnDeleteField_Click" />
+            <ComboBox Height="20" HorizontalAlignment="Left" Margin="144,77,0,0" Name="cbConditionGroupOperator" VerticalAlignment="Top" Width="63" SelectionChanged="cbConditionGroupOperator_SelectionChanged" />
+            <Label Content="Feld Operatoren:" Height="28" HorizontalAlignment="Left" Name="label2" VerticalAlignment="Top" Foreground="White" Margin="0,71,0,0" />
+            <Label Content="Wiedergabesortierung: " Height="28" HorizontalAlignment="Left" Margin="0,12,0,0" Name="label6" VerticalAlignment="Top" Foreground="White" />
+            <ComboBox Height="20" HorizontalAlignment="Left" Margin="144,17,0,0" Name="cbPLSortOrder" VerticalAlignment="Top" Width="63" SelectionChanged="cbPLSortOrder_SelectionChanged"/>
+        </Grid>
+        <Grid Name="gridStringIntFelder" Margin="679,98,5,41" Visibility="Hidden">
+            <Label Content="Wert:" Height="28" HorizontalAlignment="Left" Margin="6,6,0,0" Name="lboperator" VerticalAlignment="Top" Foreground="White" />
+            <TextBox Height="23" HorizontalAlignment="Left" Margin="73,6,0,0" Name="tbFeld" VerticalAlignment="Top" Width="169" TextChanged="tbFeld_TextChanged" />
+            <Label Content="Operator:" Height="28" HorizontalAlignment="Left" Margin="6,35,0,0" Name="label4" VerticalAlignment="Top" Foreground="White" />
+            <ComboBox Height="24" HorizontalAlignment="Left" Margin="73,35,0,0" Name="cbStringOperatoren" VerticalAlignment="Top" Width="190" SelectionChanged="cbALLOperatoren_SelectionChanged"></ComboBox>
+            <ComboBox Height="24" HorizontalAlignment="Left" Margin="73,0,0,176" Name="cbIntOperatoren" VerticalAlignment="Bottom" Width="190" SelectionChanged="cbALLOperatoren_SelectionChanged"></ComboBox>
+            <ComboBox Height="24" HorizontalAlignment="Left" Margin="73,35,0,0" Name="cbBoolOperatoren" VerticalAlignment="Top" Width="190" SelectionChanged="cbALLOperatoren_SelectionChanged"/>
+            <TextBox ScrollViewer.VerticalScrollBarVisibility="Auto" Height="167" HorizontalAlignment="Left" Margin="2,61,0,0" Name="tbhelp" Text="Hilfe" VerticalAlignment="Top" Width="268" Foreground="White" ForceCursor="True" Background="Black" BorderThickness="0" IsEnabled="True" IsReadOnly="True" />
+            <ComboBox Height="23" HorizontalAlignment="Left" Margin="73,6,0,0" Name="cbBewertungMine" VerticalAlignment="Top" Width="169" SelectionChanged="cbBewertungMine_SelectionChanged" FontFamily="Wingdings 2" FontSize="15">
+                <ComboBoxItem Content="" FontFamily="Wingdings 2" FontSize="15" />
+                <ComboBoxItem Content=" " FontFamily="Wingdings 2" FontSize="15" />
+                <ComboBoxItem Content="  " FontFamily="Wingdings 2" FontSize="15" />
+                <ComboBoxItem Content="   " FontFamily="Wingdings 2" FontSize="15" />
+                <ComboBoxItem Content="    " FontFamily="Wingdings 2" FontSize="15" />
+            </ComboBox>
+            <Button Content="Set" Height="23" HorizontalAlignment="Left" Margin="244,7,0,0" Name="btnsituation" VerticalAlignment="Top" Width="24" Click="btnsituation_Click" />
+        </Grid>
+        <Menu Height="23" HorizontalAlignment="Left" Name="menu1" VerticalAlignment="Top" Width="47" Margin="900,335,0,0">
+            <MenuItem Header="Menü">
+                <MenuItem Header="Laden" Click="MenuItem_Click_1" />
+                <MenuItem Header="Save" Click="MenuItem_Click" />
+                <MenuItem Header="Clear" Click="MenuItem_Click_2" />
+                <MenuItem Header="M3Us Generieren" Click="MenuItem_Click_3"  />
+                <MenuItem Header="Settings" Click="MenuItem_Click_4"  />
+            </MenuItem>
+        </Menu>
+    </Grid>
+</Window>

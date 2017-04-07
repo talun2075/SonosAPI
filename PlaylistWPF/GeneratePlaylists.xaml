@@ -1,0 +1,9 @@
+﻿<Window x:Class="PlaylistWPF.GeneratePlaylists"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="GeneratePlaylists" Height="159" Width="598" WindowStartupLocation="CenterOwner" Icon="/PlaylistWPF;component/Images/music.ico">
+    <Grid>
+        <ProgressBar Height="33" HorizontalAlignment="Left" Margin="59,48,0,0" Name="prb1" VerticalAlignment="Top" Width="479" />
+        <Label Content="...initialisierung" Height="26" HorizontalAlignment="Left" Margin="59,87,0,0" Name="lbprb" VerticalAlignment="Top" Width="479" />
+    </Grid>
+</Window>

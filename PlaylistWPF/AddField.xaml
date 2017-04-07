@@ -1,0 +1,13 @@
+﻿<Window x:Class="PlaylistWPF.AddField"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Feld Hinzufügen" Height="80" Width="246" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Icon="/PlaylistWPF;component/Images/music.ico">
+    <Grid Height="49">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="132*" />
+            <ColumnDefinition Width="146*" />
+        </Grid.ColumnDefinitions>
+        <ComboBox Height="24" HorizontalAlignment="Left" Margin="12,11,0,0" Name="cbFieldsToChoose" VerticalAlignment="Top" Width="133" Grid.ColumnSpan="2" />
+        <Button Content="Ok" Grid.Column="1" Height="23" HorizontalAlignment="Left" Margin="60,12,0,0" Name="btnOK" VerticalAlignment="Top" Width="40" />
+    </Grid>
+</Window>

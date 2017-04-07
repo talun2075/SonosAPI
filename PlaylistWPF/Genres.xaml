@@ -1,0 +1,12 @@
+﻿<Window x:Class="PlaylistWPF.Genres"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:playlistWpf="clr-namespace:PlaylistWPF"
+        Title="Genres" Height="484" Width="311" Icon="/PlaylistWPF;component/Images/music.ico" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Loaded="Window_Loaded">
+    <Grid>
+        <DataGrid AutoGenerateColumns="False" Height="407" HorizontalAlignment="Left" Name="dataGrid1" VerticalAlignment="Top" Width="287" SelectionUnit="Cell" CurrentCellChanged="dataGrid1_CurrentCellChanged">
+        </DataGrid>
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="167,12,0,0" Name="tbgenre" VerticalAlignment="Top" Width="120" Visibility="Hidden" />
+        <Button Content="Set" Height="23" HorizontalAlignment="Left" Margin="212,408,0,0" Name="btnsave" VerticalAlignment="Top" Width="75" Click="btnsave_Click" />
+        <Label Content="Label" Height="24" HorizontalAlignment="Left" Margin="0,421,0,0" Name="labelcount" VerticalAlignment="Top" Width="287" />
+    </Grid>
+</Window>

@@ -1,0 +1,24 @@
+﻿<Window x:Class="PlaylistWPF.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings" Height="331" Width="567" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Icon="/PlaylistWPF;component/Images/music.ico">
+    <Grid>
+        <Label Content="Wiedergabenliste XML:" Height="28" HorizontalAlignment="Left" Margin="18,22,0,0" Name="label1" VerticalAlignment="Top" />
+        <Label Content="Wiedergabelisten Speicher Ort:" Height="28" HorizontalAlignment="Left" Margin="18,56,0,0" Name="label2" VerticalAlignment="Top" />
+        <Label Content="Musik Pfad:" Height="28" HorizontalAlignment="Left" Margin="18,90,0,0" Name="label3" VerticalAlignment="Top" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="231,27,0,0" Name="tbxml" VerticalAlignment="Top" Width="254" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="231,61,0,0" Name="tbsavepath" VerticalAlignment="Top" Width="254" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="231,95,0,0" Name="tbmusicpath" VerticalAlignment="Top" Width="254" />
+        <Button Content="Speichern" Height="21" HorizontalAlignment="Left" Margin="476,259,0,0" Name="btnsave" VerticalAlignment="Top" Width="57" Click="btnsave_Click" />
+        <Button Content="Ändern" Height="23" HorizontalAlignment="Left" Margin="491,26,0,0" Name="btnsetxml" VerticalAlignment="Top" Width="54" Click="btnsetxml_Click" />
+        <Button Content="Ändern" Height="23" HorizontalAlignment="Left" Margin="491,61,0,0" Name="btnsetsavepath" VerticalAlignment="Top" Width="54" Click="btnsetsavepath_Click" />
+        <Button Content="Ändern" Height="23" HorizontalAlignment="Left" Margin="491,95,0,0" Name="btnstartdir" VerticalAlignment="Top" Width="54" Click="btnstartdir_Click" />
+        <Button Content="Genres" Height="23" HorizontalAlignment="Left" Margin="18,257,0,0" Name="btGenreSet" VerticalAlignment="Top" Width="75" Click="btGenreSet_Click" />
+        <Label Content="Musikpfad in M3U Anpassen:" Height="28" HorizontalAlignment="Left" Margin="18,127,0,0" Name="label4" VerticalAlignment="Top" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="231,161,0,0" Name="tbCMPOld" VerticalAlignment="Top" Width="254" />
+        <Label Content="Alt:" Height="28" HorizontalAlignment="Left" Margin="93,161,0,0" Name="label5" VerticalAlignment="Top" />
+        <Label Content="Neu:" Height="23" HorizontalAlignment="Left" Margin="93,186,0,0" Name="label6" VerticalAlignment="Top" Width="38" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="231,187,0,0" Name="tbCMPNew" VerticalAlignment="Top" Width="254" />
+        <CheckBox x:Name="cpplaylistautoload" Content="Wiedergabelisten Automatisch laden" HorizontalAlignment="Left" Margin="22,224,0,0" VerticalAlignment="Top"/>
+    </Grid>
+</Window>

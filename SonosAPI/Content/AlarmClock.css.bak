@@ -1,0 +1,222 @@
+﻿#AlarmClockOpen{
+	position:absolute;
+	left: 125px;
+	top: 250px;
+	Background: URL("/Images/wecker.png");
+	background-size:100% 100%;
+	background-repeat:no-repeat;
+	Background-Color: white;
+}
+#AlarmClockOpen.aktiv{
+	Background-Color: grey;
+}
+#AlarmClock{
+	display:none;
+	background-color:white;
+	height:500px;
+}
+#AlarmClockWrapper{
+	overflow:auto;
+	height:500px;
+}
+
+.alarm:last-child {
+    font-style: italic;
+}
+#AlarmClockLoader{
+	text-align:center;
+}
+#EditAlarm{
+	background-color: white;
+	border: 4px solid #000000;
+	border-radius: 25px 25px 25px 25px;
+	box-shadow: 5px 5px 7px #888888;
+	height: 470px;
+	left: 260px;
+	width: 300px;
+	padding: 20px;
+	position: absolute;
+	top: 5px;
+	display:none;
+}
+.editalarmenabled {
+    margin-left: auto;
+    margin-right: auto;
+}
+.displayflex{
+    display: flex;
+	display: -webkit-flexbox;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+}
+
+#EditAlarmDaysSelectionWrapper > div {
+    display: inline-block;
+}
+#EditAlarmDaysSelectionWrapper {
+    margin-top: 20px;
+}
+#EditAlarmStartTimeWrapper {
+    margin-top: 20px;
+}
+#EditAlarmStartTimeDIV{
+	margin-left:5px;
+}
+#EditAlarmStartTimeDIV > input {
+    text-align: center;
+    width: 60px;
+}
+#AlarmSonosPlayerSelector{
+	margin-left: 20px;
+}
+#EditAlarmRoomSelectionWrapper{
+	margin-top: 20px;
+}
+#EditAlarmDaysSelectionWrapperText {
+    float: left;
+    height: 70px;
+    width: 60px;
+}
+#EditAlarmVolumeWrapper{
+	margin-top:20px;
+}
+#EditAlarmVolumeSlider{
+	width:233px;
+	margin-top: 4px;
+	float:left;
+}
+#EditAlarmVolumeInput{
+	margin-left: 10px;
+	width:40px;
+}
+#EditAlarmDurationWrapper{
+	margin-top:20px;
+}
+#EditAlarmDurationSelection{
+	margin-left:20px;
+}
+#EditAlarmIncludeRoomsWrapper{
+	margin-left: 60px;
+	margin-top:20px;
+}
+
+#EditAlarmPlaylistWrapper {
+    margin-top: 20px;
+}
+#EditAlarmPlaylist{
+	width:150px;
+}
+#EditAlarmPlaylistSet{
+	float:right;
+}
+#SelectAlarmPlaylist{
+	background-color: white;
+	border: 4px solid #000000;
+	border-radius: 25px 25px 25px 25px;
+	box-shadow: 5px 5px 7px #888888;
+	height: 400px;
+	left: 260px;
+	width: 300px;
+	padding: 20px;
+	position: absolute;
+	top: 5px;
+	display:none;
+}
+#SelectAlarmPlaylistWrapper{
+	overflow:auto;
+	height:400px;
+}
+#EditAlarmRandomWrapper{
+	margin-left: 60px;
+	margin-top:10px;
+}
+#EditAlarmSave{
+	margin-top:20px;
+	border: 2px solid;
+    border-radius: 25px;
+    box-shadow: 3px 0 5px #888;
+	text-align: center;
+}
+/*Favoriten Boxen Pfeil nach rechts*/
+.alarmclockarrow {background-color: white;border: 4px solid #000000;border-radius: 25px 25px 25px 25px;box-shadow: 5px 5px 7px #888888;height: 625px;left: 260px;width: 500px;padding: 20px;position: absolute;top: 5px;z-index: 20;} 
+.alarmclockarrow:after, .alarmclockarrow:before { right: 100%; border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none; } 
+.alarmclockarrow:after { border-width: 75px; top: 50%; margin-top: -75px; } 
+.alarmclockarrow:before {border-color: #000000;border-color: rgba(0, 0, 0, 0); border-right-color: #000000; border-width: 81px; top: 42%; margin-top: -81px;}
+
+
+/*einzelne Arlarme designen*/
+.alarm>DIV{
+    border-bottom: 1px solid;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+.roomname{
+	width:150px;
+}
+.starttime{
+	width:100px;
+}
+.startdate{
+	width:120px;
+}
+
+
+/*Checkboxen für enabled*/
+.alarmonoffswitch {
+    position: relative; width: 57px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+    float:right;
+}
+   .alarmonoffswitch-checkbox {
+    display: none;
+}
+.alarmonoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 20px;
+}
+.alarmonoffswitch-inner {
+    width: 200%; margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0; -webkit-transition: margin 0.3s ease-in 0;
+    -o-transition: margin 0.3s ease-in 0; transition: margin 0.3s ease-in 0;
+}
+.alarmonoffswitch-inner:before, .alarmonoffswitch-inner:after {
+    float: left; width: 50%; height: 20px; padding: 0; line-height: 20px;
+    font-size: 12px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+    border-radius: 20px;
+    box-shadow: 0 10px 0 #000000 inset;
+    box-shadow: 0 10px 0 rgba(0,0,0,0.08) inset;
+    }
+.alarmonoffswitch-inner:before {
+    content: "An";
+    padding-left: 7px;
+    background-color: #FF0000; color: #FFFFFF;
+    border-radius: 20px 0 0 20px;
+}
+.alarmonoffswitch-inner:after {
+    content: "Aus";
+    padding-right: 7px;
+    background-color: #EEEEEE; color: #999999;
+    text-align: right;
+    border-radius: 0 20px 20px 0;
+}
+.alarmonoffswitch-switch {
+    width: 20px; margin:0;
+    background: #FFFFFF;
+    border: 2px solid #999999; border-radius: 20px;
+    position: absolute; top: 0; bottom: 0; right: 33px;
+    -moz-transition: all 0.3s ease-in 0; -webkit-transition: all 0.3s ease-in 0;
+    -o-transition: all 0.3s ease-in 0; transition: all 0.3s ease-in 0;
+    background-image: -moz-linear-gradient(center top, rgba(0,0,0,0.1) 0, rgba(0,0,0,0) 80%);
+    background-image: -webkit-linear-gradient(center top, rgba(0,0,0,0.1) 0, rgba(0,0,0,0) 80%);
+    background-image: -o-linear-gradient(center top, rgba(0,0,0,0.1) 0, rgba(0,0,0,0) 80%);
+    background-image: linear-gradient(center top, rgba(0,0,0,0.1) 0, rgba(0,0,0,0) 80%);
+    box-shadow: 0 1px 1px white inset;
+}
+.alarmonoffswitch-checkbox:checked + .alarmonoffswitch-label .alarmonoffswitch-inner {
+    margin-left: 0;
+}
+.alarmonoffswitch-checkbox:checked + .alarmonoffswitch-label .alarmonoffswitch-switch {
+    right:0;
+}
+/* Checkboxen ende*/

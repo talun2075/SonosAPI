@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfPlaylistClass xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <PlaylistClass>
+    <conditionGroupsNames>
+      <string>test2</string>
+    </conditionGroupsNames>
+    <Playlist>test</Playlist>
+    <Sort>Zufall</Sort>
+    <PlaylistConditionGroups>
+      <ConditionObjectGroup>
+        <Name>test2</Name>
+        <ConditionObjectList>
+          <ConditionObject>
+            <Feld>Bewertung</Feld>
+            <Wert>0</Wert>
+            <Operator>NonEqual</Operator>
+          </ConditionObject>
+        </ConditionObjectList>
+        <FieldNamesList>
+          <string>Bewertung</string>
+        </FieldNamesList>
+        <CombineOperator>And</CombineOperator>
+      </ConditionObjectGroup>
+    </PlaylistConditionGroups>
+    <GetConditionGroupNames>
+      <string>test2</string>
+    </GetConditionGroupNames>
+  </PlaylistClass>
+</ArrayOfPlaylistClass>

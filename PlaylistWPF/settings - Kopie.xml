@@ -1,0 +1,1042 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+<settings>
+            <setting name="playlistsavepath">
+                <value>c:\playlists\</value>
+            </setting>
+            <setting name="playlistxml">
+                <value>c:\playlists\playlists.xml</value>
+            </setting>
+            <setting name="MusicPath">
+                <value>x:Musik\</value>
+            </setting>
+</settings>
+<genres>
+  <genre name="Acapella">
+    <value>false</value>
+  </genre>
+  <genre name="Abstract">
+    <value>false</value>
+  </genre>
+  <genre name="Acid">
+    <value>false</value>
+  </genre>
+  <genre name="Acid Jazz">
+    <value>false</value>
+  </genre>
+  <genre name="Acid Punk">
+    <value>false</value>
+  </genre>
+  <genre name="Acoustic">
+    <value>false</value>
+  </genre>
+  <genre name="Acoustic Blues">
+    <value>false</value>
+  </genre>
+  <genre name="Adult Alternative">
+    <value>false</value>
+  </genre>
+  <genre name="Adult Contemporary">
+    <value>false</value>
+  </genre>
+  <genre name="Africa">
+    <value>false</value>
+  </genre>
+  <genre name="Afro-Beat">
+    <value>false</value>
+  </genre>
+  <genre name="Afro-Pop">
+    <value>false</value>
+  </genre>
+  <genre name="Alternative">
+    <value>true</value>
+  </genre>
+  <genre name="Alternative Rock">
+    <value>true</value>
+  </genre>
+  <genre name="Alternative Country">
+    <value>false</value>
+  </genre>
+  <genre name="Alternative Folk">
+    <value>false</value>
+  </genre>
+  <genre name="Alternative Rap">
+    <value>false</value>
+  </genre>
+  <genre name="American Trad Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Americana">
+    <value>false</value>
+  </genre>    
+  <genre name="Ambient">
+    <value>false</value>
+  </genre>
+  <genre name="Anime">
+    <value>false</value>
+  </genre>
+  <genre name="Arena Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Art Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Asia">
+    <value>false</value>
+  </genre>
+  <genre name="Audio Theatre">
+    <value>false</value>
+  </genre>
+  <genre name="Audiobook">
+    <value>false</value>
+  </genre>
+  <genre name="Australia">
+    <value>false</value>
+  </genre>  
+  <genre name="Avantgarde">
+    <value>false</value>
+  </genre>
+  <genre name="Ballad">
+    <value>false</value>
+  </genre>
+  <genre name="Barbershop">
+    <value>false</value>
+  </genre>
+  <genre name="Baroque">
+    <value>false</value>
+  </genre>
+  <genre name="Bass">
+    <value>false</value>
+  </genre>
+  <genre name="Beat">
+    <value>false</value>
+  </genre>
+  <genre name="Bebop">
+    <value>false</value>
+  </genre>
+  <genre name="Bhangra">
+    <value>false</value>
+  </genre>
+  <genre name="Big Band">
+    <value>false</value>
+  </genre>
+  <genre name="Big Beat">
+    <value>false</value>
+  </genre>
+  <genre name="Black Metal">
+    <value>false</value>
+  </genre>
+  <genre name="Bluegrass">
+    <value>false</value>
+  </genre>
+  <genre name="Blues">
+    <value>false</value>
+  </genre>
+  <genre name="Blues-Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Bop">
+    <value>false</value>
+  </genre>
+  <genre name="Booty Bass">
+    <value>false</value>
+  </genre>
+  <genre name="Bossa Nova">
+    <value>false</value>
+  </genre>
+  <genre name="Bounce">
+    <value>false</value>
+  </genre>  
+  <genre name="Breakbeat">
+    <value>false</value>
+  </genre>
+  <genre name="British Invasion">
+    <value>false</value>
+  </genre>  
+  <genre name="BritPop">
+    <value>false</value>
+  </genre>
+  <genre name="Cabaret">
+    <value>false</value>
+  </genre>
+  <genre name="Cajun">
+    <value>false</value>
+  </genre>
+  <genre name="Caribbean">
+    <value>false</value>
+  </genre>      
+  <genre name="Celtic">
+    <value>false</value>
+  </genre>
+  <genre name="Celtic Folk">
+    <value>false</value>
+  </genre>  
+  <genre name="Chamber Music">
+    <value>false</value>
+  </genre>
+  <genre name="Chanson">
+    <value>false</value>
+  </genre>
+  <genre name="Chant">
+    <value>false</value>
+  </genre>
+  <genre name="Chanukah">
+    <value>false</value>
+  </genre>
+  <genre name="Chicago Blues">
+    <value>false</value>
+  </genre>
+  <genre name="Chicano">
+    <value>false</value>
+  </genre>
+  <genre name="Children’s Music">
+    <value>false</value>
+  </genre>
+  <genre name="Chillout">
+    <value>false</value>
+  </genre>
+  <genre name="Choral">
+    <value>false</value>
+  </genre>
+  <genre name="Chorus">
+    <value>false</value>
+  </genre>
+  <genre name="Christian Classic">
+    <value>false</value>
+  </genre>  
+  <genre name="Christian Gangsta Rap">
+    <value>false</value>
+  </genre>
+  <genre name="Christian Metal">
+    <value>false</value>
+  </genre>
+  <genre name="Christian Pop">
+    <value>false</value>
+  </genre>
+  <genre name="Christian Rap">
+    <value>false</value>
+  </genre>
+  <genre name="Christian Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Christmas">
+    <value>true</value>
+  </genre>
+  <genre name="Christmas Children’s">
+    <value>false</value>
+  </genre>  
+  <genre name="Christmas Classic">
+    <value>false</value>
+  </genre>  
+  <genre name="Christmas Classical">
+    <value>false</value>
+  </genre>  
+  <genre name="Christmas Jazz">
+    <value>false</value>
+  </genre>  
+  <genre name="Christmas Modern">
+    <value>false</value>
+  </genre>  
+  <genre name="Christmas Pop">
+    <value>false</value>
+  </genre>  
+  <genre name="Christmas R and B">
+    <value>false</value>
+  </genre>  
+  <genre name="Christmas Religious">
+    <value>false</value>
+  </genre>  
+  <genre name="Christmas Rock">
+    <value>false</value>
+  </genre>  
+  <genre name="Classic">
+    <value>false</value>
+  </genre>  
+  <genre name="Classic Blues">
+    <value>false</value>
+  </genre>                          
+  <genre name="Classic Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Classical">
+    <value>true</value>
+  </genre>
+  <genre name="Classical Crossover">
+    <value>false</value>
+  </genre>  
+  <genre name="Club">
+    <value>false</value>
+  </genre>
+  <genre name="Club-House">
+    <value>false</value>
+  </genre>
+  <genre name="College Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Conjunto">
+    <value>false</value>
+  </genre>
+  <genre name="Conjunto Progressive">
+    <value>false</value>
+  </genre>
+  <genre name="Comedy">
+    <value>true</value>
+  </genre>    
+  <genre name="Contemporary Bluegrass">
+    <value>false</value>
+  </genre> 
+  <genre name="Contemporary Blues">
+    <value>false</value>
+  </genre>
+  <genre name="Contemporary Celtic">
+    <value>false</value>
+  </genre>
+  <genre name="Contemporary Country">
+    <value>false</value>
+  </genre>
+  <genre name="Contemporary Christian (CCM)">
+    <value>false</value>
+  </genre>
+  <genre name="Contemporary Folk">
+    <value>false</value>
+  </genre>
+  <genre name="Contemporary Gospel">
+    <value>false</value>
+  </genre>
+  <genre name="Contemporary Jazz">
+    <value>false</value>
+  </genre>
+  <genre name="Contemporary Latin">
+    <value>false</value>
+  </genre>
+  <genre name="Contemporary R and B">
+    <value>false</value>
+  </genre>
+  <genre name="Contemporary Singer/Songwriter">
+    <value>false</value>
+  </genre>                   
+  <genre name="Cool">
+    <value>false</value>
+  </genre>
+  <genre name="Country">
+    <value>false</value>
+  </genre>
+  <genre name="Country Blues">
+    <value>false</value>
+  </genre>
+  <genre name="Country Gospel">
+    <value>false</value>
+  </genre>      
+  <genre name="Country Jazz">
+    <value>false</value>
+  </genre>
+  <genre name="Crossover">
+    <value>true</value>
+  </genre>
+  <genre name="Crunk">
+    <value>false</value>
+  </genre>  
+  <genre name="Cult">
+    <value>false</value>
+  </genre>
+  <genre name="Dance">
+    <value>true</value>
+  </genre>
+  <genre name="Dance Hall">
+    <value>false</value>
+  </genre>
+  <genre name="Darkwave">
+    <value>false</value>
+  </genre>
+  <genre name="Death Metal">
+    <value>false</value>
+  </genre>
+  <genre name="Delta Blues">
+    <value>false</value>
+  </genre>
+  <genre name="Dirty South">
+    <value>false</value>
+  </genre>
+  <genre name="Disco">
+    <value>false</value>
+  </genre>
+  <genre name="Dixieland">
+    <value>false</value>
+  </genre>
+  <genre name="Doo Wop">
+    <value>false</value>
+  </genre>
+  <genre name="Downtempo">
+    <value>false</value>
+  </genre>
+  <genre name="Dream">
+    <value>false</value>
+  </genre>
+  <genre name="Drinking Songs">
+    <value>false</value>
+  </genre>
+  <genre name="Drone">
+    <value>false</value>
+  </genre>
+  <genre name="DrumandBass">
+    <value>false</value>
+  </genre>
+  <genre name="Drum Solo">
+    <value>false</value>
+  </genre>
+  <genre name="Dub">
+    <value>false</value>
+  </genre>
+  <genre name="Dubstep">
+    <value>false</value>
+  </genre>
+  <genre name="Duet">
+    <value>false</value>
+  </genre>
+  <genre name="Early Music">
+    <value>false</value>
+  </genre>
+  <genre name="East Coast Rap">
+    <value>false</value>
+  </genre>
+  <genre name="Easter">
+    <value>false</value>
+  </genre>  
+  <genre name="Easy Listening">
+    <value>false</value>
+  </genre>
+  <genre name="EBM">
+    <value>false</value>
+  </genre>
+  <genre name="Eclectic">
+    <value>false</value>
+  </genre>
+  <genre name="Eclectic Blues">
+    <value>false</value>
+  </genre>
+  <genre name="Electro">
+    <value>false</value>
+  </genre>
+  <genre name="Electroclash">
+    <value>false</value>
+  </genre>
+  <genre name="Electronic">
+    <value>true</value>
+  </genre>
+  <genre name="Electronica">
+    <value>false</value>
+  </genre>
+  <genre name="Electronic Rock">
+    <value>false</value>
+  </genre>    
+  <genre name="Emo">
+    <value>false</value>
+  </genre>
+  <genre name="Enka">
+    <value>false</value>
+  </genre>
+  <genre name="Environmental">
+    <value>false</value>
+  </genre>
+  <genre name="Ethnic">
+    <value>false</value>
+  </genre>
+  <genre name="Ethio-jazz">
+    <value>false</value>
+  </genre>
+  <genre name="Eurodance">
+    <value>false</value>
+  </genre>
+  <genre name="Euro-House">
+    <value>false</value>
+  </genre>
+  <genre name="Euro-Techno">
+    <value>false</value>
+  </genre>
+  <genre name="Europe">
+    <value>false</value>
+  </genre>  
+  <genre name="Exercise">
+    <value>false</value>
+  </genre>
+  <genre name="Experimental">
+    <value>false</value>
+  </genre>  
+  <genre name="Experimental Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Fast Fusion">
+    <value>false</value>
+  </genre>
+  <genre name="Folk">
+    <value>false</value>
+  </genre>
+  <genre name="Folklore">
+    <value>false</value>
+  </genre>
+  <genre name="Folk-Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Freestyle">
+    <value>false</value>
+  </genre>
+  <genre name="Funk">
+    <value>false</value>
+  </genre>
+  <genre name="Fusion">
+    <value>false</value>
+  </genre>
+  <genre name="Game">
+    <value>false</value>
+  </genre>
+  <genre name="Gangsta">
+    <value>false</value>
+  </genre>
+  <genre name="Gangsta Rap">
+    <value>false</value>
+  </genre>
+  <genre name="Garage">
+    <value>false</value>
+  </genre>
+  <genre name="Garage Rock">
+    <value>false</value>
+  </genre>
+  <genre name="G-Funk">
+    <value>false</value>
+  </genre>
+  <genre name="Glam Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Global">
+    <value>false</value>
+  </genre>
+  <genre name="Goa">
+    <value>false</value>
+  </genre>
+  <genre name="Gospel">
+    <value>true</value>
+  </genre>
+  <genre name="Gothic">
+    <value>true</value>
+  </genre>
+  <genre name="Goth Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Gothic Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Grunge">
+    <value>true</value>
+  </genre>
+  <genre name="Guitar">
+    <value>true</value>
+  </genre>
+  <genre name="Hair Metal">
+    <value>false</value>
+  </genre>
+  <genre name="Halloween">
+    <value>false</value>
+  </genre>
+  <genre name="Hard Bop">
+    <value>false</value>
+  </genre>
+  <genre name="Hard Dance">
+    <value>false</value>
+  </genre>
+  <genre name="Hard Rock">
+    <value>true</value>
+  </genre>
+  <genre name="Hardcore">
+    <value>true</value>
+  </genre>
+  <genre name="Hardcore Punk">
+    <value>false</value>
+  </genre>
+  <genre name="Hardcore Rap">
+    <value>false</value>
+  </genre>
+  <genre name="Hardcore Techno">
+    <value>false</value>
+  </genre>
+  <genre name="Hawaii">
+    <value>false</value>
+  </genre>  
+  <genre name="Healing">
+    <value>false</value>
+  </genre>  
+  <genre name="Heavy Metal">
+    <value>true</value>
+  </genre>
+  <genre name="High Classical">
+    <value>false</value>
+  </genre>
+  <genre name="Hi-NRG">
+    <value>false</value>
+  </genre>  
+  <genre name="Hip-Hop">
+    <value>false</value>
+  </genre>
+  <genre name="Honky Tonk">
+    <value>false</value>
+  </genre>
+  <genre name="House">
+    <value>false</value>
+  </genre>
+  <genre name="Humour">
+    <value>false</value>
+  </genre>
+  <genre name="IDM">
+    <value>false</value>
+  </genre>
+  <genre name="Illbient">
+    <value>false</value>
+  </genre>
+  <genre name="Impressionist">
+    <value>false</value>
+  </genre>
+  <genre name="Indie">
+    <value>false</value>
+  </genre>
+  <genre name="Indie Pop">
+    <value>false</value>
+  </genre>  
+  <genre name="Indie Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Industrial">
+    <value>false</value>
+  </genre>
+  <genre name="Industro-Goth">
+    <value>false</value>
+  </genre>
+  <genre name="Instrumental">
+    <value>true</value>
+  </genre>
+  <genre name="Instrumental Pop">
+    <value>false</value>
+  </genre>
+  <genre name="Instrumental Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Jam Band">
+    <value>false</value>
+  </genre>
+  <genre name="Jackin House">
+    <value>false</value>
+  </genre>
+  <genre name="Japan">
+    <value>false</value>
+  </genre>
+  <genre name="Japanese Pop">
+    <value>false</value>
+  </genre>  
+  <genre name="Jazz">
+    <value>false</value>
+  </genre>
+  <genre name="JazzandFunk">
+    <value>false</value>
+  </genre>
+  <genre name="Jungle">
+    <value>false</value>
+  </genre>
+  <genre name="Kayokyoku">
+    <value>false</value>
+  </genre>
+  <genre name="Klezmer">
+    <value>false</value>
+  </genre>    
+  <genre name="Krautrock">
+    <value>false</value>
+  </genre>
+  <genre name="Latin">
+    <value>false</value>
+  </genre>
+  <genre name="Latin Jazz">
+    <value>false</value>
+  </genre>
+  <genre name="Latin Rap">
+    <value>false</value>
+  </genre>  
+  <genre name="Leftfield">
+    <value>false</value>
+  </genre>
+  <genre name="Lo-Fi">
+    <value>false</value>
+  </genre>
+  <genre name="Lounge">
+    <value>false</value>
+  </genre>
+  <genre name="Lullabies">
+    <value>false</value>
+  </genre>
+  <genre name="Math Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Meditative">
+    <value>false</value>
+  </genre>
+  <genre name="Merengue">
+    <value>false</value>
+  </genre>
+  <genre name="Metal">
+    <value>true</value>
+  </genre>
+  <genre name="Middle East">
+    <value>false</value>
+  </genre>
+  <genre name="Minimalism">
+    <value>false</value>
+  </genre>
+  <genre name="Modern Composition">
+    <value>false</value>
+  </genre>
+  <genre name="Motown">
+    <value>false</value>
+  </genre>        
+  <genre name="Musical">
+    <value>true</value>
+  </genre>
+  <genre name="National Folk">
+    <value>false</value>
+  </genre>
+  <genre name="Native US">
+    <value>false</value>
+  </genre>
+  <genre name="Nature">
+    <value>false</value>
+  </genre>
+  <genre name="Negerpunk">
+    <value>false</value>
+  </genre>
+  <genre name="Neoclassical">
+    <value>false</value>
+  </genre>
+  <genre name="Neo-Soul">
+    <value>false</value>
+  </genre>
+  <genre name="Neue Deutsche Welle">
+    <value>false</value>
+  </genre>
+  <genre name="New Acoustic">
+    <value>false</value>
+  </genre>
+  <genre name="New Age">
+    <value>false</value>
+  </genre>
+  <genre name="New Romantic">
+    <value>false</value>
+  </genre>
+  <genre name="New Wave">
+    <value>false</value>
+  </genre>
+  <genre name="Noise">
+    <value>false</value>
+  </genre>
+  <genre name="Novelty">
+    <value>false</value>
+  </genre>
+  <genre name="Nu-Breakz">
+    <value>false</value>
+  </genre>
+  <genre name="Oldies">
+    <value>false</value>
+  </genre>
+  <genre name="Old School Rap">
+    <value>false</value>
+  </genre>
+  <genre name="Opera">
+    <value>false</value>
+  </genre>
+  <genre name="Orchestral">
+    <value>false</value>
+  </genre>
+  <genre name="Original Score">
+    <value>false</value>
+  </genre>    
+  <genre name="Other">
+    <value>false</value>
+  </genre>
+  <genre name="Outlaw Country">
+    <value>false</value>
+  </genre>  
+  <genre name="Podcast">
+    <value>false</value>
+  </genre>
+  <genre name="Polka">
+    <value>false</value>
+  </genre>
+  <genre name="Polsk Punk">
+    <value>false</value>
+  </genre>
+  <genre name="Pop">
+    <value>true</value>
+  </genre>
+  <genre name="Pop/Funk">
+    <value>false</value>
+  </genre>
+  <genre name="Pop/Folk">
+    <value>false</value>
+  </genre>
+  <genre name="Pop/Rock">
+    <value>true</value>
+  </genre>
+  <genre name="Porn Groove">
+    <value>false</value>
+  </genre>
+  <genre name="Post-Punk">
+    <value>false</value>
+  </genre>
+  <genre name="Post-Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Power Ballad">
+    <value>false</value>
+  </genre>
+  <genre name="Pranks">
+    <value>false</value>
+  </genre>
+  <genre name="Primus">
+    <value>false</value>
+  </genre>
+  <genre name="Progressive Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Psybient">
+    <value>false</value>
+  </genre>
+  <genre name="Psychedelic">
+    <value>false</value>
+  </genre>
+  <genre name="Psychedelic Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Psytrance">
+    <value>false</value>
+  </genre>
+  <genre name="Punk">
+    <value>false</value>
+  </genre>
+  <genre name="Punk Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Qawwali">
+    <value>false</value>
+  </genre>  
+  <genre name="Quiet Storm">
+    <value>false</value>
+  </genre> 
+  <genre name="Reggae">
+    <value>false</value>
+  </genre>
+  <genre name="Ragtime">
+    <value>false</value>
+  </genre>
+  <genre name="Renaissance">
+    <value>false</value>
+  </genre>
+  <genre name="Rap">
+    <value>false</value>
+  </genre>
+  <genre name="Rave">
+    <value>false</value>
+  </genre>
+  <genre name="Retro">
+    <value>false</value>
+  </genre>
+  <genre name="Revival">
+    <value>false</value>
+  </genre>
+  <genre name="Rhythm and Blues">
+    <value>true</value>
+  </genre>
+  <genre name="Rhythmic Soul">
+    <value>false</value>
+  </genre>
+  <genre name="Rock">
+    <value>false</value>
+  </genre>
+  <genre name="RockandRoll">
+    <value>false</value>
+  </genre>
+  <genre name="Rockabilly">
+    <value>false</value>
+  </genre>
+  <genre name="Romantic">
+    <value>false</value>
+  </genre>
+  <genre name="Roots Reggae">
+    <value>false</value>
+  </genre>
+  <genre name="Roots Rock">
+    <value>false</value>
+  </genre>        
+  <genre name="Salsa">
+    <value>false</value>
+  </genre>
+  <genre name="Samba">
+    <value>false</value>
+  </genre>
+  <genre name="Satire">
+    <value>false</value>
+  </genre>
+  <genre name="Shoegaze">
+    <value>false</value>
+  </genre>
+  <genre name="Showtunes">
+    <value>false</value>
+  </genre>
+  <genre name="Ska">
+    <value>true</value>
+  </genre>
+  <genre name="Singer/Songwriter">
+    <value>false</value>
+  </genre>
+  <genre name="Slow Jam">
+    <value>false</value>
+  </genre>
+  <genre name="Slow Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Soft Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Sonata">
+    <value>false</value>
+  </genre>
+  <genre name="Soul">
+    <value>false</value>
+  </genre>
+  <genre name="Sound Clip">
+    <value>false</value>
+  </genre>
+  <genre name="Soundtrack">
+    <value>false</value>
+  </genre>
+  <genre name="Southern Gospel">
+    <value>false</value>
+  </genre>  
+  <genre name="Southern Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Space">
+    <value>false</value>
+  </genre>
+  <genre name="Space Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Speech">
+    <value>false</value>
+  </genre>
+  <genre name="Steampunk">
+    <value>false</value>
+  </genre>
+  <genre name="Surf">
+    <value>false</value>
+  </genre>  
+  <genre name="Swing">
+    <value>false</value>
+  </genre>
+  <genre name="Symphonic Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Symphony">
+    <value>false</value>
+  </genre>
+  <genre name="Synthpop">
+    <value>false</value>
+  </genre>
+  <genre name="Tango">
+    <value>false</value>
+  </genre>
+  <genre name="Techno">
+    <value>true</value>
+  </genre>
+  <genre name="Techno-Industrial">
+    <value>false</value>
+  </genre>
+  <genre name="Terror">
+    <value>false</value>
+  </genre>
+  <genre name="Tex-Mex">
+    <value>false</value>
+  </genre>
+  <genre name="Thanksgiving">
+    <value>false</value>
+  </genre>    
+  <genre name="Thrash Metal">
+    <value>false</value>
+  </genre>
+  <genre name="Top 40">
+    <value>false</value>
+  </genre>
+  <genre name="Traditional Bluegrass">
+    <value>false</value>
+  </genre>
+  <genre name="Traditional Celtic">
+    <value>false</value>
+  </genre>
+  <genre name="Traditional Country">
+    <value>false</value>
+  </genre>
+  <genre name="Traditional Folk">
+    <value>false</value>
+  </genre>
+  <genre name="Traditional Gospel">
+    <value>false</value>
+  </genre>
+  <genre name="Traditional Jazz">
+    <value>false</value>
+  </genre>
+  <genre name="Traditional Pop">
+    <value>false</value>
+  </genre>              
+  <genre name="Trailer">
+    <value>false</value>
+  </genre>
+  <genre name="Trance">
+    <value>false</value>
+  </genre>
+  <genre name="Travel">
+    <value>false</value>
+  </genre>
+  <genre name="Tribal">
+    <value>false</value>
+  </genre>
+  <genre name="Trip-Hop">
+    <value>false</value>
+  </genre>
+  <genre name="Trop Rock">
+    <value>false</value>
+  </genre>
+  <genre name="Underground Rap">
+    <value>false</value>
+  </genre>
+  <genre name="Urban Cowboy">
+    <value>false</value>
+  </genre>
+  <genre name="Vocal">
+    <value>false</value>
+  </genre>
+  <genre name="Vocal Jazz">
+    <value>false</value>
+  </genre>
+  <genre name="Vocal Pop">
+    <value>false</value>
+  </genre>
+  <genre name="Wedding Music">
+    <value>false</value>
+  </genre>        
+  <genre name="West Coast Rap">
+    <value>false</value>
+  </genre>  
+  <genre name="World Music">
+    <value>false</value>
+  </genre>
+  <genre name="Worldbeat">
+    <value>false</value>
+  </genre>
+  <genre name="Zydeco">
+    <value>false</value>
+  </genre>  
+</genres>
+</Configuration>

@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Dashbuttons</title>
+    <meta charset="utf-8" />
+    <script src="/Scripts/jquery-2.1.4.min.js" type="text/javascript"></script>
+    <style>
+        .dash {
+            font-size: 3em;
+            margin-top: 30px;
+            border: 1px solid black;
+            border-radius: 25px;
+            padding-left: 10px;
+            width: 500px;
+            box-shadow: 3px 3px 3px 1px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="Dash" class="dash" data-dash="1" data-dashid="0">Gästezimmer Regen</div>
+    <div id="Dash2" class="dash" data-dash="1" data-dashid="1">Gästezimmer TempSleep</div>
+    <div id="Dash1" class="dash" data-dash="2">Erdgeschoss</div>
+    <div id="Dash3" class="dash" data-dash="3" data-prompt="Kinderzimmer">Kinderzimmer</div>
+    <div id="Dash4" class="dash" data-dash="4">Küche</div>
+    <script>
+        $(document).ready(function () {
+            $(".dash").on("click", function () {
+                var dash = $(this).data("dash");
+                var dashid = $(this).data("dashid");
+                var dprompt = $(this).data("prompt");
+                if (typeof dashid === "undefined") {
+                    dashid = 0;
+                }
+                if (typeof dprompt !== "undefined") {
+                    if (!confirm("Du hast " + dprompt + " gewählt ist das so gewünscht?")) {
+                        return false;
+                    }
+                }
+
+
+                var url = "http://192.168.0.6/Sonos/dash/dash" + dash + "/" + dashid;
+                $.ajax({
+                    type: "Get",
+                    url: url,
+                    dataType: "json"
+                });
+                return true;
+            });
+
+        });
+
+
+    </script>
+</body>
+</html>
