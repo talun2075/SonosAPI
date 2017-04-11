@@ -33,7 +33,7 @@ namespace SonosAPI.Controllers
 
             try
             {
-                SonosPlayer gzmPlayer = GetPlayer(SonosConstants.GästezimmerName);
+                SonosPlayer gzmPlayer = SonosHelper.GetPlayer(SonosConstants.GästezimmerName);
                 if (gzmPlayer != null)
                 {
                     //hier nun den Code ausführen, der benötigt wird.
@@ -97,7 +97,7 @@ namespace SonosAPI.Controllers
                 foreach (SonosPlayer sp in SonosHelper.Sonos.Players)
                 {
                     var oldTransport = sp.CurrentState.TransportState;
-                    CheckIsZoneCord(sp);
+                    SonosHelper.CheckIsZoneCord(sp);
                     WaitForTransitioning(sp);
                     if (sp.CurrentState.TransportState != PlayerStatus.PLAYING && oldTransport != PlayerStatus.PLAYING) continue;
                     foundplayed = true;
@@ -132,14 +132,14 @@ namespace SonosAPI.Controllers
             }
             #endregion STOPP
 
-            SonosPlayer esszimmer = GetPlayer(SonosConstants.EsszimmerName);
-            SonosPlayer wohnzimmer = GetPlayer(SonosConstants.WohnzimmerName);
+            SonosPlayer esszimmer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
+            SonosPlayer wohnzimmer = SonosHelper.GetPlayer(SonosConstants.WohnzimmerName);
 
 
             //Alle Player alleine machen und neu zuordnen
             try
             {
-                CheckIsZoneCord(wohnzimmer);
+                SonosHelper.CheckIsZoneCord(wohnzimmer);
                 esszimmer.BecomeCoordinatorofStandaloneGroup();
                 Thread.Sleep(400);
                 wohnzimmer.SetAVTransportURI(SonosConstants.xrincon + esszimmer.UUID);
@@ -268,17 +268,17 @@ namespace SonosAPI.Controllers
             const string rsh = "x-sonosapi-stream:s18353?sid=254&amp;flags=8224&amp;sn=0";
             try
             {
-                SonosPlayer essPlayer = GetPlayer(SonosConstants.EsszimmerName);
-                SonosPlayer kuPlayer = GetPlayer(SonosConstants.KücheName);
-                SonosPlayer wzPlayer = GetPlayer(SonosConstants.WohnzimmerName);
+                SonosPlayer essPlayer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
+                SonosPlayer kuPlayer = SonosHelper.GetPlayer(SonosConstants.KücheName);
+                SonosPlayer wzPlayer = SonosHelper.GetPlayer(SonosConstants.WohnzimmerName);
                 var oldTransportstate = essPlayer.CurrentState.TransportState;
                 essPlayer.BecomeCoordinatorofStandaloneGroup();
                 Thread.Sleep(300);
-                CheckIsZoneCord(kuPlayer);
+                SonosHelper.CheckIsZoneCord(kuPlayer);
                 WaitForTransitioning(wzPlayer);
                 if (wzPlayer.CurrentState.TransportState == PlayerStatus.PLAYING)
                 {
-                    CheckIsZoneCord(wzPlayer);
+                    SonosHelper.CheckIsZoneCord(wzPlayer);
                     wzPlayer.SetPause();
                     //Daten vom Marantz ermitteln
                     if (!Marantz.IsInitialisiert)
@@ -319,20 +319,7 @@ namespace SonosAPI.Controllers
                 return ex.Message;
             }
         }
-        /// <summary>
-        /// Gibt den SonosPlayer aufgrund des übergebenen Names zurück oder Null.
-        /// </summary>
-        /// <param name="playerName"></param>
-        /// <returns></returns>
-        private SonosPlayer GetPlayer(string playerName)
-        {
-            foreach (SonosPlayer sonosPlayer in SonosHelper.Sonos.Players)
-            {
-                if (sonosPlayer.Name == playerName)
-                    return sonosPlayer;
-            }
-            return null;
-        }
+        
         /// <summary>
         /// Prüft die übergebene Playlist mit dem Übergeben Player ob neu geladen werden muss.
         /// </summary>
@@ -390,23 +377,6 @@ namespace SonosAPI.Controllers
             }
         }
         /// <summary>
-        /// Liefert die Zone aufgrund des übergebenen Namen
-        /// </summary>
-        /// <param name="playername"></param>
-        /// <returns></returns>
-        private SonosZone GetZone(string playername)
-        {
-            foreach (SonosZone sonosZone in SonosHelper.Sonos.Zones)
-            {
-                if (sonosZone.Coordinator.Name == playername)
-                {
-                    return sonosZone;
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
         /// Starte und Stoppt übergebenen Player. 
         /// Fügt diesen der primär Gruppe hinzu, wenn diese Spielt
         /// </summary>
@@ -426,8 +396,8 @@ namespace SonosAPI.Controllers
             SonosPlayer esszimmer;
             try
             {
-                player = GetPlayer(_player);
-                esszimmer = GetPlayer(SonosConstants.EsszimmerName);
+                player = SonosHelper.GetPlayer(_player);
+                esszimmer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
             }
             catch (Exception exceptio)
             {
@@ -435,7 +405,7 @@ namespace SonosAPI.Controllers
             }
             try
             {
-                if (!CheckIsZoneCord(player))
+                if (!SonosHelper.CheckIsZoneCord(player))
                 {
                     return retValok + " Player ausgeschaltet";
                 }
@@ -484,36 +454,6 @@ namespace SonosAPI.Controllers
             {
                 return retValReload + " MakePlayerFine:Exception:Block3: " + exceptio.Message;
             }
-        }
-        /// <summary>
-        /// Prüft ob IsZoneCord gesetzt ist
-        /// Falls nicht FallBack auf Zonen
-        /// Falls Player in einer Zone ist, wird dieser aus dieser Rausgenommen. 
-        /// </summary>
-        /// <param name="sp">Player der geprüft werden soll.</param>
-        /// <returns></returns>
-        private Boolean CheckIsZoneCord(SonosPlayer sp)
-        {
-            if (sp.IsZoneCoord == false)
-            {
-                sp.BecomeCoordinatorofStandaloneGroup();
-                Thread.Sleep(300);
-                return false;
-            }
-            if (sp.IsZoneCoord == null)
-            {
-                //Wenn IsZoneCoord Null und keine Zone gefunden wurde, dann ist der Player in einer Gruppe.
-                var sz = GetZone(sp.Name);
-                if (sz == null)
-                {
-                    sp.IsZoneCoord = false;
-                    sp.BecomeCoordinatorofStandaloneGroup();
-                    Thread.Sleep(300);
-                    return false;
-                }
-                sp.IsZoneCoord = true;
-            }
-            return true;
         }
 
         private void WaitForTransitioning(SonosPlayer sp)

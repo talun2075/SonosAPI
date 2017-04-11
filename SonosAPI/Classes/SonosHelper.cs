@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using SonosUPNP;
 
 namespace SonosAPI.Classes
@@ -31,6 +33,8 @@ namespace SonosAPI.Classes
         internal static DateTime Topologiechanged { get; set; }
         internal static Boolean WasInitialed { get; private set; }
 
+        internal static List<SonosCheckChangesObject> sccoList;
+
         /// <summary>
         /// Initialisierung des Sonos Systems
         /// </summary>
@@ -43,6 +47,7 @@ namespace SonosAPI.Classes
                 if (Sonos == null || Sonos.IsReseted || !WasInitialed)
                 {
                     serverErrors.Clear();
+                    sccoList.Clear();
                     retval = InitialSonos();
                     Sonos_TopologyChanged();
                     WasInitialed = retval;
@@ -275,6 +280,122 @@ namespace SonosAPI.Classes
             {
                 ServerErrorsAdd("URITOPath", ex);
                 return String.Empty;
+            }
+        }
+        /// <summary>
+        /// Prüft ob IsZoneCord gesetzt ist
+        /// Falls nicht FallBack auf Zonen
+        /// Falls Player in einer Zone ist, wird dieser aus dieser Rausgenommen. 
+        /// </summary>
+        /// <param name="sp">Player der geprüft werden soll.</param>
+        /// <returns></returns>
+        public static Boolean CheckIsZoneCord(SonosPlayer sp)
+        {
+            if (sp.IsZoneCoord == false)
+            {
+                sp.BecomeCoordinatorofStandaloneGroup();
+                Thread.Sleep(300);
+                return false;
+            }
+            if (sp.IsZoneCoord == null)
+            {
+                //Wenn IsZoneCoord Null und keine Zone gefunden wurde, dann ist der Player in einer Gruppe.
+                var sz = GetZone(sp.Name);
+                if (sz == null)
+                {
+                    sp.IsZoneCoord = false;
+                    sp.BecomeCoordinatorofStandaloneGroup();
+                    Thread.Sleep(300);
+                    return false;
+                }
+                sp.IsZoneCoord = true;
+            }
+            return true;
+        }
+        /// <summary>
+        /// Liefert die Zone aufgrund des übergebenen Namen
+        /// </summary>
+        /// <param name="playername"></param>
+        /// <returns></returns>
+        public static SonosZone GetZone(string playername)
+        {
+            lock (Sonos.Zones)
+            {
+                foreach (SonosZone sonosZone in Sonos.Zones)
+                {
+                    if (sonosZone.Coordinator.Name == playername)
+                    {
+                        return sonosZone;
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Gibt den SonosPlayer aufgrund des übergebenen Names zurück oder Null.
+        /// </summary>
+        /// <param name="playerName"></param>
+        /// <returns></returns>
+        public static SonosPlayer GetPlayer(string playerName)
+        {
+            lock (Sonos.Players)
+            {
+                foreach (SonosPlayer sonosPlayer in Sonos.Players)
+                {
+                    if (sonosPlayer.Name == playerName)
+                        return sonosPlayer;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Check Changes after some Seconds and make it fine if there is a Problem. 
+        /// </summary>
+        public static void MessageQueue(SonosCheckChangesObject newscco)
+        {
+            if (!sccoList.Contains(newscco) && newscco != null)
+            {
+                sccoList.Add(newscco);
+            }
+            if(!sccoList.Any()) return;
+
+            foreach (SonosCheckChangesObject sonosCheckChangesObject in sccoList)
+            {
+                //Get Player
+                SonosPlayer sp = GetPlayer(sonosCheckChangesObject.PlayerName);
+                if(sp == null) continue;
+
+                switch (sonosCheckChangesObject.Changed)
+                {
+                    case SonosCheckChangesConstants.Volume:
+                        int tvol;
+                        int.TryParse(sonosCheckChangesObject.Value, out tvol);
+                        if (tvol > 0)
+                        {
+                            if (sp.GetVolume() != tvol)
+                            {
+                                sp.SetVolume((ushort)tvol);
+                            }
+                        }
+                        break;
+                    case SonosCheckChangesConstants.SinnglePlayer:
+                        CheckIsZoneCord(sp);
+                        break;
+                    case SonosCheckChangesConstants.AddToZone:
+                        //Check Player is in Zone. If not Add it.
+                        SonosZone sz = GetZone(sonosCheckChangesObject.Value);
+                        if (sz != null && sz.Players.Count > 0)
+                        {
+                            SonosPlayer tsp = sz.Players.FirstOrDefault(x => x.Name == sonosCheckChangesObject.PlayerName);
+                            if(tsp != null) continue;
+
+                            sp.SetAVTransportURI(SonosConstants.xrincon+sz.CoordinatorUUID);
+                        }
+                        break;
+                        //todo: weitere Fälle beschreiben.
+                }
             }
         }
     }

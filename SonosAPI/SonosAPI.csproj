@@ -128,6 +128,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Classes\Marantz.cs" />
     <Compile Include="Classes\Playlist.cs" />
+    <Compile Include="Classes\SonosCheckChangesObject.cs" />
     <Compile Include="Classes\SonosConstants.cs" />
     <Compile Include="Classes\SonosHelper.cs" />
     <Compile Include="Classes\SonosStreamRating.cs" />

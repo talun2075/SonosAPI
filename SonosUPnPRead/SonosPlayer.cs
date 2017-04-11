@@ -578,11 +578,21 @@ namespace SonosUPNP
                         ct.TransportStateString = ct.TransportState.ToString();
                         changed = true;
                     }
+                    //GroupVolume
+                    if (GroupVolume == 0)
+                    {
+                        var t = GetGroupVolume();
+                        if (t != 0)
+                        {
+                            GroupVolume = t;
+                            changed = true;
+                        }
+                    }
 
                 }
                 catch (Exception ex)
                 {
-                    ServerErrorsAdd("UpdateCurrenStateTrack", ex);
+                    ServerErrorsAdd("UpdateCurrenStateTrack:InitialCheck", ex);
                 }
                 InitialCheck = true;
             }

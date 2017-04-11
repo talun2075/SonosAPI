@@ -60,7 +60,22 @@
         /// </summary>
         public const string aAlbumArtist = "A:ALBUMARTIST";
 
+    }
+    /// <summary>
+    /// todo: Beschreiben
+    /// </summary>
+    public static class SonosCheckChangesConstants
+    {
+        /// <summary>
+        /// Check Volume
+        /// </summary>
+        public const string Volume = "Volume";
+        /// <summary>
+        /// Check to SinglePlayer
+        /// </summary>
+        public const string SinnglePlayer = "SinglePlayer";
 
+        public const string AddToZone = "AddToZone";
 
     }
 }
