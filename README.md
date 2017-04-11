@@ -2,6 +2,8 @@
 
 I love the Sonos Player but Sonos miss some specials, that I want to have so I wrote it for me.
 First the Base of this Project where the Intel UPNP C# Lib, the Taglib-sharp and the Jishi Lib (https://github.com/jishi/Jishi.Intel.SonosUPnP)
+
+
 I´m not native english speaker so much Comments are written in German and much Stuff in here is for me but maybe there a some folks, that say, hey this is cool
 and we can work on it thogether. If so I will translate the comments.
 
