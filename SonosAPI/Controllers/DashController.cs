@@ -49,6 +49,7 @@ namespace SonosAPI.Controllers
                     if (gzmPlayer.GetVolume() != SonosConstants.GästezimmerVolume)
                     {
                         gzmPlayer.SetVolume(SonosConstants.GästezimmerVolume);
+                        SonosHelper.MessageQueue(new SonosCheckChangesObject {Changed = SonosCheckChangesConstants.Volume,PlayerName = SonosConstants.GästezimmerName,Value = SonosConstants.GästezimmerVolume.ToString()});
                     }
                     switch (id)
                     {

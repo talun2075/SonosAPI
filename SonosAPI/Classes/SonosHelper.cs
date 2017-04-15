@@ -16,7 +16,10 @@ namespace SonosAPI.Classes
         /// Das primäre Sonos Objekt
         /// </summary>
         public static SonosDiscovery Sonos;
-
+        /// <summary>
+        /// Timer for MessageQueue
+        /// </summary>
+        private static Timer messagetimer;
         /// <summary>
         /// Dictonary mit UUID und DateTimes für die letzten Änderungen. Wird Über Events aktualisiert
         /// </summary>
@@ -33,7 +36,7 @@ namespace SonosAPI.Classes
         internal static DateTime Topologiechanged { get; set; }
         internal static Boolean WasInitialed { get; private set; }
 
-        internal static List<SonosCheckChangesObject> sccoList;
+        internal static List<SonosCheckChangesObject> sccoList = new List<SonosCheckChangesObject>();
 
         /// <summary>
         /// Initialisierung des Sonos Systems
@@ -48,6 +51,7 @@ namespace SonosAPI.Classes
                 {
                     serverErrors.Clear();
                     sccoList.Clear();
+                    MessagePolling();
                     retval = InitialSonos();
                     Sonos_TopologyChanged();
                     WasInitialed = retval;
@@ -359,44 +363,83 @@ namespace SonosAPI.Classes
             {
                 sccoList.Add(newscco);
             }
-            if(!sccoList.Any()) return;
-
-            foreach (SonosCheckChangesObject sonosCheckChangesObject in sccoList)
+            if (!sccoList.Any()) return;
+            var itemsToRemove = new List<SonosCheckChangesObject>();
+            lock (sccoList)
             {
-                //Get Player
-                SonosPlayer sp = GetPlayer(sonosCheckChangesObject.PlayerName);
-                if(sp == null) continue;
-
-                switch (sonosCheckChangesObject.Changed)
+                foreach (SonosCheckChangesObject sonosCheckChangesObject in sccoList)
                 {
-                    case SonosCheckChangesConstants.Volume:
-                        int tvol;
-                        int.TryParse(sonosCheckChangesObject.Value, out tvol);
-                        if (tvol > 0)
-                        {
-                            if (sp.GetVolume() != tvol)
-                            {
-                                sp.SetVolume((ushort)tvol);
-                            }
-                        }
-                        break;
-                    case SonosCheckChangesConstants.SinnglePlayer:
-                        CheckIsZoneCord(sp);
-                        break;
-                    case SonosCheckChangesConstants.AddToZone:
-                        //Check Player is in Zone. If not Add it.
-                        SonosZone sz = GetZone(sonosCheckChangesObject.Value);
-                        if (sz != null && sz.Players.Count > 0)
-                        {
-                            SonosPlayer tsp = sz.Players.FirstOrDefault(x => x.Name == sonosCheckChangesObject.PlayerName);
-                            if(tsp != null) continue;
+                    //Get Player
+                    SonosPlayer sp = GetPlayer(sonosCheckChangesObject.PlayerName);
+                    if (sp == null) continue;
 
-                            sp.SetAVTransportURI(SonosConstants.xrincon+sz.CoordinatorUUID);
-                        }
-                        break;
-                        //todo: weitere Fälle beschreiben.
+                    switch (sonosCheckChangesObject.Changed)
+                    {
+                        //Change Volume
+                        case SonosCheckChangesConstants.Volume:
+                            int tvol;
+                            int.TryParse(sonosCheckChangesObject.Value, out tvol);
+                            if (tvol > 0)
+                            {
+                                var t = sp.GetVolume();
+                                if (t != tvol)
+                                {
+                                    sp.SetVolume((ushort)tvol);
+                                }
+                                itemsToRemove.Add(sonosCheckChangesObject);
+                            }
+                            break;
+                        //Make Player Standalone
+                        case SonosCheckChangesConstants.SinnglePlayer:
+                            CheckIsZoneCord(sp);
+                            itemsToRemove.Add(sonosCheckChangesObject);
+                            break;
+                        //Add Player to Zone
+                        case SonosCheckChangesConstants.AddToZone:
+                            //Check Player is in Zone. If not Add it.
+                            SonosZone sz = GetZone(sonosCheckChangesObject.Value);
+                            if (sz == null) break;
+                            if (sz.Players.Count > 0)
+                            {
+                                SonosPlayer tsp =
+                                    sz.Players.FirstOrDefault(x => x.Name == sonosCheckChangesObject.PlayerName);
+                                if (tsp != null) continue; //Player is in there
+                                sp.SetAVTransportURI(SonosConstants.xrincon + sz.CoordinatorUUID);
+                                itemsToRemove.Add(sonosCheckChangesObject);
+                            }
+                            else
+                            {
+                                sp.SetAVTransportURI(SonosConstants.xrincon + sz.CoordinatorUUID);
+                                itemsToRemove.Add(sonosCheckChangesObject);
+                            }
+                            break;
+                    }
+                }
+                if (!itemsToRemove.Any()) return;
+                foreach (SonosCheckChangesObject sonosCheckChangesObject in itemsToRemove)
+                {
+                    sccoList.Remove(sonosCheckChangesObject);
                 }
             }
+        }
+        /// <summary>
+        /// MessageQueue Start Polling Timer
+        /// </summary>
+        private static void MessagePolling()
+        {
+            if (messagetimer != null)
+            {
+                return;
+            }
+            messagetimer = new Timer(MessagePollingState, null, TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(30));
+        }
+        /// <summary>
+        /// MessageQueue Poliing
+        /// </summary>
+        /// <param name="state"></param>
+        private static void MessagePollingState(object state)
+        {
+            MessageQueue(null);
         }
     }
 }
