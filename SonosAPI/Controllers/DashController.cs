@@ -45,6 +45,7 @@ namespace SonosAPI.Controllers
                     {
                         //Es wird gespielt und nochmal gedrückt, daher die Playlist wechseln.
                         id = id == "0" ? "1" : "0";
+                        //todo: Prüfen, was abgespielt wird und das mit berüccksichtigen. Da die Id nur getauscht werden sollte, wenn es sich um die defaults handelt.
                     }
                     if (gzmPlayer.GetVolume() != SonosConstants.GästezimmerVolume)
                     {
@@ -155,10 +156,12 @@ namespace SonosAPI.Controllers
                 if (wohnzimmer.GetVolume() != SonosConstants.WohnzimmerVolume)
                 {
                     wohnzimmer.SetVolume(SonosConstants.WohnzimmerVolume);
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Volume, PlayerName = SonosConstants.WohnzimmerName, Value = SonosConstants.WohnzimmerVolume.ToString() });
                 }
                 if (esszimmer.GetVolume() != SonosConstants.EsszimmerVolume)
                 {
                     esszimmer.SetVolume(SonosConstants.EsszimmerVolume);
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Volume, PlayerName = SonosConstants.EsszimmerName, Value = SonosConstants.EsszimmerVolume.ToString() });
                 }
             }
             catch (Exception ex)
@@ -299,10 +302,12 @@ namespace SonosAPI.Controllers
                 if (essPlayer.GetVolume() != SonosConstants.EsszimmerVolume)
                 {
                     essPlayer.SetVolume(SonosConstants.EsszimmerVolume);
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Volume, PlayerName = SonosConstants.EsszimmerName, Value = SonosConstants.EsszimmerVolume.ToString() });
                 }
                 if (kuPlayer.GetVolume() != SonosConstants.KücheVolume)
                 {
                     kuPlayer.SetVolume(SonosConstants.KücheVolume);
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Volume, PlayerName = SonosConstants.KücheName, Value = SonosConstants.KücheVolume.ToString() });
                 }
                 kuPlayer.SetAVTransportURI(SonosConstants.xrincon + essPlayer.UUID);
                 Thread.Sleep(300);
@@ -434,6 +439,7 @@ namespace SonosAPI.Controllers
                 if (player.GetVolume() == _volume)
                 {
                     player.SetVolume(_volume);
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Volume, PlayerName = player.Name, Value = _volume.ToString() });
                 }
                 //Prüfen, ob Esszimmer spielt
                 WaitForTransitioning(esszimmer);

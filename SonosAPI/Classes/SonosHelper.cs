@@ -362,6 +362,7 @@ namespace SonosAPI.Classes
             if (!sccoList.Contains(newscco) && newscco != null)
             {
                 sccoList.Add(newscco);
+                return;//New entry will be checked on net timer.tick
             }
             if (!sccoList.Any()) return;
             var itemsToRemove = new List<SonosCheckChangesObject>();
