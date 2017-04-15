@@ -9,7 +9,7 @@
         public const string EsszimmerName = "Esszimmer";
         public const int EsszimmerVolume = relativerVolWert + 8;
         public const string WohnzimmerName = "Wohnzimmer";
-        public const int WohnzimmerVolume = relativerVolWert + 41;
+        public const int WohnzimmerVolume = relativerVolWert + 44;
         public const string GästezimmerName = "Gästezimmer";
         public const int GästezimmerVolume = 1;
         public const string SchlafzimmerName = "Schlafzimmer";
