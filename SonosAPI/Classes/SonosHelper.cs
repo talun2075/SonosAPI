@@ -353,7 +353,27 @@ namespace SonosAPI.Classes
             }
             return null;
         }
-
+        /// <summary>
+        /// Wait until Player is not more in Transition Playstate
+        /// </summary>
+        /// <param name="sp"></param>
+        public static void WaitForTransitioning(SonosPlayer sp)
+        {
+            if (sp.CurrentState.TransportState == PlayerStatus.TRANSITIONING)
+            {
+                Boolean trans = false;
+                int counter = 0;
+                while (!trans)
+                {
+                    if (sp.CurrentState.TransportState != PlayerStatus.TRANSITIONING || counter > 5)
+                    {
+                        trans = true;
+                    }
+                    Thread.Sleep(200);
+                    counter++;
+                }
+            }
+        }
         /// <summary>
         /// Check Changes after some Seconds and make it fine if there is a Problem. 
         /// </summary>
@@ -402,9 +422,12 @@ namespace SonosAPI.Classes
                             if (sz == null) break;
                             if (sz.Players.Count > 0)
                             {
-                                SonosPlayer tsp =
-                                    sz.Players.FirstOrDefault(x => x.Name == sonosCheckChangesObject.PlayerName);
-                                if (tsp != null) continue; //Player is in there
+                                SonosPlayer tsp = sz.Players.FirstOrDefault(x => x.Name == sonosCheckChangesObject.PlayerName);
+                                if (tsp != null)
+                                {
+                                    itemsToRemove.Add(sonosCheckChangesObject);
+                                    continue; //Player is in there
+                                }
                                 sp.SetAVTransportURI(SonosConstants.xrincon + sz.CoordinatorUUID);
                                 itemsToRemove.Add(sonosCheckChangesObject);
                             }
@@ -413,6 +436,45 @@ namespace SonosAPI.Classes
                                 sp.SetAVTransportURI(SonosConstants.xrincon + sz.CoordinatorUUID);
                                 itemsToRemove.Add(sonosCheckChangesObject);
                             }
+                            break;
+                        case SonosCheckChangesConstants.Playing:
+                            WaitForTransitioning(sp);
+                            if (sonosCheckChangesObject.Value == "true")
+                            {
+                                if (sp.CurrentState.TransportState != PlayerStatus.PLAYING)
+                                {
+                                    sp.SetPlay();
+                                }
+                            }
+                            if (sonosCheckChangesObject.Value == "false")
+                            {
+                                if (sp.CurrentState.TransportState == PlayerStatus.PLAYING)
+                                {
+                                    sp.SetPause();
+                                }
+                            }
+                            itemsToRemove.Add(sonosCheckChangesObject);
+                            break;
+                        case SonosCheckChangesConstants.MarantzPower:
+                            if (!Marantz.IsInitialisiert)
+                            {
+                                Marantz.Initialisieren(SonosConstants.MarantzUrl);
+                            }
+                            if (sonosCheckChangesObject.Value == "off")
+                            {
+                                if (Marantz.PowerOn)
+                                {
+                                    Marantz.PowerOn = false;
+                                }
+                            }
+                            if (sonosCheckChangesObject.Value == "on")
+                            {
+                                if (!Marantz.PowerOn)
+                                {
+                                    Marantz.PowerOn = true;
+                                }
+                            }
+                            itemsToRemove.Add(sonosCheckChangesObject);
                             break;
                     }
                 }
@@ -442,5 +504,6 @@ namespace SonosAPI.Classes
         {
             MessageQueue(null);
         }
+    
     }
 }

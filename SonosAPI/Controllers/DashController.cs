@@ -17,7 +17,7 @@ namespace SonosAPI.Controllers
 
         public string Get()
         {
-            Marantz.Initialisieren("http://192.168.0.243");
+            Marantz.Initialisieren(SonosConstants.MarantzUrl);
             return "get";
 
         }
@@ -40,7 +40,7 @@ namespace SonosAPI.Controllers
                     /*
                      * Es soll für das Schlafen Regen bzw. die Tempsleep geladen werden und die Lautstärke auf 1 gesetzt werden.
                      */
-                    WaitForTransitioning(gzmPlayer);
+                    SonosHelper.WaitForTransitioning(gzmPlayer);
                     if (gzmPlayer.CurrentState.TransportState == PlayerStatus.PLAYING)
                     {
                         //Es wird gespielt und nochmal gedrückt, daher die Playlist wechseln.
@@ -50,7 +50,7 @@ namespace SonosAPI.Controllers
                     if (gzmPlayer.GetVolume() != SonosConstants.GästezimmerVolume)
                     {
                         gzmPlayer.SetVolume(SonosConstants.GästezimmerVolume);
-                        SonosHelper.MessageQueue(new SonosCheckChangesObject {Changed = SonosCheckChangesConstants.Volume,PlayerName = SonosConstants.GästezimmerName,Value = SonosConstants.GästezimmerVolume.ToString()});
+                        SonosHelper.MessageQueue(new SonosCheckChangesObject {Changed = SonosCheckChangesConstants.Volume,PlayerName = gzmPlayer.Name, Value = SonosConstants.GästezimmerVolume.ToString()});
                     }
                     switch (id)
                     {
@@ -71,6 +71,7 @@ namespace SonosAPI.Controllers
                             break;
                     }
                     gzmPlayer.SetPlay();
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Playing, PlayerName = gzmPlayer.Name, Value = "true" });
                     return retValok;
                 }
                 return retValReload+" kein Gästezimmer gefunden";
@@ -100,10 +101,11 @@ namespace SonosAPI.Controllers
                 {
                     var oldTransport = sp.CurrentState.TransportState;
                     SonosHelper.CheckIsZoneCord(sp);
-                    WaitForTransitioning(sp);
+                    SonosHelper.WaitForTransitioning(sp);
                     if (sp.CurrentState.TransportState != PlayerStatus.PLAYING && oldTransport != PlayerStatus.PLAYING) continue;
                     foundplayed = true;
                     sp.SetPause();
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Playing, PlayerName = sp.Name, Value = "false" });
                 }
             }
             catch(Exception ex)
@@ -115,7 +117,7 @@ namespace SonosAPI.Controllers
                 //Daten vom Marantz ermitteln
                 if (!Marantz.IsInitialisiert)
                 {
-                    Marantz.Initialisieren("http://192.168.0.243");
+                    Marantz.Initialisieren(SonosConstants.MarantzUrl);
                 }
                 if (foundplayed)
                 {
@@ -125,6 +127,7 @@ namespace SonosAPI.Controllers
                         //Marantz ausschalten.
                         Marantz.PowerOn = false;
                     }
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.MarantzPower, PlayerName = SonosConstants.EsszimmerName, Value = "off" });
                     return "ok, Musik wurde ausgeschaltet.";
                 }
             }
@@ -146,6 +149,7 @@ namespace SonosAPI.Controllers
                 Thread.Sleep(400);
                 wohnzimmer.SetAVTransportURI(SonosConstants.xrincon + esszimmer.UUID);
                 Thread.Sleep(200);
+                SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.AddToZone, PlayerName = wohnzimmer.Name, Value = SonosConstants.EsszimmerName });
             }
             catch (Exception ex)
             {
@@ -156,12 +160,12 @@ namespace SonosAPI.Controllers
                 if (wohnzimmer.GetVolume() != SonosConstants.WohnzimmerVolume)
                 {
                     wohnzimmer.SetVolume(SonosConstants.WohnzimmerVolume);
-                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Volume, PlayerName = SonosConstants.WohnzimmerName, Value = SonosConstants.WohnzimmerVolume.ToString() });
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Volume, PlayerName = wohnzimmer.Name, Value = SonosConstants.WohnzimmerVolume.ToString() });
                 }
                 if (esszimmer.GetVolume() != SonosConstants.EsszimmerVolume)
                 {
                     esszimmer.SetVolume(SonosConstants.EsszimmerVolume);
-                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Volume, PlayerName = SonosConstants.EsszimmerName, Value = SonosConstants.EsszimmerVolume.ToString() });
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Volume, PlayerName = esszimmer.Name, Value = SonosConstants.EsszimmerVolume.ToString() });
                 }
             }
             catch (Exception ex)
@@ -173,7 +177,7 @@ namespace SonosAPI.Controllers
                 //Marantz Verarbeiten.
                 if (!Marantz.IsInitialisiert)
                 {
-                    Marantz.Initialisieren("http://192.168.0.243");
+                    Marantz.Initialisieren(SonosConstants.MarantzUrl);
                 }
                 if (Marantz.SelectedInput != MarantzInputs.Sonos)
                 {
@@ -187,6 +191,7 @@ namespace SonosAPI.Controllers
                 {
                     Marantz.Volume = "-30.0";
                 }
+                SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.MarantzPower, PlayerName = SonosConstants.EsszimmerName, Value = "on" });
             }
             catch (Exception ex)
             {
@@ -204,6 +209,7 @@ namespace SonosAPI.Controllers
                     Thread.Sleep(200);
                 }
                 esszimmer.SetPlay();
+                SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Playing, PlayerName = esszimmer.Name, Value = "true" });
             }
             catch (Exception ex)
             {
@@ -269,6 +275,7 @@ namespace SonosAPI.Controllers
         [HttpGet]
         public string Dash5(string id)
         {
+            //todo: Message einbauen
             const string rsh = "x-sonosapi-stream:s18353?sid=254&amp;flags=8224&amp;sn=0";
             try
             {
@@ -279,7 +286,7 @@ namespace SonosAPI.Controllers
                 essPlayer.BecomeCoordinatorofStandaloneGroup();
                 Thread.Sleep(300);
                 SonosHelper.CheckIsZoneCord(kuPlayer);
-                WaitForTransitioning(wzPlayer);
+                SonosHelper.WaitForTransitioning(wzPlayer);
                 if (wzPlayer.CurrentState.TransportState == PlayerStatus.PLAYING)
                 {
                     SonosHelper.CheckIsZoneCord(wzPlayer);
@@ -287,12 +294,12 @@ namespace SonosAPI.Controllers
                     //Daten vom Marantz ermitteln
                     if (!Marantz.IsInitialisiert)
                     {
-                        Marantz.Initialisieren("http://192.168.0.243");
+                        Marantz.Initialisieren(SonosConstants.MarantzUrl);
                     }
                     if (Marantz.SelectedInput == MarantzInputs.Sonos && Marantz.PowerOn)
                         Marantz.PowerOn = false;
                 }
-                WaitForTransitioning(essPlayer);
+                SonosHelper.WaitForTransitioning(essPlayer);
                 if (essPlayer.CurrentState.TransportState == PlayerStatus.PLAYING || oldTransportstate == PlayerStatus.PLAYING)
                 {
                     essPlayer.SetPause();
@@ -393,6 +400,7 @@ namespace SonosAPI.Controllers
         /// <returns>Ok oder ein Fehler</returns>
         private String MakePlayerFine(string _player, ushort _volume, Boolean addToEsszimmer = true, string _Playlist = defaultPlaylist)
         {
+            //todo: Message einbauen
             /*
              * Übergebener Player soll der Primären (esszimmer und Wohnzimmer) zugefügt werden, wenn diese Spielen.
              * Wenn nicht, dann eigene Playlist und single Player
@@ -423,7 +431,7 @@ namespace SonosAPI.Controllers
             try
             {
                 //Prüfen, ob er abspielt
-                WaitForTransitioning(player);
+                SonosHelper.WaitForTransitioning(player);
                 if (player.CurrentState.TransportState == PlayerStatus.PLAYING)
                 {
                     player.SetPause();
@@ -442,7 +450,7 @@ namespace SonosAPI.Controllers
                     SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Volume, PlayerName = player.Name, Value = _volume.ToString() });
                 }
                 //Prüfen, ob Esszimmer spielt
-                WaitForTransitioning(esszimmer);
+                SonosHelper.WaitForTransitioning(esszimmer);
                 if (esszimmer.CurrentState.TransportState == PlayerStatus.PLAYING && addToEsszimmer)
                 {
                     player.SetAVTransportURI(SonosConstants.xrincon + esszimmer.UUID);
@@ -460,24 +468,6 @@ namespace SonosAPI.Controllers
             catch (Exception exceptio)
             {
                 return retValReload + " MakePlayerFine:Exception:Block3: " + exceptio.Message;
-            }
-        }
-
-        private void WaitForTransitioning(SonosPlayer sp)
-        {
-            if (sp.CurrentState.TransportState == PlayerStatus.TRANSITIONING)
-            {
-                Boolean trans = false;
-                int counter = 0;
-                while (!trans)
-                {
-                    if (sp.CurrentState.TransportState != PlayerStatus.TRANSITIONING || counter > 5)
-                    {
-                        trans = true;
-                    }
-                    Thread.Sleep(200);
-                    counter++;
-                }
             }
         }
     }

@@ -60,9 +60,10 @@
         /// </summary>
         public const string aAlbumArtist = "A:ALBUMARTIST";
 
+        public const string MarantzUrl = "http://192.168.0.243";
     }
     /// <summary>
-    /// todo: Beschreiben
+    /// Constants for Messagequeue
     /// </summary>
     public static class SonosCheckChangesConstants
     {
@@ -74,8 +75,18 @@
         /// Check to SinglePlayer
         /// </summary>
         public const string SinnglePlayer = "SinglePlayer";
-
+        /// <summary>
+        /// Is added to a Zone
+        /// </summary>
         public const string AddToZone = "AddToZone";
+        /// <summary>
+        /// Is Playing
+        /// </summary>
+        public const string Playing = "Playing";
+        /// <summary>
+        /// Check the Powerstate of the Marantz AVR
+        /// </summary>
+        public const string MarantzPower = "Marantzpower";
 
     }
 }
