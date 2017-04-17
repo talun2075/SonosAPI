@@ -491,7 +491,7 @@ namespace SonosAPI.Controllers
                         si.Description = "Sonos";
                     }
                 }
-                return k;
+                return k.OrderBy(x => x.Title).ToList();
             }
             catch (Exception x)
             {
