@@ -296,6 +296,7 @@ namespace SonosAPI.Classes
         /// <returns></returns>
         public static Boolean CheckIsZoneCord(SonosPlayer sp)
         {
+            //todo: Messagequeue
             if (sp.IsZoneCoord == false)
             {
                 sp.BecomeCoordinatorofStandaloneGroup();
@@ -324,6 +325,11 @@ namespace SonosAPI.Classes
         /// <returns></returns>
         public static SonosZone GetZone(string playername)
         {
+            if (Sonos == null || Sonos.Zones.Count == 0)
+            {
+                InitialSonos();
+                return null;
+            }
             lock (Sonos.Zones)
             {
                 foreach (SonosZone sonosZone in Sonos.Zones)
@@ -344,6 +350,11 @@ namespace SonosAPI.Classes
         /// <returns></returns>
         public static SonosPlayer GetPlayer(string playerName)
         {
+            if (Sonos == null || Sonos.Players.Count == 0)
+            {
+                InitialSonos();
+                return null;
+            }
             lock (Sonos.Players)
             {
                 foreach (SonosPlayer sonosPlayer in Sonos.Players)

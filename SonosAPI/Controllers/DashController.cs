@@ -17,14 +17,7 @@ namespace SonosAPI.Controllers
 
         public string Get()
         {
-            Nanoleaf.Initialisieren("JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3", "192.168.0.166", 16021);
-            Thread.Sleep(500);
-            Nanoleaf.PowerOn = true;
-            Thread.Sleep(10000);
-            Nanoleaf.PowerOn = false;
-
-            Marantz.Initialisieren(SonosConstants.MarantzUrl);
-            return "get "+ Nanoleaf.PowerOn.ToString();
+            return "get";
 
         }
         /// <summary>
@@ -411,7 +404,6 @@ namespace SonosAPI.Controllers
         /// <returns>Ok oder ein Fehler</returns>
         private String MakePlayerFine(string _player, ushort _volume, Boolean addToEsszimmer = true, string _Playlist = defaultPlaylist)
         {
-            //todo: Message einbauen
             /*
              * Übergebener Player soll der Primären (esszimmer und Wohnzimmer) zugefügt werden, wenn diese Spielen.
              * Wenn nicht, dann eigene Playlist und single Player
@@ -422,7 +414,9 @@ namespace SonosAPI.Controllers
             try
             {
                 player = SonosHelper.GetPlayer(_player);
+                if (player == null) return retValReload + _player + " konnte nicht gefunden werden.";
                 esszimmer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
+                if (esszimmer == null) return retValReload + " Esszimmer konnte nicht gefunden werden.";
             }
             catch (Exception exceptio)
             {
@@ -446,6 +440,7 @@ namespace SonosAPI.Controllers
                 if (player.CurrentState.TransportState == PlayerStatus.PLAYING)
                 {
                     player.SetPause();
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Playing, PlayerName = player.Name, Value = "false" });
                     return retValok+" ist ausgeschaltet";
                 }
             }
@@ -474,6 +469,7 @@ namespace SonosAPI.Controllers
                     LoadPlaylist(_Playlist, player);
                 }
                 player.SetPlay();
+                SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Playing, PlayerName = player.Name, Value = "true" });
                 return retValok+" Player spielt alleine";
             }
             catch (Exception exceptio)

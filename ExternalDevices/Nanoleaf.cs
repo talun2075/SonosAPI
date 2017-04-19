@@ -104,6 +104,7 @@ namespace ExternalDevices
                 }
                 var response = (HttpWebResponse) webRequest.GetResponse();
                 if (response.StatusCode != HttpStatusCode.OK) return "Error: " + response.StatusCode;
+                // ReSharper disable once AssignNullToNotNullAttribute
                 using (var reader = new StreamReader(response.GetResponseStream()))
                 {
                     retval = reader.ReadToEnd();
