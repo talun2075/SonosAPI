@@ -126,7 +126,6 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Classes\Marantz.cs" />
     <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\SonosCheckChangesObject.cs" />
     <Compile Include="Classes\SonosConstants.cs" />
@@ -282,6 +281,10 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ExternalDevices\ExternalDevices.csproj">
+      <Project>{3cafb4c8-f7a7-41d2-881a-0dc533638d1b}</Project>
+      <Name>ExternalDevices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MP3File\MP3File.csproj">
       <Project>{BEB80EEA-46A0-4C9E-B125-35589052F52F}</Project>
       <Name>MP3File</Name>

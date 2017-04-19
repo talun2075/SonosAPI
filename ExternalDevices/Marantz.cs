@@ -5,21 +5,26 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace SonosAPI.Classes
+namespace ExternalDevices
 {
     /// <summary>
     /// Klasse,die den Marantz AVR in ein Objekt hält
     /// </summary>
     public static class Marantz
     {
+        #region InternalVariables
         private static String mUrl;
         private static String mXMLPath = "/goform/formMainZone_MainZoneXml.xml";
         private static String mInputPath = "MainZone/index.put.asp";
-        #region InternalVariables
         private static MarantzInputs _selectedMarantzInputs;
         private static Boolean _PowerOn;
-        private static string _volume;
+        private static String _volume;
         #endregion InternalVariables
+        /// <summary>
+        /// Initialisieren des Marantz
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         public static Boolean Initialisieren(String url)
         {
             try
@@ -37,7 +42,6 @@ namespace SonosAPI.Classes
                 if (powerstateNode == null || inputFuncSelectNode == null || volumeStateNode == null) return false;
                 _PowerOn = powerstateNode.InnerText == "ON";
                 _volume = volumeStateNode.InnerText;
-                //var k = inputFuncSelectNode.InnerText;
                 try
                 {
                     _selectedMarantzInputs = (MarantzInputs)Enum.Parse(typeof(MarantzInputs), inputFuncSelectNode.InnerText);
@@ -80,7 +84,7 @@ namespace SonosAPI.Classes
             }
             catch (Exception ex)
             {
-                SonosHelper.ServerErrorsAdd("DashController: Marantzinput", ex);
+                //SonosHelper.ServerErrorsAdd("DashController: Marantzinput", ex);todo: überlegen, wie man mit exception umgeht.
             }
         }
         /// <summary>

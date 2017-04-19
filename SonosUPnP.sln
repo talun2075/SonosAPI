@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UPnP", "UPnP\UPnP.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SonosConsole", "SonosConsole\SonosConsole.csproj", "{37CB660E-CC90-462F-9496-5695A9129F28}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalDevices", "ExternalDevices\ExternalDevices.csproj", "{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +135,22 @@ Global
 		{37CB660E-CC90-462F-9496-5695A9129F28}.Release|x64.Build.0 = Release|Any CPU
 		{37CB660E-CC90-462F-9496-5695A9129F28}.Release|x86.ActiveCfg = Release|Any CPU
 		{37CB660E-CC90-462F-9496-5695A9129F28}.Release|x86.Build.0 = Release|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Debug|x64.Build.0 = Debug|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Debug|x86.Build.0 = Debug|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Release|x64.ActiveCfg = Release|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Release|x64.Build.0 = Release|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Release|x86.ActiveCfg = Release|Any CPU
+		{3CAFB4C8-F7A7-41D2-881A-0DC533638D1B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

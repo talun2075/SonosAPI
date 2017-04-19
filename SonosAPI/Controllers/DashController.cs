@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Web.Http;
+using ExternalDevices;
 using SonosAPI.Classes;
 using SonosUPNP;
-
 
 namespace SonosAPI.Controllers
 {
@@ -17,8 +17,14 @@ namespace SonosAPI.Controllers
 
         public string Get()
         {
+            Nanoleaf.Initialisieren("JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3", "192.168.0.166", 16021);
+            Thread.Sleep(500);
+            Nanoleaf.PowerOn = true;
+            Thread.Sleep(10000);
+            Nanoleaf.PowerOn = false;
+
             Marantz.Initialisieren(SonosConstants.MarantzUrl);
-            return "get";
+            return "get "+ Nanoleaf.PowerOn.ToString();
 
         }
         /// <summary>
@@ -114,13 +120,13 @@ namespace SonosAPI.Controllers
             }
             try
             {
-                //Daten vom Marantz ermitteln
-                if (!Marantz.IsInitialisiert)
-                {
-                    Marantz.Initialisieren(SonosConstants.MarantzUrl);
-                }
                 if (foundplayed)
                 {
+                    //Daten vom Marantz ermitteln
+                    if (!Marantz.IsInitialisiert)
+                    {
+                        Marantz.Initialisieren(SonosConstants.MarantzUrl);
+                    }
                     //Ist auf Sonos?
                     if (Marantz.SelectedInput == MarantzInputs.Sonos && Marantz.PowerOn)
                     {
@@ -128,6 +134,11 @@ namespace SonosAPI.Controllers
                         Marantz.PowerOn = false;
                     }
                     SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.MarantzPower, PlayerName = SonosConstants.EsszimmerName, Value = "off" });
+                    if (Nanoleaf.Initialisieren("JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3", "192.168.0.166", 16021))
+                    {
+                        if (Nanoleaf.PowerOn)
+                            Nanoleaf.PowerOn = false;
+                    }
                     return "ok, Musik wurde ausgeschaltet.";
                 }
             }

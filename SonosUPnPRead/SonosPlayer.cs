@@ -57,9 +57,7 @@ namespace SonosUPNP
             {
                 sw.WriteLine(error);
                 sw.WriteLine("TargetSite: " + ExceptionMes.TargetSite);
-                sw.WriteLine("InnerException: " + ExceptionMes.InnerException);
                 sw.WriteLine("Base:Message: " + ExceptionMes.GetBaseException().Message);
-                sw.WriteLine("Base: InnerException: " + ExceptionMes.GetBaseException().InnerException);
             }
 
         }
