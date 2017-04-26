@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Aurora</title>
+    <meta charset="utf-8" />
+    <script src="/Scripts/jquery-2.1.4.min.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery-ui.min.js"></script>
+    <script src="/Scripts/jquery.ui.touch-punch.min.js"></script>
+    <script src="/Scripts/JSAurora.js"></script>
+    <link href="/Content/Aurora.css" rel="stylesheet" />
+    <link href="/Content/jquery-ui.min.css" rel="stylesheet"/>
+    <link href="/Content/AuroraMedia.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="shortcut icon" type="image/x-icon" href="/Images/aurorafavicon.ico">
+</head>
+<body>
+<div id="AuroraWrapper">
+    <div id="AuroraCentered">
+        <div class="container">
+                <input type="checkbox" id="power" name="power" checked="checked"/>
+                <label for="power" class="power">
+                    <span class="icon-off"></span>
+                    <span class="light"></span>
+                </label>
+            </div>
+            <div id="BrightnessSlider"></div>
+            <div id="Scenarios"></div>
+    </div>
+</div>
+<script>
+        var aurora;
+        var options = { PowerDom: "power", ScenariosDOM: "Scenarios", SelectedScenarioClass: "ssc", BrightnessDOM: "BrightnessSlider", PowerClassOff: "pwroff" }
+        $(document).ready(function () {
+            aurora = new NanoleafAurora(options);
+            aurora.Init();
+        });
+        
+
+
+    </script>
+</body>
+</html>

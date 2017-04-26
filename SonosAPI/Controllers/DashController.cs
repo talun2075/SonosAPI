@@ -17,6 +17,8 @@ namespace SonosAPI.Controllers
 
         public string Get()
         {
+            
+            Nanoleaf.Initialisieren("JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3", "192.168.0.166", 16021);
             return "get";
 
         }

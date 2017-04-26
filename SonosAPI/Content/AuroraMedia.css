@@ -1,0 +1,28 @@
+﻿@media screen and (max-width: 500px) {
+#Scenarios {
+    position: absolute;
+    left: 100px;
+}
+#AuroraWrapper {
+    width: 100%;
+}
+#AuroraCentered {
+    display: block;
+}
+#AuroraCentered > DIV {
+    margin-top: 20px;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+#BrightnessSlider {
+    height: 200px;
+    float: left;
+    left: 50px;
+}
+.container {
+    left: 50px;
+    position: relative;
+}
+
+}
