@@ -1,16 +1,16 @@
 ﻿"use strict";
-
 function NanoleafAurora(option) {
     var BasePath = '/sonos/Nanoleaf/';
-    var _init = false;
-    var _powerState = false;
-    var _selectedScenario = "leer";
-    var _scenarios = [];
     var internalaurora = this;
+    var _data;
     var _PowerDom = $("#" + option.PowerDom);
     var _ScenariosDOM = option.ScenariosDOM;
     var _SelectedScenarioClass = option.SelectedScenarioClass;
-    var _BrightnessDOM = $("#" + option.BrightnessDOM);
+    var _BrightnessDOMString = option.BrightnessDOM;
+    var _BrightnessDOM;
+    var _BrightnessDOMValueDOM = $("#"+option.BrightnessDOMValueDOM);
+    var _opjectname = option.Name || "aurora";
+    var Timer = 0;
     var CallServer = function (url) {
         return $.ajax({
             type: "GET",
@@ -18,103 +18,104 @@ function NanoleafAurora(option) {
             dataType: "json"
         });
     }
-   
-    this.SetScenarios = function (v)
-    {
-        if (Array.isArray(_scenarios) && _scenarios.length === 0) {
-            _scenarios = v;
-            var sd = $("#" + _ScenariosDOM);
-                sd.empty();
-            $.each(_scenarios, function(index,item) {
-                var newdiv;
-                if (item === _selectedScenario) {
-                    newdiv = $("<div class="+_SelectedScenarioClass+">" + item + "</div>");
-                } else {
-                    newdiv = $("<div>" + item + "</div>");
-                }
-                newdiv.appendTo(sd);
-                newdiv.on("click", function() {
-                    internalaurora.SetSelectedScenario($(this).html());
-                });
-            });
-
-        }
-    }
-
     this.SetPowerState = function (v) {
-        if (typeof (v) === "boolean") {
-            if (_init === false && v ===true) {
-                _PowerDom.prop("checked",!v);
-            } else {
-                if (v !== _powerState) {
-                    CallServer("SetPowerState/" + v);
-                }
-            }
-            _powerState = v;
+        if (typeof (v) === "boolean" && v !== _data.state.on.value) {
+            CallServer("SetPowerState/" + v);
+            _data.state.on.value = v;
+            this.RenderAurora();
         }
     }
-
     this.SetSelectedScenario = function (v) {
-        if (_selectedScenario === "leer" || _scenarios.indexOf(v) !== -1) {
-            if (_selectedScenario !== "leer") {
-                //Check for PowerState
-                if (_powerState === false) {
-                    _powerState = true;
-                    _PowerDom.prop("checked", false);
-                }
-                CallServer("SetSelectedScenario/" + v);
-                $("#" + _ScenariosDOM + "> .ssc").removeClass();
-                $.each($("#" + _ScenariosDOM + "> DIV"), function (index, item) {
-                    if (item.innerText === v) {
-                        $(item).addClass(_SelectedScenarioClass);
-                    }
-                });
-            }
-            _selectedScenario = v;
+        _data.effects.select = v;
+        if (_data.state.on.value !== true) {
+            _data.state.on.value = true;
         }
-
+        CallServer("SetSelectedScenario/" + v);
+        this.RenderAurora();
+        return;
+    }
+    this.RenderAurora = function () {
+        if (typeof _data === "undefined") {
+            alert("Aurora ist nicht initialisiert");
+            return false;
+        }
+        //Power
+        if (_PowerDom.prop("checked") !== !_data.state.on.value) {
+            _PowerDom.prop("checked", !_data.state.on.value);
+        }
+        //Scenarios
+        if (_data.effects.list.length === 0) {
+            alert("Keine Scenarien geliefert");
+            return false;
+        }
+        var sd = $("#" + _ScenariosDOM);
+        sd.empty();
+        $.each(_data.effects.list, function(index, item) {
+            var newdiv;
+            if (item === _data.effects.select) {
+                newdiv = $("<div class=" + _SelectedScenarioClass + ">" + item + "</div>");
+            } else {
+                newdiv = $("<div>" + item + "</div>");
+            }
+            newdiv.appendTo(sd);
+            newdiv.on("click", function() {
+                internalaurora.SetSelectedScenario($(this).html());
+            });
+        });
+        //Brightness
+        if (typeof _BrightnessDOM === "undefined") {
+            _BrightnessDOMValueDOM.html(_data.state.brightness.value);
+            _BrightnessDOM =$("#"+_BrightnessDOMString) .slider({
+                orientation: "vertical",
+                range: "min",
+                min: _data.state.brightness.min,
+                max: _data.state.brightness.max,
+                value: _data.state.brightness.value,
+                stop: function(event, ui) {
+                    _data.state.brightness.value = ui.value;
+                    CallServer("SetBrightness/" + ui.value);
+                    return true;
+                },
+                slide: function(event, ui) {
+                    _BrightnessDOMValueDOM.html(ui.value);
+                }
+            });
+        } else {
+            if (_BrightnessDOM.slider("option", "value") !== _data.state.brightness.value) {
+                _BrightnessDOM.slider({ value: _data.state.brightness.value });
+                _BrightnessDOMValueDOM.html(_data.state.brightness.value);
+            }
+        }
+    return true;
     }
     this.Init = function() {
-        //Init Nanaoleaf && Get Server Data
-        var request = CallServer("");
-        request.success(function(data) {
-            if (typeof data.name !== "undefined") {
-                if (data.name === "ERROR") {
-                    alert("Fehler beim Initialisieren am Server");
-                    return false;
-                }
-                internalaurora.SetSelectedScenario(data.effects.select);
-                internalaurora.SetPowerState(data.state.on.value);
-                internalaurora.SetScenarios(data.effects.list);
-               
-                _BrightnessDOM.slider({
-                    orientation: "vertical",
-                    range: "min",
-                    min: data.state.brightness.min,
-                    max: data.state.brightness.max,
-                    value: data.state.brightness.value,
-                    stop: function (event, ui) {
-                        CallServer("SetBrightness/" + ui.value);
-                        return true;
-                    },
-                    slide: function (event, ui) {
-                        //todo: Slide definieren.
-                    }
-                });
-                _init = true;
-            } else {
-                alert("Fehler beim Initialisieren: Object enthält kein Namen");
-            }
-            return true;
-        }).fail(function() {
-            alert("Initialisierung fehlgeschlagen.");
-        });
+        this.UpdateData();
         _PowerDom.on("click", function () {
             var t = _PowerDom.prop("checked");
             internalaurora.SetPowerState(!t);
         });
     }
-
+    this.UpdateData = function () {
+        clearTimeout(Timer);
+        //Init Nanaoleaf && Get Server Data
+        var request = CallServer("");
+        request.success(function (data) {
+            if (typeof data.name !== "undefined") {
+                if (data.name === "ERROR") {
+                    alert("Fehler beim Initialisieren am Server");
+                    return false;
+                }
+                _data = data;
+                internalaurora.RenderAurora();
+            } else {
+                alert("Fehler beim Initialisieren: Object enthält kein Namen");
+            }
+            return true;
+        }).fail(function () {
+            alert("Initialisierung fehlgeschlagen.");
+        });
+        window.setTimeout(_opjectname + ".UpdateData()", 30000);
+    }
 
 
 }

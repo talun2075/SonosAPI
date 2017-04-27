@@ -88,7 +88,9 @@ namespace ExternalDevices
         /// All Knowing Scenarios
         /// </summary>
         public static List<String> Scenarios => NLJ.Effects.Scenarios;
-
+        /// <summary>
+        /// Helligkeit
+        /// </summary>
         public static int Brightness
         {
             get

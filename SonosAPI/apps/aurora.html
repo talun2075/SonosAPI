@@ -24,13 +24,14 @@
                     <span class="light"></span>
                 </label>
             </div>
-            <div id="BrightnessSlider"></div>
+        <div id="BrightnessSlider">
+            <div id="BrightnessSliderLabel">Helligkeit</div><div id="BrightnessSliderValue">50</div></div>
             <div id="Scenarios"></div>
     </div>
 </div>
 <script>
         var aurora;
-        var options = { PowerDom: "power", ScenariosDOM: "Scenarios", SelectedScenarioClass: "ssc", BrightnessDOM: "BrightnessSlider", PowerClassOff: "pwroff" }
+        var options = { PowerDom: "power", ScenariosDOM: "Scenarios", SelectedScenarioClass: "ssc", BrightnessDOM: "BrightnessSlider", BrightnessDOMValueDOM: "BrightnessSliderValue", PowerClassOff: "pwroff" }
         $(document).ready(function () {
             aurora = new NanoleafAurora(options);
             aurora.Init();

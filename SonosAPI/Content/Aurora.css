@@ -17,12 +17,23 @@
     margin-right: 25px;
 }
 #BrightnessSlider {
-    height: 200px;
+    height: 220px;
 }
 .ssc {
     font-style: italic;
     font-weight: bold;
 }
+#BrightnessSliderLabel {
+    word-wrap: break-word;
+    width: 5px;
+    position: relative;
+    right: -25px;
+    color: black;
+}
+#BrightnessSliderValue {
+    color: black;
+}
+
 
 /*CSS PowerButton*/
 .container {

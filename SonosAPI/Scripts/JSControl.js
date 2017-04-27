@@ -8,7 +8,7 @@ function Fehlerbehandlung(Nachricht, Datei, Zeile) {
     alert(fehler);
     return true;
 }
-
+//todo: Apps anders anzeigen. Evtl als Iframe einbinden und von links einblenden lassen.
 function WroteSysteminfos() {
     var fehler = "SonosZones:ActiveSonosZone:" + SonosZones.ActiveZoneUUID + "<br />" +
         "SonosZones:ActiveName:" + SonosZones.ActiveZoneName + "<br />" +

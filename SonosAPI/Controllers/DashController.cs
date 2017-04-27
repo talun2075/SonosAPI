@@ -347,6 +347,7 @@ namespace SonosAPI.Controllers
         /// <returns>True muss neu geladen werden</returns>
         private Boolean CheckPlaylist(string pl, SonosPlayer sp)
         {
+            //todo: prüfen, da scheinbar manchmal das nicht genommen wird. Wird die Playliste gelerrt beim Drücken des Dashbuttons?
             try
             {
                 Boolean retval = false;

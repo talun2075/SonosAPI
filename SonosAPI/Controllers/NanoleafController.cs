@@ -4,8 +4,15 @@ using ExternalDevices;
 
 namespace SonosAPI.Controllers
 {
+    /// <summary>
+    /// Schnittstelle/API für die Nanoleaf Aurora
+    /// </summary>
     public class NanoleafController : ApiController
     {
+        /// <summary>
+        /// Get Data
+        /// </summary>
+        /// <returns>Nanoleaf Object</returns>
         [HttpGet]
         public NanoLeafJson Get()
         {
@@ -15,7 +22,11 @@ namespace SonosAPI.Controllers
             }
             return new NanoLeafJson() {Name = "ERROR"};
         }
-
+        /// <summary>
+        /// Set Scenario
+        /// </summary>
+        /// <param name="id">Name of Scenario</param>
+        /// <returns></returns>
         [HttpGet]
         public string SetSelectedScenario(string id)
         {
@@ -25,7 +36,11 @@ namespace SonosAPI.Controllers
             }
             return Nanoleaf.SelectedScenario;
         }
-
+        /// <summary>
+        /// Set Powerstate
+        /// </summary>
+        /// <param name="id">true/false</param>
+        /// <returns></returns>
         [HttpGet]
         public Boolean SetPowerState(string id)
         {
@@ -40,7 +55,11 @@ namespace SonosAPI.Controllers
             }
             return Nanoleaf.PowerOn;
         }
-
+        /// <summary>
+        /// Brightness /Helligkeit
+        /// </summary>
+        /// <param name="id">Number between min and max</param>
+        /// <returns>Brightness</returns>
         [HttpGet]
         public int SetBrightness(int id)
         {
