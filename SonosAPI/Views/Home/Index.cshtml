@@ -83,13 +83,12 @@
                 </label>
             </div>
         </div>
-        <div id="apps">Apps</div>
+        <div id="Apps">Apps</div>
         <div id="AppList">
-            Apps:
             <ul>
-                <li><a target="_blank" href="/apps/clock.html">Clock</a></li>
-                <li><a target="_blank" href="/apps/dash.html">Dash Buttons</a></li>
-                <li><a target="_blank" href="/apps/aurora.html">Aurora</a></li>
+                <li><a target="_blank" data-appname="Clock" onclick="LoadApp(this); return false;" href="/apps/clock.html">Clock</a></li>
+                <li><a target="_blank" data-appname="Dash" onclick="LoadApp(this); return false;" href="/apps/dash.html">Dash Buttons</a></li>
+                <li><a target="_blank" data-appname="Aurora" onclick="LoadApp(this); return false;" href="/apps/aurora.html">Aurora</a></li>
             </ul>
         </div>
     </div>
@@ -301,6 +300,10 @@
 </div>
 <div id="SetGroupMembers"></div>
 <div id="Overlay" onclick="SonosWindows('overlay');"></div>
+<div id="AppIframeWrapper">
+    <div id="AppIframeClose" onclick="CloseAppIframe();"><br/>Schließen</div>
+    <div id="AppIframe"></div>
+</div>
 </div>
 <div id="EventErrorDiv">
     <div>Der Server ist nicht erreichbar.</div>

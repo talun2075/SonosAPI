@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Xml.Serialization;
 using System.IO;
-using PlaylistGenerator.Conditons;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Xml.Serialization;
 using MP3File;
 
-namespace PlaylistGenerator.Playlist
+namespace PlaylistGenerator
 {
     /// <summary>
     /// Enthält eine Playlist
@@ -282,6 +282,7 @@ namespace PlaylistGenerator.Playlist
                     }
                     catch
                     {
+                        // ignored
                     }
                 }
             }
@@ -324,17 +325,33 @@ namespace PlaylistGenerator.Playlist
                             if (sortorder.ToLower() == "zufall")
                             {
 
-                                Random rng = new Random();
+                                //Random rng = new Random();
+                                //List<MP3File.MP3File> list = plnames[i];
+                                //int n = list.Count;
+                                //while (n > 1)
+                                //{
+                                //    n--;
+                                //    int k = rng.Next(n + 1);
+                                //    MP3File.MP3File value = list[k];
+                                //    list[k] = list[n];
+                                //    list[n] = value;
+                                //}
+                                //todo: Prüfen, ob besser
+                                RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
                                 List<MP3File.MP3File> list = plnames[i];
                                 int n = list.Count;
                                 while (n > 1)
                                 {
+                                    byte[] box = new byte[1];
+                                    do provider.GetBytes(box);
+                                    while (!(box[0] < n * (Byte.MaxValue / n)));
+                                    int k = (box[0] % n);
                                     n--;
-                                    int k = rng.Next(n + 1);
                                     MP3File.MP3File value = list[k];
                                     list[k] = list[n];
                                     list[n] = value;
                                 }
+
                             }
                             if (sortorder.ToLower() == "bewertung")
                             {

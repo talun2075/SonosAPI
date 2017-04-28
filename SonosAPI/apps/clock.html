@@ -18,7 +18,7 @@
                 var elem = document.getElementById(id);
                 if (elem !== null && typeof elem !== "undefined") {
                     var percent = GetTimeHappend() * 100 / timeThisYear;
-                    elem.innerHTML = percent.toFixed(8);
+                    elem.innerHTML = percent.toFixed(8)+"%";
                 } else {
                     console.warn("Übergebenes DOM Element nicht gefunden");
                 }
@@ -34,7 +34,6 @@
     </script>
     <style>
         #Clock {
-            display: inline-flex;
             font-size: 3em;
             margin-top:25%;
 			margin-left: 15%
@@ -45,9 +44,8 @@
 </head>
 <body>
     <div id="Clock">
-        <label>Jahres Fortschritt:&nbsp;&nbsp; </label>
+        <div>Jahres Fortschritt:&nbsp;&nbsp;</div>
         <div id="ClockCounter"></div>
-        <div>%</div>
     </div>
 </body>
 </html>

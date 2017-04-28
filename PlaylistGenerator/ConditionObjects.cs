@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using MP3File;
 
-namespace PlaylistGenerator.Conditons
+namespace PlaylistGenerator
 {
     /// <summary>
     /// Die Condition Objekte

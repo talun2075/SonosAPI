@@ -157,8 +157,11 @@
     <Content Include="Images\add_red.png" />
     <Content Include="Images\ajax-loader.gif" />
     <Content Include="Images\ajax-loader2.gif" />
+    <Content Include="Images\android-chrome-144x144.png" />
+    <Content Include="Images\apple-touch-icon.png" />
     <Content Include="Images\audioin.png" />
     <Content Include="Images\bombe.png" />
+    <Content Include="Images\browserconfig.xml" />
     <Content Include="Images\browse_red.png" />
     <Content Include="Images\check.png" />
     <Content Include="Images\check_red.png" />
@@ -173,11 +176,15 @@
     <Content Include="Images\fade_red.png" />
     <Content Include="Images\fav.png" />
     <Content Include="Images\aurorafavicon.ico" />
+    <Content Include="Images\favicon-16x16.png" />
+    <Content Include="Images\favicon-32x32.png" />
+    <Content Include="Images\favicon.ico" />
     <Content Include="Images\filterrot.png" />
     <Content Include="Images\froehlichrot.png" />
     <Content Include="Images\froehlichschwarz.png" />
     <Content Include="Images\gold.png" />
     <Content Include="Images\grau.png" />
+    <Content Include="Images\mstile-150x150.png" />
     <Content Include="Images\pfeil1.png" />
     <Content Include="Images\pfeil1rot.png" />
     <Content Include="Images\pfeil2.png" />
@@ -205,10 +212,13 @@
     <Content Include="Images\remove_red.png" />
     <Content Include="Images\repeat_red.png" />
     <Content Include="Images\replace_red.png" />
+    <Content Include="Images\safari-pinned-tab.svg" />
     <Content Include="Images\save_red.png" />
     <Content Include="Images\settings_red.png" />
     <Content Include="Images\shuffle_red.png" />
     <Content Include="Images\sleepmode.png" />
+    <Content Include="Images\sleepmode_an.png" />
+    <Content Include="Images\sleepmode_rot.png" />
     <Content Include="Images\songstart_red.png" />
     <Content Include="Images\sonos.png" />
     <Content Include="Images\hintergrund rot.png" />
@@ -313,6 +323,7 @@
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\manifest.json" />
     <None Include="Properties\PublishProfiles\Profil1.pubxml" />
   </ItemGroup>
   <PropertyGroup>

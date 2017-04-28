@@ -82,7 +82,7 @@ namespace ExternalDevices
                 response.Dispose();
                 dataStream.Dispose();
             }
-            catch (Exception ex)
+            catch
             {
                 //SonosHelper.ServerErrorsAdd("DashController: Marantzinput", ex);todo: überlegen, wie man mit exception umgeht.
             }

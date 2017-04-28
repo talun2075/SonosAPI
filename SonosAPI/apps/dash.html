@@ -12,7 +12,8 @@
             border: 1px solid black;
             border-radius: 25px;
             padding-left: 10px;
-            width: 550px;
+            width: 100%;
+            max-width: 550px;
             box-shadow: 3px 3px 3px 1px;
             margin-left: auto;
             margin-right: auto;
@@ -22,7 +23,12 @@
             float: right;
             margin-right: 5px;
         }
-
+        @media screen and (max-width: 550px) {
+            .dash {
+                max-width: 450px;
+            } 
+            
+        }
     </style>
 </head>
 <body>

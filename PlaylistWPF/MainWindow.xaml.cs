@@ -4,8 +4,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using PlaylistGenerator.Conditons;
-using PlaylistGenerator.Playlist;
+using PlaylistGenerator;
+
 namespace PlaylistWPF
 {
     /// <summary>

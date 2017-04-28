@@ -73,6 +73,15 @@ $(document).ready(function () {
     SoDo.errorloggingDOM.on("click", function () {
         SonosWindows(SoDo.errorlogging);
     });
+    $("#Apps").on("click", function() {
+        var al = $("#AppList");
+        al.toggle(200,function() {
+            if (al.is(":hidden")) {
+                $("#AppIframe").hide();
+            }
+        });
+
+    });
     if (showerrors === true) {
         SoDo.SetErrorLogging();
         SoDo.errorloggingDOM.show();
@@ -1861,6 +1870,26 @@ function DevTest(da) {
 }
 
 //{ In Work
+
+function LoadApp(t) {
+    var tdata = $(t).data("appname");
+    
+    switch (tdata) {
+        case 'Clock':
+            $("#AppIframe").html("<iframe src='/apps/clock.html'></iframe>");
+            break;
+        case 'Dash':
+            $("#AppIframe").html("<iframe src='/apps/dash.html' scrolling='no'></iframe>");
+            break;
+        case 'Aurora':
+            $("#AppIframe").html("<iframe src='/apps/aurora.html' scrolling='no'></iframe>");
+            break;
+    }
+    $("#AppIframeWrapper").slideDown(100);
+}
+function CloseAppIframe() {
+    $("#AppIframeWrapper").slideUp(100);
+}
 //Eventing?
 /*
 function Eventing() {

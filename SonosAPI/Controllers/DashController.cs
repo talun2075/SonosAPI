@@ -18,7 +18,7 @@ namespace SonosAPI.Controllers
         public string Get()
         {
             
-            Nanoleaf.Initialisieren("JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3", "192.168.0.166", 16021);
+            Nanoleaf.Initialisieren();
             return "get";
 
         }
@@ -129,7 +129,7 @@ namespace SonosAPI.Controllers
                         Marantz.PowerOn = false;
                     }
                     SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.MarantzPower, PlayerName = SonosConstants.EsszimmerName, Value = "off" });
-                    if (Nanoleaf.Initialisieren("JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3", "192.168.0.166", 16021))
+                    if (Nanoleaf.Initialisieren())
                     {
                         if (Nanoleaf.PowerOn)
                             Nanoleaf.PowerOn = false;
@@ -212,7 +212,6 @@ namespace SonosAPI.Controllers
                 {
                     if (!LoadPlaylist(defaultPlaylist, esszimmer))
                         return "reload, weil Playlist nicht geladen werden konnte";
-                    Thread.Sleep(200);
                 }
                 esszimmer.SetPlay();
                 SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Playing, PlayerName = esszimmer.Name, Value = "true" });
@@ -388,7 +387,7 @@ namespace SonosAPI.Controllers
                 sp.Enqueue(sonospl[0], true);
                 Thread.Sleep(200);
                 sp.SetAVTransportURI(SonosConstants.xrinconqueue + sp.UUID + "#0");
-                Thread.Sleep(400);
+                Thread.Sleep(500);
                 return true;
             }
             catch

@@ -8,7 +8,7 @@
     <ProjectGuid>{22C37A17-23EB-49A4-BA3D-C0BDD5F91488}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ConditionObject</RootNamespace>
+    <RootNamespace>PlaylistGenerator</RootNamespace>
     <AssemblyName>PlaylistGenerator</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

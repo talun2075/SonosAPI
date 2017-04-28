@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
-using PlaylistGenerator.Playlist;
+using PlaylistGenerator;
 
 namespace PlaylistWPF
 {
