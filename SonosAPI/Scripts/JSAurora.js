@@ -74,6 +74,9 @@ function NanoleafAurora(option) {
                 stop: function(event, ui) {
                     _data.state.brightness.value = ui.value;
                     CallServer("SetBrightness/" + ui.value);
+                    if (_data.state.on.value !== true) {
+                        _data.state.on.value = true;
+                    }
                     return true;
                 },
                 slide: function(event, ui) {

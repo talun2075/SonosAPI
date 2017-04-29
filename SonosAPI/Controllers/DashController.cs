@@ -45,8 +45,24 @@ namespace SonosAPI.Controllers
                     if (gzmPlayer.CurrentState.TransportState == PlayerStatus.PLAYING)
                     {
                         //Es wird gespielt und nochmal gedrückt, daher die Playlist wechseln.
-                        id = id == "0" ? "1" : "0";
-                        //todo: Prüfen, was abgespielt wird und das mit berüccksichtigen. Da die Id nur getauscht werden sollte, wenn es sich um die defaults handelt.
+                        if (id == "0")
+                        {
+                            //Prüfen, ob Regen abgespielt wird
+                            var israinloaded = !CheckPlaylist(playlistToLoad, gzmPlayer);
+                            if (israinloaded)
+                            {
+                                id = "1";
+                            }
+                        }
+                        else
+                        {
+                            var isTempSleepLoad = !CheckPlaylist(SonosConstants.SQ + "74", gzmPlayer);
+                            if (isTempSleepLoad)
+                            {
+                                id = "0";
+                            }
+
+                        }
                     }
                     if (gzmPlayer.GetVolume() != SonosConstants.GästezimmerVolume)
                     {
@@ -145,12 +161,13 @@ namespace SonosAPI.Controllers
 
             SonosPlayer esszimmer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
             SonosPlayer wohnzimmer = SonosHelper.GetPlayer(SonosConstants.WohnzimmerName);
-
+            int oldcurrenttrack;
 
             //Alle Player alleine machen und neu zuordnen
             try
             {
                 SonosHelper.CheckIsZoneCord(wohnzimmer);
+                oldcurrenttrack = esszimmer.GetAktSongInfo().TrackIndex;
                 esszimmer.BecomeCoordinatorofStandaloneGroup();
                 Thread.Sleep(400);
                 wohnzimmer.SetAVTransportURI(SonosConstants.xrincon + esszimmer.UUID);
@@ -213,6 +230,12 @@ namespace SonosAPI.Controllers
                     if (!LoadPlaylist(defaultPlaylist, esszimmer))
                         return "reload, weil Playlist nicht geladen werden konnte";
                 }
+                else
+                {
+                    //alten Song aus der Playlist laden, da immer wieder auf 1 reset passiert.
+                    esszimmer.SetTrackInPlaylist(oldcurrenttrack.ToString());
+                }
+
                 esszimmer.SetPlay();
                 SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Playing, PlayerName = esszimmer.Name, Value = "true" });
             }
@@ -280,7 +303,6 @@ namespace SonosAPI.Controllers
         [HttpGet]
         public string Dash5(string id)
         {
-            //todo: Message einbauen
             const string rsh = "x-sonosapi-stream:s18353?sid=254&amp;flags=8224&amp;sn=0";
             try
             {
@@ -290,6 +312,7 @@ namespace SonosAPI.Controllers
                 var oldTransportstate = essPlayer.CurrentState.TransportState;
                 essPlayer.BecomeCoordinatorofStandaloneGroup();
                 Thread.Sleep(300);
+                SonosHelper.MessageQueue(new SonosCheckChangesObject{Changed = SonosCheckChangesConstants.SinglePlayer,PlayerName = essPlayer.Name,Value = ""});
                 SonosHelper.CheckIsZoneCord(kuPlayer);
                 SonosHelper.WaitForTransitioning(wzPlayer);
                 if (wzPlayer.CurrentState.TransportState == PlayerStatus.PLAYING)
@@ -302,14 +325,20 @@ namespace SonosAPI.Controllers
                         Marantz.Initialisieren(SonosConstants.MarantzUrl);
                     }
                     if (Marantz.SelectedInput == MarantzInputs.Sonos && Marantz.PowerOn)
+                    {
                         Marantz.PowerOn = false;
+                        SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.MarantzPower, PlayerName = SonosConstants.EsszimmerName, Value = "on" });
+                    }
                 }
                 SonosHelper.WaitForTransitioning(essPlayer);
                 if (essPlayer.CurrentState.TransportState == PlayerStatus.PLAYING || oldTransportstate == PlayerStatus.PLAYING)
                 {
                     essPlayer.SetPause();
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Playing, PlayerName = essPlayer.Name, Value = "false" });
                     kuPlayer.SetPause();
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Playing, PlayerName = kuPlayer.Name, Value = "false" });
                     return retValok+" ausgeschaltet.";
+
                 }
                 if (essPlayer.GetVolume() != SonosConstants.EsszimmerVolume)
                 {
@@ -330,6 +359,7 @@ namespace SonosAPI.Controllers
                     Thread.Sleep(300);
                 }
                 essPlayer.SetPlay();
+                SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Playing, PlayerName = essPlayer.Name, Value = "true" });
                 return retValok+" eingeschaltet und RSH gestartet";
             }
             catch (Exception ex)
@@ -346,7 +376,6 @@ namespace SonosAPI.Controllers
         /// <returns>True muss neu geladen werden</returns>
         private Boolean CheckPlaylist(string pl, SonosPlayer sp)
         {
-            //todo: prüfen, da scheinbar manchmal das nicht genommen wird. Wird die Playliste gelerrt beim Drücken des Dashbuttons?
             try
             {
                 Boolean retval = false;

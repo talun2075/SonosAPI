@@ -74,7 +74,7 @@
         /// <summary>
         /// Check to SinglePlayer
         /// </summary>
-        public const string SinnglePlayer = "SinglePlayer";
+        public const string SinglePlayer = "SinglePlayer";
         /// <summary>
         /// Is added to a Zone
         /// </summary>

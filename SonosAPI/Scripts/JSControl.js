@@ -1888,7 +1888,7 @@ function LoadApp(t) {
     $("#AppIframeWrapper").slideDown(100);
 }
 function CloseAppIframe() {
-    $("#AppIframeWrapper").slideUp(100);
+    $("#AppIframeWrapper").hide(100);
 }
 //Eventing?
 /*

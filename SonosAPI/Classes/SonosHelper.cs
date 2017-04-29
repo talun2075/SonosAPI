@@ -287,20 +287,30 @@ namespace SonosAPI.Classes
                 return String.Empty;
             }
         }
+
         /// <summary>
         /// Prüft ob IsZoneCord gesetzt ist
         /// Falls nicht FallBack auf Zonen
         /// Falls Player in einer Zone ist, wird dieser aus dieser Rausgenommen. 
         /// </summary>
         /// <param name="sp">Player der geprüft werden soll.</param>
+        /// <param name="fromMessaQueue">Is the Call from MesseageQueue</param>
         /// <returns></returns>
-        public static Boolean CheckIsZoneCord(SonosPlayer sp)
+        public static Boolean CheckIsZoneCord(SonosPlayer sp, Boolean fromMessaQueue = false)
         {
-            //todo: Messagequeue
             if (sp.IsZoneCoord == false)
             {
                 sp.BecomeCoordinatorofStandaloneGroup();
                 Thread.Sleep(300);
+                if (!fromMessaQueue)
+                {
+                    MessageQueue(new SonosCheckChangesObject
+                    {
+                        Changed = SonosCheckChangesConstants.SinglePlayer,
+                        PlayerName = sp.Name,
+                        Value = ""
+                    });
+                }
                 return false;
             }
             if (sp.IsZoneCoord == null)
@@ -423,8 +433,8 @@ namespace SonosAPI.Classes
                             }
                             break;
                         //Make Player Standalone
-                        case SonosCheckChangesConstants.SinnglePlayer:
-                            CheckIsZoneCord(sp);
+                        case SonosCheckChangesConstants.SinglePlayer:
+                            CheckIsZoneCord(sp,true);
                             itemsToRemove.Add(sonosCheckChangesObject);
                             break;
                         //Add Player to Zone
