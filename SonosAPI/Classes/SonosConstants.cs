@@ -3,7 +3,7 @@
     public static class SonosConstants
     {
         //todo: mp4 und sonos-http aufnehmen?
-        private const int relativerVolWert = 20;
+        private const int relativerVolWert = 15;
         public const string KücheName = "Küche";
         public const int KücheVolume = relativerVolWert + 4;
         public const string EsszimmerName = "Esszimmer";

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Xml.Serialization;
 using MP3File;
 
@@ -14,7 +13,6 @@ namespace PlaylistGenerator
     /// </summary>
     public class PlaylistClass
     {
-        private String _SortOrder = "Keine";
         public List<String> conditionGroupsNames = new List<string>();
         /// <summary>
         /// Erzeugt eine Playlist
@@ -40,22 +38,8 @@ namespace PlaylistGenerator
         /// Sortierreihenfolge der Playlist, wenn sortiert werden soll.
         /// Erlaubt: Titel, Artist, Random
         /// </summary>
-        public String Sort
-        {
-            get { return _SortOrder; }
-            set
-            {
-                string t = value.ToLower();
-                if (t.StartsWith("titel") || t.StartsWith("interpret") || t.StartsWith("zufall"))
-                {
-                    _SortOrder = value;
-                }
-                else
-                {
-                    _SortOrder = "Keine";
-                }
-            }
-        }
+        public PlaylistSortOrder Sort { get; set; }
+
         /// <summary>
         /// Alle Bedingungsgruppen
         /// </summary>
@@ -82,6 +66,19 @@ namespace PlaylistGenerator
         }
     }
     /// <summary>
+    /// Playlist Sort Order Enums
+    /// </summary>
+    public enum PlaylistSortOrder
+    {
+        Title,
+        Artist,
+        Random,
+        Rating,
+        RatingMine,
+        NotSet
+    }
+
+    /// <summary>
     /// enthält alle Playlisten
     /// </summary>
     static public class Playlists
@@ -92,10 +89,8 @@ namespace PlaylistGenerator
         /// <summary>
         /// Gibt eine Liste mit allen Playlists
         /// </summary>
-        static public List<PlaylistClass> GetPlaylists
-        {
-            get { return pll; }
-        }
+        static public List<PlaylistClass> GetPlaylists => pll;
+
         /// <summary>
         /// Liefert eine Liste mit allen Playlistnamen
         /// </summary>
@@ -149,10 +144,8 @@ namespace PlaylistGenerator
             xmls.Serialize(textWriter, GetPlaylists);
             textWriter.Close();
         }
-        static public Nullable<bool> Load(string path)
+        static public bool? Load(string path)
         {
-            try
-            {
                 if (!File.Exists(path))
                 {
                     return false;
@@ -166,12 +159,6 @@ namespace PlaylistGenerator
                     playlistNames.Add(pl.Playlist);
                 }
                 return true;
-            }
-            catch
-            {
-
-                return false;
-            }
         }
 
 
@@ -311,53 +298,37 @@ namespace PlaylistGenerator
 
                     if (plnames[i].Count > 0)
                     {
-                        string sortorder = Playlists.GetPlaylists[i].Sort;
-                        if (Playlists.GetPlaylists[i].Sort.ToLower() != "keine")
+                        PlaylistSortOrder sortorder = Playlists.GetPlaylists[i].Sort;
+                        if (sortorder != PlaylistSortOrder.NotSet)
                         {
-                            if (sortorder.ToLower() == "titel")
+                            if (sortorder == PlaylistSortOrder.Title)
                             {
                                 plnames[i] = plnames[i].OrderBy(x => x.Titel).ToList();
                             }
-                            if (sortorder.ToLower() == "interpret")
+                            if (sortorder == PlaylistSortOrder.Artist)
                             {
                                 plnames[i] = plnames[i].OrderBy(x => x.Artist).ToList();
                             }
-                            if (sortorder.ToLower() == "zufall")
+                            if (sortorder == PlaylistSortOrder.Random)
                             {
-
-                                //Random rng = new Random();
-                                //List<MP3File.MP3File> list = plnames[i];
-                                //int n = list.Count;
-                                //while (n > 1)
-                                //{
-                                //    n--;
-                                //    int k = rng.Next(n + 1);
-                                //    MP3File.MP3File value = list[k];
-                                //    list[k] = list[n];
-                                //    list[n] = value;
-                                //}
-                                //todo: Prüfen, ob besser
-                                RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+                                Random rng = new Random();
                                 List<MP3File.MP3File> list = plnames[i];
                                 int n = list.Count;
                                 while (n > 1)
                                 {
-                                    byte[] box = new byte[1];
-                                    do provider.GetBytes(box);
-                                    while (!(box[0] < n * (Byte.MaxValue / n)));
-                                    int k = (box[0] % n);
                                     n--;
+                                    int k = rng.Next(n + 1);
                                     MP3File.MP3File value = list[k];
                                     list[k] = list[n];
                                     list[n] = value;
                                 }
 
                             }
-                            if (sortorder.ToLower() == "bewertung")
+                            if (sortorder == PlaylistSortOrder.Rating)
                             {
                                 plnames[i] = plnames[i].OrderBy(x => x.Bewertung).ToList();
                             }
-                            if (sortorder.ToLower() == "bewertung mine")
+                            if (sortorder == PlaylistSortOrder.RatingMine)
                             {
                                 plnames[i] = plnames[i].OrderBy(x => x.BewertungMine).ToList();
                             }

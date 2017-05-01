@@ -401,6 +401,7 @@ namespace SonosAPI.Classes
         /// </summary>
         public static void MessageQueue(SonosCheckChangesObject newscco)
         {
+            //todo: Logging implementieren
             if (!sccoList.Contains(newscco) && newscco != null)
             {
                 sccoList.Add(newscco);
@@ -484,7 +485,7 @@ namespace SonosAPI.Classes
                             }
                             if (sonosCheckChangesObject.Value == "off")
                             {
-                                if (Marantz.PowerOn)
+                                if (Marantz.PowerOn && Marantz.SelectedInput == MarantzInputs.Sonos)
                                 {
                                     Marantz.PowerOn = false;
                                 }

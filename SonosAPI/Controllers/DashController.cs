@@ -158,6 +158,15 @@ namespace SonosAPI.Controllers
                 return retValReload + " Exception: Marantz konnte nicht geschaltet werden.";
             }
             #endregion STOPP
+            //Aurora einschalten ab 18 Uhr.
+            if (DateTime.Now.Hour > 17)
+            {
+                if (Nanoleaf.Initialisieren())
+                {
+                    if (!Nanoleaf.PowerOn)
+                        Nanoleaf.PowerOn = true;
+                }
+            }
 
             SonosPlayer esszimmer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
             SonosPlayer wohnzimmer = SonosHelper.GetPlayer(SonosConstants.WohnzimmerName);

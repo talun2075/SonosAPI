@@ -34,17 +34,19 @@ namespace ExternalDevices
                 ip = ip.Replace("http://", "");
             if (!Regex.IsMatch(ip, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$")) return false;
             if (port == 0) return false;
-            //todo: If Token NEW Build Dialog
             _tokenAuth = token;
             _ip = ip;
             _port = port;
             return GetNanoLeafInformations();
         }
-
+        /// <summary>
+        /// Use to Get a New Token
+        /// Push the On Button for 5 till 7 Seconds on the Aurora and then Call this Method. You have 30 Seconds time.
+        /// </summary>
+        /// <returns>New Token</returns>
         public static String NewUser()
         {
-            //todo:finish
-            return String.Empty;
+            return ConnectToNanoleaf(NanoleafRequest.POST, "new");
         }
         #endregion PublicMethods
 
@@ -129,10 +131,17 @@ namespace ExternalDevices
                 Uri urlstate;
                 if (!string.IsNullOrEmpty(call))
                 {
-                    if (call == "INIT")
-                        call = String.Empty;
-                    urlstate = new Uri("http://" + _ip + ":" + _port + _Apipath + _tokenAuth + call);
-                 }
+                    if (call == "new")
+                    {
+                        urlstate = new Uri("http://" + _ip + ":" + _port + _Apipath +  call);
+                    }
+                    else
+                    {
+                        if (call == "INIT")
+                            call = String.Empty;
+                        urlstate = new Uri("http://" + _ip + ":" + _port + _Apipath + _tokenAuth + call);
+                    }
+                }
                 else
                 {
                     return "Error no Call";

@@ -32,7 +32,15 @@ namespace PlaylistWPF
             //Autoload der Playlist
             if(Functions.PlaylistAutoLoad && File.Exists(Functions.PlaylistXML))
             {
-                Playlists.Load(Functions.PlaylistXML);
+                try
+                {
+                    Playlists.Load(Functions.PlaylistXML);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Es ist ein Fehler beim laden der Playlist aufgetreten." + ex.Message, "Fehler",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
                 ResetDatabinds();
             }
         }
@@ -353,8 +361,16 @@ namespace PlaylistWPF
             // Process save file dialog box results
             if (result == true)
             {
-                // Load document
-                result = Playlists.Load(dlg.FileName);
+                try
+                {
+                    // Load document
+                    result = Playlists.Load(dlg.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Es ist ein Fehler beim laden der Playlist aufgetreten." + ex.Message, "Fehler",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             return result;
         }
@@ -485,6 +501,56 @@ namespace PlaylistWPF
 
             }
             return "Fehler";
+        }
+        /// <summary>
+        /// Gibt einen String aufgrund der übergebenen PlaylistSortOrder zurück
+        /// </summary>
+        /// <param name="plso"></param>
+        /// <returns></returns>
+        private string GetSortOrderString(PlaylistSortOrder plso)
+        {
+            switch (plso)
+            {
+                case PlaylistSortOrder.Random:
+                    return "Zufall";
+                case PlaylistSortOrder.Title:
+                    return "Titel";
+                case PlaylistSortOrder.Artist:
+                    return "Interpret";
+                case PlaylistSortOrder.Rating:
+                    return "Bewertung";
+                case PlaylistSortOrder.RatingMine:
+                    return "Bewertung Mine";
+                default:
+                    return "Keine";
+
+
+            }
+        }
+        /// <summary>
+        /// Gibt eine PlaylistSortOrder aufgrund des übergebenen Strings zurück
+        /// </summary>
+        /// <param name="plso"></param>
+        /// <returns></returns>
+        private PlaylistSortOrder GetSortOrderPlaylistSortOrder(string plso)
+        {
+            switch (plso)
+            {
+                case "Zufall":
+                    return PlaylistSortOrder.Random;
+                case "Titel":
+                    return PlaylistSortOrder.Title;
+                case "Interpret":
+                    return PlaylistSortOrder.Artist;
+                case "Bewertung":
+                    return PlaylistSortOrder.Rating;
+                case "Bewertung Mine":
+                    return PlaylistSortOrder.RatingMine;
+                default:
+                    return PlaylistSortOrder.NotSet;
+
+
+            }
         }
         /// <summary>
         /// Ermittelt den Operator aufgrund des Strings
@@ -729,7 +795,7 @@ namespace PlaylistWPF
                 gridconditionlist.Visibility = Visibility.Visible;
                 btndelete.IsEnabled = true;
                 btnEditPlaylist.IsEnabled = true;
-                cbPLSortOrder.SelectedValue =b.Sort;
+                cbPLSortOrder.SelectedValue = GetSortOrderString(b.Sort);
             }
             else
             {
@@ -887,7 +953,7 @@ namespace PlaylistWPF
         {
             if (cbPLSortOrder.SelectedValue != null)
             {
-                Playlists.GetPlaylists[lbPlaylist.SelectedIndex].Sort = e.AddedItems[0].ToString();
+                Playlists.GetPlaylists[lbPlaylist.SelectedIndex].Sort = GetSortOrderPlaylistSortOrder(e.AddedItems[0].ToString());
                     //cbPLSortOrder.SelectedValue.ToString();
             }
         }

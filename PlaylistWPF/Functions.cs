@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using System.Xml.Linq;
+
 
 namespace PlaylistWPF
 {
@@ -138,7 +140,7 @@ namespace PlaylistWPF
             }
             catch (DirectoryNotFoundException)
             {
-                //"Das Verzeichis aus der App.Config für x existiert nicht", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+               MessageBox.Show(@"Das Verzeichis aus der App.Config für x existiert nicht", @"Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
