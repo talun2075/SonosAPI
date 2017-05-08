@@ -88,5 +88,7 @@
         /// </summary>
         public const string MarantzPower = "Marantzpower";
 
+        public const string NanoleafSelectedScenario = "NanoleafSelectedScenario";
+
     }
 }

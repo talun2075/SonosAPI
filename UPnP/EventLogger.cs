@@ -74,13 +74,16 @@ namespace OpenSource.Utilities
 		/// </summary>
 		public static void StopLog()
 		{
-            try
-            {
-                Enabled = false;
-                if (log != null) log.Close();
-                log = null;
+		    try
+		    {
+		        Enabled = false;
+		        if (log != null) log.Close();
+		        log = null;
+		    }
+		    catch (Exception ex)
+		    {
+                var k = ex.Message;
             }
-            catch (Exception) { }
 		}
  
 		/// <summary>
@@ -118,10 +121,12 @@ namespace OpenSource.Utilities
 				    {
 				        try
 				        {
-				            log.WriteEntry(origin + ": " + information + "\r\n\r\nTRACE:\r\n" + trace,LogType);
+				            log.WriteEntry(origin + ": " + information + "\r\n\r\nTRACE:\r\n" + trace, LogType);
 				        }
-				        catch(Exception)
-				        {}
+				        catch (Exception ex)
+				        {
+                            var k = ex.Message;
+                        }
 				    }
 				    if (OnEvent != null) OnEvent(LogType,sender,trace.ToString(),information);
 				}
@@ -140,49 +145,55 @@ namespace OpenSource.Utilities
 	    /// <param name="additional"></param>
 	    public static void Log(Exception exception, string additional) 
 		{
-            try
-            {
-                string name = exception.GetType().FullName;
-                string message = exception.Message;
-                Exception t = exception;
-                int i = 0;
-                while (t.InnerException != null)
-                {
-                    t = t.InnerException;
-                    name += " : " + t.GetType().FullName;
-                    // message = t.Message;
-                    // NKIDD - ADDED
-                    message += "\r\n\r\nInnerException #" + i + ":\r\nMessage: " + t.Message + "\r\nSource: " + t.Source + "\r\nStackTrace: " + t.StackTrace;
-                    i++;
-                }
+	        try
+	        {
+	            string name = exception.GetType().FullName;
+	            string message = exception.Message;
+	            Exception t = exception;
+	            int i = 0;
+	            while (t.InnerException != null)
+	            {
+	                t = t.InnerException;
+	                name += " : " + t.GetType().FullName;
+	                // message = t.Message;
+	                // NKIDD - ADDED
+	                message += "\r\n\r\nInnerException #" + i + ":\r\nMessage: " + t.Message + "\r\nSource: " + t.Source +
+	                           "\r\nStackTrace: " + t.StackTrace;
+	                i++;
+	            }
 
-                name += "\r\n\r\n Additional Info: " + additional + "\r\n" + message;
+	            name += "\r\n\r\n Additional Info: " + additional + "\r\n" + message;
 
-                if (Enabled)
-                {
-                    if (log != null)
-                    {
-                        try
-                        {
-                            log.WriteEntry(exception.Source + " threw exception: " + exception, EventLogEntryType.Error);
-                        }
-                        catch (Exception)
-                        { }
-                    }
-                    if (OnEvent != null) OnEvent(EventLogEntryType.Error, exception.Source, exception.StackTrace, name);
-                }
+	            if (Enabled)
+	            {
+	                if (log != null)
+	                {
+	                    try
+	                    {
+	                        log.WriteEntry(exception.Source + " threw exception: " + exception, EventLogEntryType.Error);
+	                    }
+	                    catch (Exception ex)
+	                    {
+	                        var k = ex.Message;
+	                    }
+	                }
+	                if (OnEvent != null) OnEvent(EventLogEntryType.Error, exception.Source, exception.StackTrace, name);
+	            }
 
-                if (g_onExceptionShowMessage)
-                {
-                    ExceptionForm ef = new ExceptionForm(exception);
-                    if (ef.ShowDialog() == DialogResult.OK)
-                    {
-                        Debugger.Break();
-                    }
-                    ef.Dispose();
-                }
-            }
-            catch (Exception) { }
+	            if (g_onExceptionShowMessage)
+	            {
+	                ExceptionForm ef = new ExceptionForm(exception);
+	                if (ef.ShowDialog() == DialogResult.OK)
+	                {
+	                    Debugger.Break();
+	                }
+	                ef.Dispose();
+	            }
+	        }
+	        catch (Exception ex)
+	        {
+	            var k = ex.Message;
+	        }
 		}
 
 	}

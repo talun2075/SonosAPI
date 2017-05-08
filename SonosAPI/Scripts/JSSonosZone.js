@@ -225,7 +225,6 @@ function SonosZone(uuid, name) {
     this.Playlist = new SonosPlaylist();
     this.PlaylistLoader = false;
     this.RenderPlaylist = function(source) {
-        //todo: Warum wird neu gerendert, wenn Lautstärke nach oben geht
         SonosLog("RenderPlaylist Callby:" + source);
         this.RenderNextTrack("RenderPlaylist");
         if (this.Playlist.CheckToRender()) {

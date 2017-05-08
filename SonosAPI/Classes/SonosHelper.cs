@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -184,10 +185,42 @@ namespace SonosAPI.Classes
                 sw.WriteLine("TargetSite: " + ExceptionMes.TargetSite);
                 sw.WriteLine("Base:Message: " + ExceptionMes.GetBaseException().Message);
             }
-
+        }
+        /// <summary>
+        /// Internal Logging to Debug on Server.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="message"></param>
+        private static void TraceLog(string filename, string message)
+        {
+            try
+            {
+                var dir = Directory.CreateDirectory(@"C:\NasWeb\Logging");
+                string file = dir.FullName + "\\" + filename + "_Log.txt";
+                if (!File.Exists(file))
+                {
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(file))
+                    {
+                        sw.WriteLine("Loggingstart:");
+                    }
+                }
+                using (StreamWriter sw = File.AppendText(file))
+                {
+                    sw.WriteLine(message);
+                }
+            }
+            catch (Exception ex)
+            {
+                ServerErrorsAdd("TraceLog",ex);
+            }
 
         }
 
+        internal static void TraceLogMessageQueue(string message)
+        {
+            TraceLog("mq",message);
+        }
         /// <summary>
         /// Wird aufgerufen, wenn sich etwas bei einem Player geändert hat
         /// </summary>
@@ -401,10 +434,13 @@ namespace SonosAPI.Classes
         /// </summary>
         public static void MessageQueue(SonosCheckChangesObject newscco)
         {
-            //todo: Logging implementieren
             if (!sccoList.Contains(newscco) && newscco != null)
             {
                 sccoList.Add(newscco);
+                TraceLogMessageQueue("In Liste zufügen:");
+                TraceLogMessageQueue("Gerät: "+newscco.PlayerName);
+                TraceLogMessageQueue("Value: " + newscco.Value);
+                TraceLogMessageQueue("Change: " + newscco.Changed);
                 return;//New entry will be checked on net timer.tick
             }
             if (!sccoList.Any()) return;
@@ -413,6 +449,7 @@ namespace SonosAPI.Classes
             {
                 foreach (SonosCheckChangesObject sonosCheckChangesObject in sccoList)
                 {
+                    TraceLogMessageQueue(DateTime.Now.ToString(CultureInfo.CurrentCulture));
                     //Get Player
                     SonosPlayer sp = GetPlayer(sonosCheckChangesObject.PlayerName);
                     if (sp == null) continue;
@@ -421,25 +458,36 @@ namespace SonosAPI.Classes
                     {
                         //Change Volume
                         case SonosCheckChangesConstants.Volume:
+                            TraceLogMessageQueue("Volume Start");
+                            TraceLogMessageQueue("Player:"+sp.Name);
                             int tvol;
                             int.TryParse(sonosCheckChangesObject.Value, out tvol);
+                            TraceLogMessageQueue("Value:"+tvol);
                             if (tvol > 0)
                             {
                                 var t = sp.GetVolume();
+                                TraceLogMessageQueue("Volume vom Player:" + t);
                                 if (t != tvol)
                                 {
+                                    TraceLogMessageQueue("Volume neu setzen");
                                     sp.SetVolume((ushort)tvol);
                                 }
                                 itemsToRemove.Add(sonosCheckChangesObject);
                             }
+                            TraceLogMessageQueue("Volume Ende");
                             break;
                         //Make Player Standalone
                         case SonosCheckChangesConstants.SinglePlayer:
+                            TraceLogMessageQueue("Single Player Start");
+                            TraceLogMessageQueue("Player:" + sp.Name);
                             CheckIsZoneCord(sp,true);
                             itemsToRemove.Add(sonosCheckChangesObject);
+                            TraceLogMessageQueue("Single Player Ende");
                             break;
                         //Add Player to Zone
                         case SonosCheckChangesConstants.AddToZone:
+                            TraceLogMessageQueue("Add To Zone Start");
+                            TraceLogMessageQueue("Player:" + sp.Name);
                             //Check Player is in Zone. If not Add it.
                             SonosZone sz = GetZone(sonosCheckChangesObject.Value);
                             if (sz == null) break;
@@ -459,45 +507,75 @@ namespace SonosAPI.Classes
                                 sp.SetAVTransportURI(SonosConstants.xrincon + sz.CoordinatorUUID);
                                 itemsToRemove.Add(sonosCheckChangesObject);
                             }
+                            TraceLogMessageQueue("Add To Zone Ende");
                             break;
                         case SonosCheckChangesConstants.Playing:
+                            TraceLogMessageQueue("Playing Start");
+                            TraceLogMessageQueue("Player:" + sp.Name);
                             WaitForTransitioning(sp);
                             if (sonosCheckChangesObject.Value == "true")
                             {
+                                TraceLogMessageQueue("Set Play Start");
                                 if (sp.CurrentState.TransportState != PlayerStatus.PLAYING)
                                 {
                                     sp.SetPlay();
+                                    TraceLogMessageQueue("Set Play Ende");
                                 }
                             }
                             if (sonosCheckChangesObject.Value == "false")
                             {
+                                TraceLogMessageQueue("Set Pause Start");
                                 if (sp.CurrentState.TransportState == PlayerStatus.PLAYING)
                                 {
                                     sp.SetPause();
+                                    TraceLogMessageQueue("Set Pause Ende");
                                 }
                             }
                             itemsToRemove.Add(sonosCheckChangesObject);
+                            TraceLogMessageQueue("Playing Ende");
                             break;
                         case SonosCheckChangesConstants.MarantzPower:
-                            if (!Marantz.IsInitialisiert)
-                            {
+                            TraceLogMessageQueue("Marantz Power Start");
+                                TraceLogMessageQueue("Initialisieren");
                                 Marantz.Initialisieren(SonosConstants.MarantzUrl);
-                            }
+                                TraceLogMessageQueue("Initialisieren Ende");
+                            TraceLogMessageQueue("Input:" + Marantz.SelectedInput);
+                            TraceLogMessageQueue("Power:" + Marantz.PowerOn);
+                            TraceLogMessageQueue("Value des Objects:" + sonosCheckChangesObject.Value);
                             if (sonosCheckChangesObject.Value == "off")
                             {
+                                TraceLogMessageQueue("Marantz ausschalten Start");
                                 if (Marantz.PowerOn && Marantz.SelectedInput == MarantzInputs.Sonos)
                                 {
                                     Marantz.PowerOn = false;
+                                    TraceLogMessageQueue("Marantz ausschalten Ende");
                                 }
                             }
                             if (sonosCheckChangesObject.Value == "on")
                             {
+                                TraceLogMessageQueue("Marantz Einschalten Start");
                                 if (!Marantz.PowerOn)
                                 {
+                                    TraceLogMessageQueue("Marantz Einschalten Ende");
                                     Marantz.PowerOn = true;
                                 }
                             }
                             itemsToRemove.Add(sonosCheckChangesObject);
+                            TraceLogMessageQueue("Marantz Power Ende");
+                            break;
+                        case SonosCheckChangesConstants.NanoleafSelectedScenario:
+                            TraceLogMessageQueue("Nanoleaf Selected Scenario Start");
+                            if (Nanoleaf.Initialisieren())
+                            {
+                                TraceLogMessageQueue("Nanoleaf Selected Scenario:"+ Nanoleaf.SelectedScenario);
+                                if (Nanoleaf.SelectedScenario != sonosCheckChangesObject.Value)
+                                {
+                                    TraceLogMessageQueue("Nanoleaf Selected Scenario muss geändert werden auf:" + sonosCheckChangesObject.Value);
+                                    Nanoleaf.SelectedScenario = sonosCheckChangesObject.Value;
+                                }
+                             }
+                            itemsToRemove.Add(sonosCheckChangesObject);
+                            TraceLogMessageQueue("Nanoleaf Selected Scenario Ende");
                             break;
                     }
                 }

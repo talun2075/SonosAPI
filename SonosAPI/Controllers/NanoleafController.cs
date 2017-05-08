@@ -20,6 +20,7 @@ namespace SonosAPI.Controllers
             {
                 return Nanoleaf.NLJ;
             }
+            
             return new NanoLeafJson() {Name = "ERROR"};
         }
         /// <summary>
@@ -69,6 +70,12 @@ namespace SonosAPI.Controllers
                 Nanoleaf.Brightness = id;
             }
             return Nanoleaf.Brightness;
+        }
+
+        [HttpGet]
+        public String SetRandomScenario(int id)
+        {
+            return Nanoleaf.SetRandomScenario();
         }
     }
 }

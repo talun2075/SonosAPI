@@ -134,10 +134,7 @@ namespace SonosAPI.Controllers
                 if (foundplayed)
                 {
                     //Daten vom Marantz ermitteln
-                    if (!Marantz.IsInitialisiert)
-                    {
-                        Marantz.Initialisieren(SonosConstants.MarantzUrl);
-                    }
+                    Marantz.Initialisieren(SonosConstants.MarantzUrl);
                     //Ist auf Sonos?
                     if (Marantz.SelectedInput == MarantzInputs.Sonos && Marantz.PowerOn)
                     {
@@ -163,8 +160,7 @@ namespace SonosAPI.Controllers
             {
                 if (Nanoleaf.Initialisieren())
                 {
-                    if (!Nanoleaf.PowerOn)
-                        Nanoleaf.PowerOn = true;
+                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.NanoleafSelectedScenario, PlayerName = SonosConstants.EsszimmerName, Value = Nanoleaf.SetRandomScenario()});
                 }
             }
 
@@ -207,10 +203,7 @@ namespace SonosAPI.Controllers
             try
             {
                 //Marantz Verarbeiten.
-                if (!Marantz.IsInitialisiert)
-                {
-                    Marantz.Initialisieren(SonosConstants.MarantzUrl);
-                }
+                Marantz.Initialisieren(SonosConstants.MarantzUrl);
                 if (Marantz.SelectedInput != MarantzInputs.Sonos)
                 {
                     Marantz.SelectedInput = MarantzInputs.Sonos;
@@ -329,14 +322,11 @@ namespace SonosAPI.Controllers
                     SonosHelper.CheckIsZoneCord(wzPlayer);
                     wzPlayer.SetPause();
                     //Daten vom Marantz ermitteln
-                    if (!Marantz.IsInitialisiert)
-                    {
-                        Marantz.Initialisieren(SonosConstants.MarantzUrl);
-                    }
+                    Marantz.Initialisieren(SonosConstants.MarantzUrl);
                     if (Marantz.SelectedInput == MarantzInputs.Sonos && Marantz.PowerOn)
                     {
                         Marantz.PowerOn = false;
-                        SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.MarantzPower, PlayerName = SonosConstants.EsszimmerName, Value = "on" });
+                        SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.MarantzPower, PlayerName = SonosConstants.EsszimmerName, Value = "off" });
                     }
                 }
                 SonosHelper.WaitForTransitioning(essPlayer);
@@ -490,7 +480,7 @@ namespace SonosAPI.Controllers
             }
             try
             {
-                if (player.GetVolume() == _volume)
+                if (player.GetVolume() != _volume)
                 {
                     player.SetVolume(_volume);
                     SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Volume, PlayerName = player.Name, Value = _volume.ToString() });

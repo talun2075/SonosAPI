@@ -19,8 +19,11 @@ namespace SonosAPI.Classes
             try
             {
                 var xml = pl.GetPlaylistWithTotalNumbers(NumberReturned, 0);
-                TotalMatches = Convert.ToInt16(xml[1]);
-                list = ParseSonosXML(xml[0]);
+                if (xml[1] != null)
+                {
+                    TotalMatches = Convert.ToInt16(xml[1]);
+                    list = ParseSonosXML(xml[0]);
+                }
             }
             catch (Exception ex)
             {

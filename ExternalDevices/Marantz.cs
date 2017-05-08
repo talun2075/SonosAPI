@@ -55,14 +55,10 @@ namespace ExternalDevices
             {
                 return false;
             }
-            IsInitialisiert = true;
             return true;
         }
         private static void MarantzInput(string inp)
         {
-            if (!IsInitialisiert) return;
-            try
-            {
                 WebRequest webRequest = WebRequest.Create(mUrl+"/"+mInputPath);
                 webRequest.Method = "POST";
                 string postData = inp;
@@ -81,11 +77,6 @@ namespace ExternalDevices
                 WebResponse response = webRequest.GetResponse();
                 response.Dispose();
                 dataStream.Dispose();
-            }
-            catch
-            {
-                //SonosHelper.ServerErrorsAdd("DashController: Marantzinput", ex);todo: überlegen, wie man mit exception umgeht.
-            }
         }
         /// <summary>
         /// Lautstärke Setzen (Format "-30.0")

@@ -944,6 +944,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("GetAktSongInfo:AvTRansport", new Exception("AVTransport ist null"));
+                    return null;
+                }
                 var arguments = new UPnPArgument[9];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("Track", 0u);
@@ -965,6 +970,7 @@ namespace SonosUPNP
                 {
                     TrackIndex = Convert.ToInt32(arguments[1].DataValue.ToString()),
                     TrackMetaData = (string)arguments[3].DataValue,
+
                     TrackURI = (string)arguments[4].DataValue,
                     TrackDuration = trackDuration,
                     RelTime = relTime
@@ -1667,6 +1673,12 @@ namespace SonosUPNP
         {
             try
             {
+                if (RenderingControl == null)
+                {
+                    ServerErrorsAdd("GetVolume:KeinRenderingControl", new Exception("GetVolume:Kein RenderingControl beim Player gefunden"));
+                    return 0;
+
+                }
                 var arguments = new UPnPArgument[3];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("Channel", "Master");

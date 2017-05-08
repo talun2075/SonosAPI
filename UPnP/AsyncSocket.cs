@@ -660,13 +660,20 @@ namespace OSTL.UPnP
                 {
                     try
                     {
-                        if (MainSocket.SocketType == SocketType.Stream)
+                        if (MainSocket == null)
                         {
-                            sent = MainSocket.EndSend(result);
+                            Disconnect = true;
                         }
                         else
                         {
-                            sent = MainSocket.EndSendTo(result);
+                            if (MainSocket.SocketType == SocketType.Stream)
+                            {
+                                sent = MainSocket.EndSend(result);
+                            }
+                            else
+                            {
+                                sent = MainSocket.EndSendTo(result);
+                            }
                         }
                     }
                     catch (Exception ex)

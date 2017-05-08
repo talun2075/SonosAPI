@@ -435,7 +435,16 @@ namespace SonosAPI.Controllers
         {
             try
             {
-                SonosPlayer pl = GetPlayerbyRincon(id);
+                SonosPlayer pl;
+                try
+                {
+                    pl = GetPlayerbyRincon(id);
+                }
+                catch (Exception ex)
+                {
+                    AddServerErrors("GetVolume:GetPlayer", ex);
+                    return 1;
+                }
                 if (pl == null) return 1;
                 return GetPlayerbyRincon(id).GetVolume();
             }
@@ -1103,16 +1112,27 @@ namespace SonosAPI.Controllers
         {
             try
             {
-                SonosPlayer pla = GetPlayerbyRincon(id);
+                SonosPlayer pla;
+                try
+                {
+                    pla = GetPlayerbyRincon(id);
+                }
+                catch
+                {
+                    return new PlayerState();
+                }
                 if (pla == null || pla.CurrentState == null)
                 {
                     return new PlayerState();
                 }
                 PlayerInfo pl = pla.GetAktSongInfo();
                 PlayerState current = new PlayerState();
+                if (pl == null)
+                {
+                    return current;
+                }
                 if (pl.TrackMetaData != "NOT_IMPLEMENTED") //Kommt, wenn kein Song in Playlist
                 {
-                    
                     SonosItem song = new SonosItem();
                     try
                     {
