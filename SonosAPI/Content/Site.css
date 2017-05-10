@@ -23,6 +23,7 @@ a {
     left: 60px;
     border-radius: 14px 14px 14px 14px;
     box-shadow: 2px 2px 3px 1px;
+    background-color: white;
 }
 #AppIframeWrapper {
     display: none;
@@ -308,16 +309,17 @@ div#AppList ul {
 #Bewertungsfilter {
     background: url("/Images/filterrot.png") no-repeat scroll 0 0 / 100% 100% #000000;
     background: url("/Images/filterrot.png") no-repeat scroll 0 0 / 100% 100% rgba(0, 0, 0, 0);
-    position: absolute;
-    top: 270px;
-    right: 65px;
+    margin-top: 10px;
 }
 
     #Bewertungsfilter.akt {
         box-shadow: 0 0 0 #888;
         Background-Color: grey;
     }
-
+#Version {
+    position: absolute;
+    bottom: 2px;
+}
 #Gelegenheitendiv, #Geschwindigkeitendiv, #Stimmungendiv, #FilterStimmungendiv, #FilterGeschwindigkeitendiv, #FilterGelegenheitendiv {
     border-bottom: 2px solid black;
     height: 50px;
@@ -1484,7 +1486,9 @@ div#AppList ul {
 #Settingsbox {
     display: none;
 }
-
+#Settingsclose {
+    display: none;
+}
 #Settingsboxwrapper {
     overflow: auto;
     -webkit-overflow-scrolling: touch;

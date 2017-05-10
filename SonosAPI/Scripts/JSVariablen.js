@@ -122,6 +122,7 @@ function SonosDOMObjects() {
     this.setGroupMembers = $("#SetGroupMembers"); //Box mit allen Playern um auszuwählen, wer mit wem zusammengehört.
     this.settingsBox = $("#Settingsbox"); //Inhalt der Settings DIV
     this.settingsbutton = $("#Settings"); //Settingsbutton
+    this.settingsClosebutton = $("#Settingsclose"); //Settingsbutton
     this.shuffleButton = $("#Shuffle");//Mediabutton
     this.sleepMode = $("#SleepMode"); //Box für Sleepmode
     this.sleepModeButton = $("#SleepModeButton"); //Button Sleepmode

@@ -41,7 +41,6 @@
 <div id="SetMute" class="mediabuttonring" onclick="SetMute();"></div>
 <div id="Debug" class="mediabutton" onClick="WroteDebugInfos()">Debug</div>
 <div id="Browse" class="mediabuttonring" onclick="BrowsePress();"></div>
-<div id="Bewertungsfilter" class="mediabuttonring"></div>
 <div id="Browsebox" class="box_browse">
     <img id="BrowseLoader" src="/Images/ajax-loader2.gif" alt=""/>
     <div id="Ankerlist"></div>
@@ -59,8 +58,9 @@
 </div>
 <div id="Settings" class="mediabuttonring"></div>
 <div id="Settingsbox" class="box_settings">
-    <div id="MusikIndex"><b>Musikindex Aktualisieren</b> <img alt="Musikindex aktualisieren loader" id="MusikIndexLoader" src="/Images/ajax-loader2.gif"/><img id="MIUCheck"
-                                                                                                                                                               src="/Images/check.png"/>
+    <div id="Settingsclose">X</div>
+    <div id="MusikIndex"><b>Musikindex Aktualisieren</b> <img alt="Musikindex aktualisieren loader" id="MusikIndexLoader" src="/Images/ajax-loader2.gif"/>
+        <img id="MIUCheck"src="/Images/check.png"/>
     </div>
     <div id="Settingsboxwrapper">
         <p><b>Wiedergabeliste:</b><input id="SaveQueue" placeholder="Wiedergabeliste speichern als..." type="text"/><input type="text" name="Suggestion" disabled="disabled" id="Suggestion"/><img alt="Wiedergabeliste Speichern" id="SaveQueueLoader" src="/Images/ajax-loader2.gif"/><img src="/Images/save_red.png" alt="Playliste exportieren" id="SaveQueueImg" onclick="SaveQueue();"/>
@@ -91,8 +91,9 @@
                 <li><a target="_blank" data-appname="Aurora" onclick="LoadApp(this); return false;" href="/apps/aurora.html">Aurora</a></li>
             </ul>
         </div>
+        <div id="Bewertungsfilter" class="mediabuttonring"></div>
     </div>
-    Version:2.0
+    <div id="Version">Version:2.5</div>
 </div>
 <img id="Cover" alt="Cover" src="/Images/no-cover.png" onclick="ShowCurrentRating('show');"/>
 <div id="NextSongWrapper">

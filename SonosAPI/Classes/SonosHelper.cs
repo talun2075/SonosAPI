@@ -452,7 +452,7 @@ namespace SonosAPI.Classes
                     TraceLogMessageQueue(DateTime.Now.ToString(CultureInfo.CurrentCulture));
                     //Get Player
                     SonosPlayer sp = GetPlayer(sonosCheckChangesObject.PlayerName);
-                    if (sp == null) continue;
+                    if (sp == null) continue;//todo: überlegen ob das Sinn macht, wenn External Devices dabei sein können. Evtl. vorher prüfen, ob es sich um ein solches Gerät handelt?
 
                     switch (sonosCheckChangesObject.Changed)
                     {

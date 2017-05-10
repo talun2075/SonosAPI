@@ -129,6 +129,11 @@ $(document).ready(function () {
         SonosWindows(SoDo.settingsBox);
         SoDo.settingsbutton.toggleClass("akt");
     });
+    //Settingswurde gedrückt
+    SoDo.settingsClosebutton.on("click", function () {
+        SonosWindows(SoDo.settingsBox,true);
+        SoDo.settingsbutton.toggleClass("akt");
+    });
     //Events verarbeiten, wenn ein Button geklickt wurde.
     SoDo.nextButton.on("click", function () {
         //Curenttrack ändern, danach die Nummer Ändern und somit den Nexttrack rendern.

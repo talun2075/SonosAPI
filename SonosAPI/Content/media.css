@@ -46,7 +46,7 @@
     #SleepModeButton {
         bottom: auto;
         left: auto;
-        right: 5px;
+        right: 45px;
         top: 380px;
         height: 25px;
         width: 25px;
@@ -71,13 +71,6 @@
         left: auto;
         right: 100px;
         top: 380px;
-        height: 25px;
-        width: 25px;
-    }
-    #Bewertungsfilter {
-        left: auto;
-        right: 50px;
-        top: 380px; 
         height: 25px;
         width: 25px;
     }
@@ -141,6 +134,23 @@
         width: auto;
         bottom: 10px;
         max-width: 348px;
+        width: calc(100% - 60px);
+        height: 300px;
+    }
+    #Settingsboxwrapper {
+        height: 260px;
+    }
+    #Settingsclose {
+        display: block;
+        position: absolute;
+        top: -1px;
+        right: -1px;
+        height: 50px;
+        width: 50px;
+        background-color: gray;
+        border-radius: 0 25px 0 25px;
+        text-align: center;
+        line-height: 50px;
     }
     #SaveQueue {
         width: 230px;
@@ -149,6 +159,18 @@
         width: 230px;
         top: 86px;
         left: 22px;
+    }
+    #SaveQueueImg {
+        left: 5px;
+    }
+    #AppIframeWrapper {
+        right: auto;
+        height: 100%;
+        width: calc(100% - 5px);
+        border-radius: 25px 25px 25px 25px;
+    }
+    #AppIframeClose {
+        border-radius: 25px 25px 0 0;
     }
     #AudioIn {
         left: 220px;
