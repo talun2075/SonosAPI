@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Http;
-using MP3File;
 using SonosAPI.Classes;
 using SonosUPNP;
 
@@ -15,7 +14,6 @@ namespace SonosAPI.Controllers
         /// Alles was von den XFile Informationen gelöscht werden muß;
         /// </summary>
         public static string RemoveFromUri { get; set; } = SonosConstants.xfilecifs;
-        public static int MP3ErrorsCounter { get; set; }
         #endregion KlassenVariablen
         #region Public Methoden
         /// <summary>
@@ -27,7 +25,6 @@ namespace SonosAPI.Controllers
             try
             {
                 SonosHelper.Initialisierung();
-                MP3ReadWrite.CountEventHandler += MP3ErrorCounterChanged;
                 return "Ready";
             }
             catch (Exception x)
@@ -52,11 +49,5 @@ namespace SonosAPI.Controllers
             return SonosHelper.Sonos.Zones;
         }
         #endregion Public Methoden
-
-        private void MP3ErrorCounterChanged()
-        {
-            MP3ErrorsCounter = MP3ReadWrite.listOfCurrentErrors.Count;
-            MP3ReadWrite.WriteNow();
-        }
     }
 }

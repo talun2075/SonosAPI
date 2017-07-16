@@ -44,7 +44,7 @@ function SonosPlaylist() {
         }
         this.Playlist.splice(rem, 1);
         //numberof Tracks setzen.
-        SonosZones[SonosZones.ActiveZoneUUID].SetNumberOfTracks(this.Playlist.length);
+        SonosZones[SonosZones.ActiveZoneUUID].NumberOfTracks =this.Playlist.length;
         this.RenderPlaylist();
     }
     this.CheckToRender = function (pl) {

@@ -123,6 +123,7 @@ function SonosDOMObjects() {
     this.settingsBox = $("#Settingsbox"); //Inhalt der Settings DIV
     this.settingsbutton = $("#Settings"); //Settingsbutton
     this.settingsClosebutton = $("#Settingsclose"); //Settingsbutton
+    this.BrowseClosebutton = $("#Browseclose");
     this.shuffleButton = $("#Shuffle");//Mediabutton
     this.sleepMode = $("#SleepMode"); //Box für Sleepmode
     this.sleepModeButton = $("#SleepModeButton"); //Button Sleepmode

@@ -82,6 +82,12 @@
         left: 75px;
         bottom: 30px;
     }
+    #PlaylistCount.moveleft,#PlaylistCount.movedown,#AktSongInfo.moveleft,#Cover.moveright,#AktSongInfo.moveright {
+    -webkit-transform: translate(0,0);
+            -moz-transform: translate(0,0);
+            -o-transform: translate(0,0);
+            -ms-transform: translate(0,0);
+    }
     .mediabutton {
         height: 50px;
         width: 50px;
@@ -153,7 +159,7 @@
         line-height: 50px;
     }
     #SaveQueue {
-        width: 230px;
+        width: 200px;
     }
     #Suggestion {
         width: 230px;
@@ -166,7 +172,7 @@
     #AppIframeWrapper {
         right: auto;
         height: 100%;
-        width: calc(100% - 5px);
+        width: 100%;
         border-radius: 25px 25px 25px 25px;
     }
     #AppIframeClose {
@@ -197,4 +203,33 @@
         background-color: white;
         z-index: 91;
     }
+    .box_browse {
+        left: 0;
+        width: calc(100% - 27px);
+        top: 0;
+        padding: 70px 2px 20px 20px;
+        bottom: 5px;
+    }
+    #BrowseGenre {
+        left: 80px;
+        top: 35px;
+        right: 0;
+    }
+    #BrowseFavorites {
+        left: 170px;
+        top: 35px;
+    }
+    #Browseclose {
+        display: block;
+        position: absolute;
+        top: -1px;
+        right: -1px;
+        height: 50px;
+        width: 50px;
+        background-color: gray;
+        border-radius: 0 25px 0 25px;
+        text-align: center;
+        line-height: 50px;
+    }
+
 }

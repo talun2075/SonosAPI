@@ -89,6 +89,9 @@ $(document).ready(function () {
     $(window).on("resize", function () {
         SetHeight();
     });
+    $("#AppIframeClose").on("click", function() {
+        $("#AppIframeWrapper").hide(100);
+    });
     SoDo.lyricButton.on("click", function () {
         ShowPlaylistLyricCurrent();
     });
@@ -134,12 +137,16 @@ $(document).ready(function () {
         SonosWindows(SoDo.settingsBox,true);
         SoDo.settingsbutton.toggleClass("akt");
     });
+    SoDo.BrowseClosebutton.on("click", function () {
+        BrowsePress();
+        console.log("ok");
+    });
     //Events verarbeiten, wenn ein Button geklickt wurde.
     SoDo.nextButton.on("click", function () {
         //Curenttrack ändern, danach die Nummer Ändern und somit den Nexttrack rendern.
         if (SonosZones.CheckActiveZone()) {
             SoVa.currentplaylistScrolled = false;
-            SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrackNumber((SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber + 1));
+            SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber =(SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber + 1);
             SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrack(SonosZones[SonosZones.ActiveZoneUUID].Playlist.Playlist[(SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1)], "Nextclick");
             doit('Next');
             if (SoVa.ratingonlycurrent === false && SoDo.ratingListBox.is(":visible")) {
@@ -154,7 +161,7 @@ $(document).ready(function () {
             if ((SonosZones[SonosZones.ActiveZoneUUID].PlayMode !== "REPEAT_ALL" && SonosZones[SonosZones.ActiveZoneUUID].PlayMode !== "SHUFFLE") && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber === 1) {
                 return false;
             }
-            SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrackNumber((SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1));
+            SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber =(SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1);
             SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrack(SonosZones[SonosZones.ActiveZoneUUID].Playlist.Playlist[SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber], "PreClick");
             doit('Previous');
             SonosWindows(SoDo.ratingListBox, true);
@@ -200,7 +207,7 @@ $(document).ready(function () {
                     return false;
                 }
             }
-            SonosZones[SonosZones.ActiveZoneUUID].SetCordinatorVolume(ui.value);
+            SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume =ui.value;
             SetVolumeDevice(SonosZones.ActiveZoneUUID, ui.value);
             return true;
         },
@@ -337,7 +344,7 @@ function GetZones() {
             SonosLog("Zones SetActiveZone Ende");
             SonosLog("Zones SetDevice");
         } else {
-            SonosZones[SonosZones.ActiveZoneUUID].SetLocalActiveZone(true);
+            SonosZones[SonosZones.ActiveZoneUUID].ActiveZone = true;
         }
         if (renderZones === true) {
             window.setTimeout("SonosZones.RenderZones()", 500);
@@ -451,7 +458,7 @@ function SetDevice(dev) {
     SoVa.ratingonlycurrent = false;
     SoDo.devicesWrapper.children("DIV").children("DIV").removeClass("akt_device");
     $("#" + dev).addClass("akt_device");
-    SonosZones[dev].SetLocalActiveZone(true);
+    SonosZones[dev].ActiveZone = true;
     document.title = 'Sonos::' + SonosZones.ActiveZoneName;
     SonosLog("SetDevice Ende");
 } //Ende SetDevice
@@ -475,9 +482,9 @@ function PlayPress() {
     if (SonosZones.CheckActiveZone()) {
         SonosLog("PlayPress State:" + SonosZones[SonosZones.ActiveZoneUUID].PlayState);
         if (SonosZones[SonosZones.ActiveZoneUUID].PlayState === "PLAYING") {
-            SonosZones[SonosZones.ActiveZoneUUID].SetPlayState("PAUSED_PLAYBACK");
+            SonosZones[SonosZones.ActiveZoneUUID].PlayState ="PAUSED_PLAYBACK";
         } else {
-            SonosZones[SonosZones.ActiveZoneUUID].SetPlayState("PLAYING");
+            SonosZones[SonosZones.ActiveZoneUUID].PlayState="PLAYING";
         }
     }
     SonosLog("PlayPress Done");
@@ -495,8 +502,8 @@ function PlayPressSmall(k) {
     } else {
         SonosLog("PlayPressSmall läd doitValue");
         SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrack(SonosZones[SonosZones.ActiveZoneUUID].Playlist.Playlist[(PressKey - 1)], "PlaypressSmall");
-        SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrackNumber(PressKey);
-        SonosZones[SonosZones.ActiveZoneUUID].SetPlayState("PLAYING");
+        SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber =PressKey;
+        SonosZones[SonosZones.ActiveZoneUUID].PlayState ="PLAYING";
         doitValue("SetSongInPlaylist", PressKey);
     }
 
@@ -504,7 +511,7 @@ function PlayPressSmall(k) {
 //Setzen des Wiedergabemodus
 function SetPlaymode(v) {
     SonosLog("SetPlaymode:" + v);
-    SonosZones[SonosZones.ActiveZoneUUID].SetPlayMode(v);
+    SonosZones[SonosZones.ActiveZoneUUID].PlayMode =v;
 }
 //Setzen des Layout des Wiedergabemodus
 function SetPlaymodeDivs(v) {
@@ -549,7 +556,7 @@ function SetPlaymodeDivs(v) {
 function SetFade() {
     SonosLog("SetFade");
     SonosAjax("SetFadeMode");
-    SonosZones[SonosZones.ActiveZoneUUID].SetFadeMode(!SonosZones[SonosZones.ActiveZoneUUID].FadeMode);
+    SonosZones[SonosZones.ActiveZoneUUID].FadeMode = !SonosZones[SonosZones.ActiveZoneUUID].FadeMode;
 }
 //{ Lautstärke
 //Setzt Mute
@@ -590,7 +597,7 @@ function SetVolume(k) {
                         return false;
                     }
                 }
-                SonosZones[SonosZones.ActiveZoneUUID].SetCordinatorVolume(ui.value);
+                SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume =ui.value;
                 SoDo.volumeSlider.slider({ value: ui.value });
                 $("#MultivolumePrimaryNumber").html(ui.value);
                 SetVolumeDevice(SonosZones.ActiveZoneUUID, ui.value);
@@ -671,7 +678,7 @@ function SetVolume(k) {
         } else {
             newvolume = SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume - v;
         }
-        SonosZones[SonosZones.ActiveZoneUUID].SetCordinatorVolume(newvolume);
+        SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume =newvolume;
         SetVolumeDevice(SonosZones.ActiveZoneUUID, newvolume);
     }
 }
@@ -938,39 +945,37 @@ function ShowPlaylistLyricCurrent() {
         MoveAktArtist();
     }
 }
-function MoveAktArtist(timer) {
+function MoveAktArtist() {
+
     if (SoVa.smallDevice === true) {
         return;
     }
-    if (typeof timer === "undefined") {
-        timer = 1000;
-    }
     var hivi = (SoDo.lyric.is(":hidden") && SoDo.browse.is(":hidden") && SoDo.lyricsPlaylist.is(":hidden"));
     if (SoVa.ratingonlycurrent === false && hivi === false) {
-        SoDo.aktSongInfo.animate({ left: '750px' }, timer);
-        SoDo.cover.animate({ right: '5px' }, timer);
-        SoDo.playlistCount.animate({ bottom: '30px' }, timer);
+        SoDo.aktSongInfo.addClass("moveright");
+        SoDo.cover.addClass("moveright");
+        SoDo.playlistCount.addClass("movedown");
     }
     if (SoVa.ratingonlycurrent === false && hivi === true) {
-        SoDo.aktSongInfo.animate({ left: '630px' }, timer);
-        SoDo.cover.animate({ right: '110px' }, timer);
-        SoDo.playlistCount.animate({ bottom: '50px' }, timer);
+        SoDo.aktSongInfo.removeClass("moveright");
+        SoDo.cover.removeClass("moveright");
+        SoDo.playlistCount.removeClass("movedown");
     }
     if (SoVa.ratingonlycurrent === true && hivi === false && SoDo.ratingListBox.is(":hidden")) {
-        SoDo.aktSongInfo.animate({ left: '750px' }, timer);
-        SoDo.cover.animate({ right: '5px' }, timer);
-        SoDo.playlistCount.animate({ bottom: '30px' }, timer);
+        SoDo.aktSongInfo.addClass("moveright");
+        SoDo.cover.addClass("moveright");
+        SoDo.playlistCount.addClass("movedown");
     }
     if (SoVa.ratingonlycurrent === true && hivi === true && SoDo.ratingListBox.is(":hidden")) {
-        SoDo.aktSongInfo.animate({ left: '630px' }, timer);
-        SoDo.cover.animate({ right: '110px' }, timer);
-        SoDo.playlistCount.animate({ bottom: '50px' }, timer);
+        SoDo.aktSongInfo.removeClass("moveright");
+        SoDo.cover.removeClass("moveright");
+        SoDo.playlistCount.removeClass("movedown");
     }
     if (SoVa.ratingonlycurrent === true && hivi === true && SoDo.ratingListBox.is(":visible")) {
-        SoDo.playlistCount.animate({ bottom: '50px' }, timer);
+        SoDo.playlistCount.removeClass("movedown");
     }
     if (SoVa.ratingonlycurrent === true && hivi === false && SoDo.ratingListBox.is(":visible")) {
-        SoDo.playlistCount.animate({ bottom: '30px' }, timer);
+        SoDo.playlistCount.addClass("movedown");
     }
 }
 //Entfernt ein Song aus der Playlist
@@ -982,7 +987,7 @@ function RemoveFromPlaylist(k) {
     SonosAjax("RemoveSongInPlaylist", "", (PressKey + 1)).success(function (data) {
         if (data === true) {
             if (PressKey < SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber) {
-                SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrackNumber(SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1);
+                SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber =(SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1);
             }
             //Playlist wird automatisch neu geladen. 
             SonosZones[SonosZones.ActiveZoneUUID].Playlist.RemoveFromPlaylist(PressKey);
@@ -1250,13 +1255,15 @@ function ShowCurrentRating(t) {
             SonosWindows(SoDo.ratingListBox);
         }
         //Verschieben des Titels.
-        SoDo.aktSongInfo.animate({ left: "530px" }, 1000);
-        SoDo.playlistCount.animate({ left: "430px" }, 1000);
+
+        SoDo.aktSongInfo.addClass("moveleft");
+        SoDo.playlistCount.addClass("moveleft");
     }
     if (SoVa.ratingonlycurrent === true && t === "hide") {
         SonosWindows(SoDo.ratingListBox);
-        SoDo.playlistCount.animate({ left: "530px" }, 1000);
         MoveAktArtist();
+        SoDo.aktSongInfo.removeClass("moveleft");
+        SoDo.playlistCount.removeClass("moveleft");
         return;
     }
     if (SoVa.ratingonlycurrent === false) {
@@ -1443,7 +1450,9 @@ function ShowRatingErrorNames() {
 function BrowsePress() {
     SonosLog("BrowsePress");
     SonosWindows(SoDo.browse);
-    MoveAktArtist(250);
+    if (document.body.clientWidth > 420) {
+        MoveAktArtist(250);
+    }
     SoDo.browseButton.toggleClass("akt");
     if (SoVa.browsefirst === 0) {
         window.setTimeout("LoadBrowse('A:ALBUMARTIST')", 300);
@@ -1527,7 +1536,7 @@ function LoadBrowse(v) {
                         //Rating wird mitgeliefert und angezeigt, wenn es . 
                         var rating = '<div class="bomb" Style="display:block;"><img src="/Images/bombe.png" alt="playlistbomb"/></div>';
                             if (parseInt(item.MP3.Bewertung) !== -1) {
-                                rating = '<div style="float: left;margin-left: 10px;margin-top: 10px;" class="rating_bar"><div style="width:' + item.MP3.Bewertung + '%;"></div></div>';
+                                rating = '<div style="margin-left: 10px;margin-top: 10px;" class="rating_bar"><div style="width:' + item.MP3.Bewertung + '%;"></div></div>';
                             }
                         //Bei Favoriten das Rating überschreiben durch ein Remove von Favoriten
                         if (item.ParentID === "FV:2") {
@@ -1883,16 +1892,13 @@ function LoadApp(t) {
             $("#AppIframe").html("<iframe src='/apps/clock.html'></iframe>");
             break;
         case 'Dash':
-            $("#AppIframe").html("<iframe src='/apps/dash.html' scrolling='no'></iframe>");
+            $("#AppIframe").html("<iframe src='/apps/dash.html'></iframe>");
             break;
         case 'Aurora':
             $("#AppIframe").html("<iframe src='/apps/aurora.html' scrolling='no'></iframe>");
             break;
     }
     $("#AppIframeWrapper").slideDown(100);
-}
-function CloseAppIframe() {
-    $("#AppIframeWrapper").hide(100);
 }
 //Eventing?
 /*

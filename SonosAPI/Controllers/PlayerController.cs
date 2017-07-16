@@ -566,7 +566,8 @@ namespace SonosAPI.Controllers
         [HttpGet]
         public int GetErrorListCount()
         {
-            return DevicesController.MP3ErrorsCounter;
+            MP3ReadWrite.WriteNow();
+            return MP3ReadWrite.listOfCurrentErrors.Count;
         }
         /// <summary>
         /// Liefert die ServerErrorliste

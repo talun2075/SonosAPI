@@ -32,12 +32,11 @@ namespace SonosConsole
             if (args == null) throw new ArgumentNullException(nameof(args));
             //Liste der DashButtons definieren.MAC ohne Doppelpunkte
             dashlist.Add(PhysicalAddress.Parse("AC63BEC64066"));//Seriennummer 213544
-            dashlist.Add(PhysicalAddress.Parse("AC63BE1A3548"));//Seriennummer 359509
             dashlist.Add(PhysicalAddress.Parse("AC63BE9D0BE7"));//Seriennummer 277109
             dashlist.Add(PhysicalAddress.Parse("AC63BE3AC1CF"));//Seriennummer 832769
             dashlist.Add(PhysicalAddress.Parse("AC63BE0EA91A"));//Seriennummer 823671
             dashlist.Add(PhysicalAddress.Parse("50F5DA5B814D"));//Seriennummer 455294
-            
+            dashlist.Add(PhysicalAddress.Parse("6837E921DD21"));//Seriennummer 735888
             foreach (var macstring in dashlist)
             {
                 DiclastEventTime.Add(macstring.ToString(), DateTime.Now.AddSeconds(-100));
@@ -211,13 +210,13 @@ namespace SonosConsole
                             }
                         }
                         break;
-                    case "AC63BE1A3548":
+                    case "6837E921DD21":
                     case "AC63BE3AC1CF":
                         var nowAC63BE1A3548 = DateTime.Now;
-                        if (nowAC63BE1A3548 - DuplicateIgnoreInterval > DiclastEventTime["AC63BE1A3548"])
+                        if (nowAC63BE1A3548 - DuplicateIgnoreInterval > DiclastEventTime["AC63BE3AC1CF"])
                         {
                             Console.WriteLine("Musik Erdgeschoss");
-                            DiclastEventTime["AC63BE1A3548"] = nowAC63BE1A3548;
+                            DiclastEventTime["AC63BE3AC1CF"] = nowAC63BE1A3548;
                             try
                             {
                                 CallWebInterface2(initialSonosUrl+"/Sonos/dash/dash2/0", goodReturnValue);

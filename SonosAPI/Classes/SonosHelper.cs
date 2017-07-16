@@ -191,7 +191,7 @@ namespace SonosAPI.Classes
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="message"></param>
-        private static void TraceLog(string filename, string message)
+        internal static void TraceLog(string filename, string message)
         {
             try
             {
@@ -219,7 +219,7 @@ namespace SonosAPI.Classes
 
         internal static void TraceLogMessageQueue(string message)
         {
-            TraceLog("mq",message);
+            //TraceLog("mq",message);
         }
         /// <summary>
         /// Wird aufgerufen, wenn sich etwas bei einem Player geändert hat
@@ -335,15 +335,6 @@ namespace SonosAPI.Classes
             {
                 sp.BecomeCoordinatorofStandaloneGroup();
                 Thread.Sleep(300);
-                if (!fromMessaQueue)
-                {
-                    MessageQueue(new SonosCheckChangesObject
-                    {
-                        Changed = SonosCheckChangesConstants.SinglePlayer,
-                        PlayerName = sp.Name,
-                        Value = ""
-                    });
-                }
                 return false;
             }
             if (sp.IsZoneCoord == null)

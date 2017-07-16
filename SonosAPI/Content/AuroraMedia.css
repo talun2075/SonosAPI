@@ -1,7 +1,7 @@
 ﻿@media screen and (max-width: 550px) {
 #Scenarios {
     position: absolute;
-    left: 100px;
+    left: 150px;
 }
 #AuroraWrapper {
     width: 100%;
@@ -18,10 +18,10 @@
 #BrightnessSlider {
     height: 200px;
     float: left;
-    left: 50px;
+    left: 80px;
 }
 .container {
-    left: 50px;
+    left: 80px;
     position: relative;
 }
 

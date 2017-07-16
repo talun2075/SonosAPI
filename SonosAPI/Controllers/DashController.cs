@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Web.Http;
 using ExternalDevices;
@@ -110,19 +112,39 @@ namespace SonosAPI.Controllers
             //Durch alle Zonen gehen und Gruppen auflösen und Pausieren, falls einer abspielt. 
             #region STOPP
             Boolean foundplayed = false;
+            List<string> foundedPlayer = new List<string>();
             try
             {
                 
-
-                foreach (SonosPlayer sp in SonosHelper.Sonos.Players)
+                SonosHelper.TraceLog("Stopp.log","Prüfung ob ausgeschaltet werden muss");
+                lock (SonosHelper.Sonos.Players)
                 {
-                    var oldTransport = sp.CurrentState.TransportState;
-                    SonosHelper.CheckIsZoneCord(sp);
-                    SonosHelper.WaitForTransitioning(sp);
-                    if (sp.CurrentState.TransportState != PlayerStatus.PLAYING && oldTransport != PlayerStatus.PLAYING) continue;
-                    foundplayed = true;
-                    sp.SetPause();
-                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Playing, PlayerName = sp.Name, Value = "false" });
+                    foreach (SonosPlayer sp in SonosHelper.Sonos.Players)
+                    {
+                        if (sp.CurrentState.TransportState == PlayerStatus.PLAYING)
+                        {
+                            foundedPlayer.Add(sp.Name);
+                        }
+                    }
+                }
+                if (foundedPlayer.Any())
+                {
+                    foreach (string playername in foundedPlayer)
+                    {
+                        var pl = SonosHelper.GetPlayer(playername);
+                        if (pl == null)
+                            return retValReload + " Es konnte der Player " + playername + " nicht als Objekt ermittelt werden.";
+
+                        var wasZoneCord = SonosHelper.CheckIsZoneCord(pl);
+                        SonosHelper.WaitForTransitioning(pl);
+                        if (wasZoneCord)
+                        {
+                            foundplayed = true;
+                            pl.SetPause();
+                            SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.Playing, PlayerName = pl.Name, Value = "false" });
+                        }
+
+                    }
                 }
             }
             catch(Exception ex)
@@ -155,8 +177,8 @@ namespace SonosAPI.Controllers
                 return retValReload + " Exception: Marantz konnte nicht geschaltet werden.";
             }
             #endregion STOPP
-            //Aurora einschalten ab 18 Uhr.
-            if (DateTime.Now.Hour > 17)
+            //Aurora einschalten zwischen 18 Uhr und 5 Uhr.
+            if (DateTime.Now.Hour > 17 || DateTime.Now.Hour < 6)
             {
                 if (Nanoleaf.Initialisieren())
                 {
@@ -260,7 +282,7 @@ namespace SonosAPI.Controllers
              */
             try
             {
-                if (DateTime.Now.Hour > 17)
+                if (DateTime.Now.Hour > 17 || DateTime.Now.Hour < 6)
                 {
                     return MakePlayerFine(SonosConstants.KinderzimmerName, SonosConstants.KinderzimmerVolume, false, kzPlaylist);
                 }

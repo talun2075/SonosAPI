@@ -52,11 +52,6 @@ namespace MP3File
     public static class MP3ReadWrite
     {
         /// <summary>
-        /// Eventhandler um Änderungen bei der Verarbeitung mitzubekommen. 
-        /// </summary>
-        public static event Action CountEventHandler;
-
-        /// <summary>
         /// Aktuell nicht zu verarbeitende Songs
         /// Meistens weil die gerade abgespielt werden.
         /// </summary>
@@ -83,8 +78,6 @@ namespace MP3File
                 song.Genre = _song.Genre;
                 song.Laufzeit = _song.Laufzeit;
             }
-            if(CountEventHandler != null)
-                CountEventHandler.Invoke();
         }
         /// <summary>
         /// Versucht die Fehlerliste abzuarbeiten 
@@ -114,8 +107,6 @@ namespace MP3File
                         {
                             MP3File k = listOfCurrentErrors[erledigt];
                             listOfCurrentErrors.Remove(k);
-                            if (CountEventHandler != null)
-                                CountEventHandler.Invoke();
                         }
                         // ReSharper disable once EmptyGeneralCatchClause
                         catch

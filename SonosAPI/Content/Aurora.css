@@ -32,6 +32,9 @@
 }
 #BrightnessSliderValue {
     color: black;
+    position: relative;
+    left: -40px;
+    top: -130px;
 }
 
 

@@ -42,6 +42,7 @@ namespace SonosUPNP
         /// <param name="ExceptionMes"></param>
         private void ServerErrorsAdd(string Method, Exception ExceptionMes)
         {
+            if (ExceptionMes.Message.StartsWith("Could not connect to device")) return;
             string error = DateTime.Now.ToString("yyyy-M-d_-_hh-mm-ss") + "_" + DateTime.Now.Ticks + " " + Method + " " + ExceptionMes.Message;
             var dir = Directory.CreateDirectory(@"C:\NasWeb\Error");
             string file = dir.FullName + "\\Log_" + Name + ".txt";
@@ -53,13 +54,13 @@ namespace SonosUPNP
                     sw.WriteLine("Loggingstart:");
                 }
             }
-            using (StreamWriter sw = File.AppendText(file))
-            {
-                sw.WriteLine(error);
-                sw.WriteLine("TargetSite: " + ExceptionMes.TargetSite);
-                sw.WriteLine("Base:Message: " + ExceptionMes.GetBaseException().Message);
-            }
 
+                using (StreamWriter sw = File.AppendText(file))
+                {
+                    sw.WriteLine(error);
+                    sw.WriteLine("TargetSite: " + ExceptionMes.TargetSite);
+                    sw.WriteLine("Base:Message: " + ExceptionMes.GetBaseException().Message);
+                }
         }
         #endregion
         #region Eventing
@@ -882,8 +883,10 @@ namespace SonosUPNP
         {
             try
             {
-                var arguments = new UPnPArgument[1];
+                var arguments = new UPnPArgument[3];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
+                arguments[1] = new UPnPArgument("DelegatedGroupCoordinatorID", null);
+                arguments[2] = new UPnPArgument("NewGroupID", null);
                 AVTransport.InvokeAsync("BecomeCoordinatorOfStandaloneGroup", arguments);
             }
             catch (Exception ex)

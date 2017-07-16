@@ -19,7 +19,6 @@ namespace ExternalDevices
         private static Int16 _port;
         private const string _Statepath = "/state";
         private const string _Apipath = "/api/beta/";
-        private static Boolean _initialized;
         #region PublicMethods
         /// <summary>
         /// Init the aurora
@@ -30,7 +29,6 @@ namespace ExternalDevices
         /// <returns>Was the Init Successfull</returns>
         public static Boolean Initialisieren(string token= "JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3", string ip="192.168.0.166", Int16 port=16021)
         {
-            if (_initialized) return true;
             if (String.IsNullOrEmpty(ip) || String.IsNullOrEmpty(token)) return false;
             if (ip.StartsWith("http://"))
                 ip = ip.Replace("http://", "");
@@ -39,17 +37,20 @@ namespace ExternalDevices
             _tokenAuth = token;
             _ip = ip;
             _port = port;
-            return GetNanoLeafInformations();
+            return token == "new" || GetNanoLeafInformations();
         }
         /// <summary>
         /// Use to Get a New Token
         /// Push the On Button for 5 till 7 Seconds on the Aurora and then Call this Method. You have 30 Seconds time.
         /// </summary>
         /// <returns>New Token</returns>
-        public static String NewUser()
+        public static String NewUser(string ip, Int16 port=16021)
         {
-            CheckIniState();
-            return ConnectToNanoleaf(NanoleafRequest.POST, "new");
+            if (Initialisieren("new", ip, port))
+            {
+                return ConnectToNanoleaf(NanoleafRequest.POST, "new");
+            }
+            return "Es ist ein Fehler beim Anlegen des neuen Users entstanden!";
         }
 
         public static String SetRandomScenario()
@@ -119,7 +120,54 @@ namespace ExternalDevices
 
             }
         }
-
+        /// <summary>
+        /// Farbton (Hue)
+        /// </summary>
+        public static int Hue
+        {
+            get
+            {
+                return NLJ.State.Hue.Value;
+            }
+            set
+            {
+                if (value > NLJ.State.Hue.Max || value < NLJ.State.Hue.Min) return;
+                NLJ.State.Hue.Value = value;
+                ConnectToNanoleaf(NanoleafRequest.PUT, _Statepath, "{\"hue\":" + NLJ.State.Hue.Value + "}");
+            }
+        }
+        /// <summary>
+        /// Saturation
+        /// </summary>
+        public static int Saturation
+        {
+            get
+            {
+                return NLJ.State.Saturation.Value;
+            }
+            set
+            {
+                if (value > NLJ.State.Saturation.Max || value < NLJ.State.Saturation.Min) return;
+                NLJ.State.Saturation.Value = value;
+                ConnectToNanoleaf(NanoleafRequest.PUT, _Statepath, "{\"sat\":" + NLJ.State.Saturation.Value + "}");
+            }
+        }
+        /// <summary>
+        /// ColorTemperature
+        /// </summary>
+        public static int ColorTemperature
+        {
+            get
+            {
+                return NLJ.State.ColorTemperature.Value;
+            }
+            set
+            {
+                if (value > NLJ.State.ColorTemperature.Max || value < NLJ.State.ColorTemperature.Min) return;
+                NLJ.State.ColorTemperature.Value = value;
+                ConnectToNanoleaf(NanoleafRequest.PUT, _Statepath, "{\"ct\":" + NLJ.State.Saturation.Value + "}");
+            }
+        }
         #endregion PublicProperties
 
         #region PrivateMethods
@@ -128,7 +176,6 @@ namespace ExternalDevices
         /// </summary>
         private static void CheckIniState()
         {
-            if (!_initialized)
                 Initialisieren();
         }
 
@@ -235,14 +282,14 @@ namespace ExternalDevices
                     // Deserialization from JSON  
                     DataContractJsonSerializer deserializer = new DataContractJsonSerializer(typeof(NanoLeafJson));
                     NLJ = (NanoLeafJson)deserializer.ReadObject(ms);
-
+                    NLJ.State.ColorTemperature.Max = 6500;
+                    NLJ.State.ColorTemperature.Min = 1200;
                 }
             }
             catch
             {
                 return false;
             }
-            _initialized = true;
             return true;
         }
         #endregion PrivateMethods

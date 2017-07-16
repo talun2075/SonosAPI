@@ -71,11 +71,23 @@ namespace SonosAPI.Controllers
             }
             return Nanoleaf.Brightness;
         }
-
+        /// <summary>
+        /// Setzen eins zufälligen Scenarios
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         public String SetRandomScenario(int id)
         {
             return Nanoleaf.SetRandomScenario();
+        }
+
+        [HttpGet]
+        public Boolean SetHue(int id)
+        {
+            if (id < Nanoleaf.NLJ.State.Hue.Min || id > Nanoleaf.NLJ.State.Hue.Max) return false;
+            Nanoleaf.Hue = id;
+            return true;
         }
     }
 }

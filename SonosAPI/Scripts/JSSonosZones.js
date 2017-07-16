@@ -46,7 +46,7 @@ function SonosZonesObject() {
                         playtext = "Pause";
                         playinternal = playtext;
                     }
-                    $('<div class="groupdevicewrapper"><div id="' + SonosZones[p].ZoneUUID + '" data-players="' + SonosZones[p].GetCordinatedPlayer().length + '" class="device' + aktdev + '" onclick="SetDevice(\'' + SonosZones[p].ZoneUUID + '\');"><p>' + SonosZones[p].ZoneName + '</p>' + SonosZones[p].GetCordinatedPlayerasStringFormat() + '</div><img id="deviceplayinggif_' + SonosZones[p].ZoneUUID + '" class="deviceplayinggif" ' + playstateimg + ' src="/images/playing.gif"><div id="GroupDevice_' + SonosZones[p].ZoneUUID + '" onclick="SetDeviceGroupFor(\'' + SonosZones[p].ZoneUUID + '\')" class="groupdeviceclass">&nbsp;&nbsp;Gruppe&nbsp;&nbsp;</div><div class="groupdeviceclass" onclick="SonosZones.' + SonosZones[p].ZoneUUID + '.SetPlayState(\'' + playinternal + '\')" id="' + SonosZones[p].ZoneUUID + '_GroupPlayState">&nbsp;&nbsp;' + playtext + '&nbsp;&nbsp;</div></div>').appendTo(SoDo.devicesWrapper);
+                    $('<div class="groupdevicewrapper"><div id="' + SonosZones[p].ZoneUUID + '" data-players="' + SonosZones[p].GetCordinatedPlayer().length + '" class="device' + aktdev + '" onclick="SetDevice(\'' + SonosZones[p].ZoneUUID + '\');"><p>' + SonosZones[p].ZoneName + '</p>' + SonosZones[p].GetCordinatedPlayerasStringFormat() + '</div><img id="deviceplayinggif_' + SonosZones[p].ZoneUUID + '" class="deviceplayinggif" ' + playstateimg + ' src="/images/playing.gif"><div id="GroupDevice_' + SonosZones[p].ZoneUUID + '" onclick="SetDeviceGroupFor(\'' + SonosZones[p].ZoneUUID + '\')" class="groupdeviceclass">&nbsp;&nbsp;Gruppe&nbsp;&nbsp;</div><div class="groupdeviceclass" onclick="SonosZones.' + SonosZones[p].ZoneUUID + '.PlayState =\'' + playinternal + '\'" id="' + SonosZones[p].ZoneUUID + '_GroupPlayState">&nbsp;&nbsp;' + playtext + '&nbsp;&nbsp;</div></div>').appendTo(SoDo.devicesWrapper);
                     zcounter++;
                 }
             }
@@ -108,7 +108,7 @@ function SonosZonesObject() {
                     for (var cp = 0; cp < crdplayer.length; cp++) {
                         var cpuuid = crdplayer[cp].UUID;
                         if (cpuuid === this.ActiveZoneUUID) {
-                            SonosZones[aktuuid].SetLocalActiveZone(true); //Neuen Master definieren
+                            SonosZones[aktuuid].ActiveZone =true; //Neuen Master definieren
                         }
                     }
                 }
@@ -135,7 +135,7 @@ function SonosZonesObject() {
             if (prop[i].substring(0, Checker.length) === Checker && (prop[i] !== rincon)) {
                 //Es handelt sich um einen Sonosplayer
                 var p = prop[i];
-                SonosZones[p].SetLocalActiveZone(false);
+                SonosZones[p].ActiveZone =false;
             }
         }
         this.ActiveZoneUUID = rincon;
@@ -213,7 +213,7 @@ function SonosZonesObject() {
             if (prop[i].substring(0, Checker.length) === Checker) {
                 //Es handelt sich um einen Sonosplayer
                 var p = prop[i];
-                SonosZones[p].SetLocalActiveZone(true);
+                SonosZones[p].ActiveZone =true;
                 break;
             }
         }
@@ -229,14 +229,14 @@ function SonosZonesObject() {
                 //Es handelt sich um einen Sonosplayer
                 var p = prop[i];
                 if (SonosZones[p].ZoneName === s) {
-                    SonosZones[p].SetLocalActiveZone(true);
+                    SonosZones[p].ActiveZone =true;
                     break;
                 } else {
                     var corplayer = SonosZones[p].GetCordinatedPlayer();
                     if (corplayer.length > 0) {
                         for (var cp = 0; cp < corplayer.length; cp++) {
                             if (corplayer[cp].Name === s) {
-                                SonosZones[p].SetLocalActiveZone(true);
+                                SonosZones[p].ActiveZone=true;
                                 found = true;
                                 break;
                             }
