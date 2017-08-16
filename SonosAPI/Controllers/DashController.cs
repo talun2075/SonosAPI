@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Web.Http;
 using ExternalDevices;
@@ -115,20 +116,41 @@ namespace SonosAPI.Controllers
             List<string> foundedPlayer = new List<string>();
             try
             {
-                
-                SonosHelper.TraceLog("Stopp.log","Prüfung ob ausgeschaltet werden muss");
-                lock (SonosHelper.Sonos.Players)
+                try
                 {
-                    foreach (SonosPlayer sp in SonosHelper.Sonos.Players)
+                    if (SonosHelper.Sonos == null)
                     {
-                        if (sp.CurrentState.TransportState == PlayerStatus.PLAYING)
+                        SonosHelper.Initialisierung();
+                    }
+                    if (SonosHelper.Sonos == null)
+                    {
+                        return retValReload + " Sonos ist null und konnte nicht initialisiert werden!";
+                    }
+                    lock (SonosHelper.Sonos.Players)
+                    {
+                        foreach (SonosPlayer sp in SonosHelper.Sonos.Players)
                         {
-                            foundedPlayer.Add(sp.Name);
+                            try
+                            {
+                                if (sp.CurrentState.TransportState == PlayerStatus.PLAYING)
+                                {
+                                    foundedPlayer.Add(sp.Name);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                return retValReload + "Block1.1 Exception: Beim prüfen ob ausgeschaltet werden muss:" + ex.Message;
+                            }
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    return retValReload + "Block1 Exception: Beim prüfen ob ausgeschaltet werden muss:" + ex.Message;
+                }
                 if (foundedPlayer.Any())
                 {
+
                     foreach (string playername in foundedPlayer)
                     {
                         var pl = SonosHelper.GetPlayer(playername);
@@ -397,16 +419,25 @@ namespace SonosAPI.Controllers
         /// <returns>True muss neu geladen werden</returns>
         private Boolean CheckPlaylist(string pl, SonosPlayer sp)
         {
+            StringBuilder sb = new StringBuilder();
             try
             {
+                
+                sb.AppendLine("Logging für Checkplaylist");
                 Boolean retval = false;
                 var evtlStream = sp.GetAktSongInfo();
+                sb.AppendLine("Aktueller Song ansehen");
                 if (evtlStream.TrackURI.StartsWith("aac") || evtlStream.TrackURI.Contains("mp3radio") || evtlStream.TrackURI.Contains(SonosConstants.xsonosapistream))
                     return true;
-
+                sb.AppendLine("Aktueller Song ist kein Stream");
                 var actpl = sp.GetPlaylist(0, 10);
+                sb.AppendLine("Aktuelle Playlist laden");
                 if (actpl.Count == 0) return true;
+                sb.AppendLine("Aktuelle Playlist größer als 0 Einträge"+actpl.Count);
                 var toLoadpl = sp.BrowsingWithLimitResults(pl, 10);
+                sb.AppendLine("Neue Playlist laden erfolgreich");
+                if (toLoadpl.Count == 0) return true;//eigentlich ein Fehler
+                sb.AppendLine("Neue Playlist mehr als 0 und wiurd nun durchlaufen");
                 for (int i = 0; i < actpl.Count; i++)
                 {
                     if (actpl[i].Title == toLoadpl[i].Title) continue;
@@ -417,6 +448,7 @@ namespace SonosAPI.Controllers
             }
             catch (Exception ex)
             {
+                SonosHelper.TraceLog("Checkplaylist.log",sb.ToString());
                 SonosHelper.ServerErrorsAdd("Dash2:CheckPlaylist", ex);
                 return true;
             }
@@ -429,19 +461,26 @@ namespace SonosAPI.Controllers
         /// <returns></returns>
         private Boolean LoadPlaylist(string pl, SonosPlayer sp)
         {
+            StringBuilder stringb = new StringBuilder();
             try
             {
+                stringb.AppendLine("Löschen aller Tracks von " + sp.Name);
                 sp.RemoveAllTracksFromQueue();
                 Thread.Sleep(300);
+                stringb.AppendLine("Playlist wird geladen:"+pl);
                 var sonospl = sp.BrowsingMeta(pl);
+                stringb.AppendLine("Playlist wurde geladen und hat "+sonospl.Count+" Ergebnisse.");
                 sp.Enqueue(sonospl[0], true);
                 Thread.Sleep(200);
+                stringb.AppendLine("Playlist wurde ersetzt.");
                 sp.SetAVTransportURI(SonosConstants.xrinconqueue + sp.UUID + "#0");
+                stringb.AppendLine("SetAVTransportURI wurde ersetzt.");
                 Thread.Sleep(500);
                 return true;
             }
             catch
             {
+                SonosHelper.TraceLog("Loadplaylist.log", stringb.ToString());
                 return false;
             }
         }

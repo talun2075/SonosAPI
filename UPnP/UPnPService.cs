@@ -3014,6 +3014,7 @@ namespace OSTL.UPnP
         /// </summary>
         /// <param name="MethodName">Name of Method</param>
         /// <param name="InVarArr">Array of UPnPArguments</param>
+        /// <param name="Tag"></param>
         /// <param name="InvokeCallback">Callback for Success</param>
         /// <param name="ErrorCallback">Callback for Failed</param>
         /// <returns>Unique Handle identifier</returns>

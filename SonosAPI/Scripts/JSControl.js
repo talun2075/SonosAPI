@@ -65,7 +65,7 @@ $(document).ready(function () {
     //SonosLog("Document Ready");
     window.SoDo = new SonosDOMObjects();
     window.SoVa = new SonosVariablen();
-    if (document.body.clientWidth < 360) {
+    if (document.body.clientWidth < 770) {
         SoVa.smallDevice = true;
     }
     window.SonosZones = new SonosZonesObject();
@@ -287,7 +287,7 @@ function GetZones() {
     SonosLog("Zones laden");
     clearTimeout(SoVa.GetZonesTimer);
     SonosAjax("GetCoordinator").success(function (data) {
-        if (data == null || data.length === 0 || data[0].ZoneName === "Leer") {
+        if (data === null || typeof data === "undefined" || data.length === 0 || data[0].ZoneName === "Leer") {
             SoVa.GetZonesTimer = window.setTimeout("GetZones()", 800);
             SonosLog("Zones leer beim Laden");
             return;
@@ -319,9 +319,6 @@ function GetZones() {
                 if (parseInt($("#" + data[i].CoordinatorUUID).attr("data-players")) !== data[i].Players.length) {
                     //Anzahl der Player hat sich geändert.
                     renderZones = true;
-                }
-                if (data[i].Players.length > 0 && renderZones === false) {
-                    
                 }
                 SonosZones[rincon].SetBySonosItem(data[i]);
             } else {
@@ -379,7 +376,7 @@ function GroupDeviceShow() {
     } else {
         $(".groupdeviceclass").css("display", "none");
         SoDo.devicesWrapper.animate({ width: "165px" }, 1000, function () {
-            SoDo.devicesWrapper.removeClass("groupdevicesshown").css("z-index", 100);;
+            SoDo.devicesWrapper.removeClass("groupdevicesshown").css("z-index", 100);
             SoDo.groupDeviceShow.text(">>");
         });
         SoDo.devices.animate({ width: "165" }, 1000);
@@ -741,7 +738,7 @@ function AddToPlaylist(item) {
 //Setzen des Songs in der aktuellen Playlist
 function SetCurrentPlaylistSong(apsnumber, source) {
     if (typeof apsnumber == "undefined" || apsnumber == null) {
-        if (typeof SonosZones[SonosZones.ActiveZoneUUID] !== "undefined" && typeof SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber !== "undefined" && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber != null && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber !== 0) {
+        if (typeof SonosZones[SonosZones.ActiveZoneUUID] !== "undefined" && typeof SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber !== "undefined" && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber !== null && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber !== 0) {
             apsnumber = SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber;
         } else {
             SonosLog("SetCurrentPlaylistSong nicht möglich, da kein Currenttrack übergeben wurde bzw. ermittelt werden konnte.");
@@ -790,7 +787,7 @@ function ReplacePlaylist(item) {
     $(".currentplaylist").remove();
     var uri = $(item).parent().attr("data-containerid");
     //Damit beim gleichem Lied kein Problem entsteht Artist leeren.
-    if (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack != null && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Artist != null) {
+    if (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack !== null && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Artist !== null) {
         SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Artist = "leer";
     }
     SonosAjax("ReplacePlaylist", { '': uri }).success(function () {
@@ -1324,7 +1321,7 @@ function SetRatingLyric() {
     var pid = parseInt(SoDo.ratingListBox.attr("data-playlistid"));
     SonosAjax("SetSongMeta",{ '': uri + "#" + rating + "#" + gelegenheit + "#" + geschwindigkeit + "#" + stimmung + "#" + aufwecken + "#" + artistpl + "#" + rmine }).done(function () {
         SonosLog("SetRatingLyric rated to Server");
-        if ((SoDo.ratingListBox.attr("data-type") === "current" || pid === (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1)) && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3 != null) {
+        if ((SoDo.ratingListBox.attr("data-type") === "current" || pid === (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1)) && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3 !== null) {
             SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3.Gelegenheit = gelegenheit;
             SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3.Geschwindigkeit = geschwindigkeit;
             SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3.Stimmung = stimmung;
@@ -1386,7 +1383,7 @@ function GetRatingErrors() {
     var request = SonosAjax("GetErrorListCount");
     request.success(function (data) {
         //Es gibt keine Fehler mehr, daher alles ausblenden
-        if (data == null || data === 0) {
+        if (data === null || data === 0) {
             if (SoVa.ratingerrorsCount !== 0) {
                 if (SoDo.ratingErrors.is(":visible")) {
                     SoDo.ratingErrors.hide();
@@ -1474,7 +1471,7 @@ function LoadBrowse(v) {
             loadbrowse = $(v).parent().attr("data-containerid");
         }
     }
-    if (typeof loadbrowse == 'undefined') {
+    if (typeof loadbrowse === 'undefined') {
         loadbrowse = v;
     }
     $(".currentbrowse").remove();
@@ -1491,7 +1488,7 @@ function LoadBrowse(v) {
                 //Erster Durchlauf und nicht im Root
                 if (i === 0 && item.ParentID !== "A:ALBUMARTIST" && item.ParentID !== "A:PLAYLISTS" && item.ParentID !== "A:GENRE" && item.ParentID !== "FV:2") {
                     //Es gibt auch noch ein Parenteintrag, diesen anpassen und entsprechend darstellen ansonsten den alten nehmen
-                    if (item.ParentID != null) {
+                    if (item.ParentID !== null) {
                         if (item.ParentID.lastIndexOf("/") > 0) {
                             SoVa.browseParentID = item.ParentID.substring(0, item.ParentID.lastIndexOf("/"));
                         } else {
@@ -1509,7 +1506,7 @@ function LoadBrowse(v) {
                 var im = "";
                 //Entweder ein Container oder ein Song
                 var browsetitlewidth;
-                if (item.ContainerID != null) {
+                if (item.ContainerID !== null) {
                     //Prüfen ob schon im Array.
                     var alink = "";
                     if (loadbrowse === "A:ALBUMARTIST" || loadbrowse === "A:PLAYLISTS" || loadbrowse === "A:GENRE") {
@@ -1520,7 +1517,7 @@ function LoadBrowse(v) {
                         }
                     }
                     browsetitlewidth = 320;
-                    if (item.AlbumArtURI != null && item.MP3.HatCover === true) {
+                    if (item.AlbumArtURI !== null && item.MP3.HatCover === true) {
                         im = '<div class="browsingCover"><img src="' + SoVa.nocoverpfad + '" class="lazy" data-original="http://' + SonosZones[SonosZones.ActiveZoneUUID].BaseURL + item.AlbumArtURI + '"></div>';
                         browsetitlewidth = 280;
                     }
@@ -1544,7 +1541,7 @@ function LoadBrowse(v) {
                         }
 
                         im = "";
-                        if (item.AlbumArtURI != null && item.MP3.HatCover === true) {
+                        if (item.AlbumArtURI !== null && item.MP3.HatCover === true) {
                             var itmAAURi = "http://" + SonosZones[SonosZones.ActiveZoneUUID].BaseURL + item.AlbumArtURI;
                             //Prüfen woher das cover stammt.
                             if (!item.AlbumArtURI.startsWith("/getaa?u=")) {
@@ -1653,13 +1650,13 @@ function ShowCurrentSongMeta() {
         return;
     }
     SoDo.currentMeta.empty();
-    if (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3 != null) {
+    if (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3 !== null) {
         var data = SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3;
         var prop = Object.getOwnPropertyNames(data);
         for (var i = 0; i < prop.length; i++) {
             var k = prop[i];
             if (SoVa.metaUse.indexOf(k) !== -1) {
-                if (data[k] !== "" && data[k] != null && data[k] !== "leer" && data[k] !== 0) {
+                if (data[k] !== "" && data[k] !== null && data[k] !== "leer" && data[k] !== 0) {
                     $("<div><b>" + k + "</b>: " + data[k] + "</div>").appendTo(SoDo.currentMeta);
                 }
             }
@@ -1670,7 +1667,7 @@ function ShowCurrentSongMeta() {
             for (var y = 0; y < propnull.length; y++) {
                 var kp = propnull[y];
                 if (SoVa.metaUse.indexOf(kp) !== -1) {
-                    if (datanull[kp] != null && datanull[kp] !== "") {
+                    if (datanull[kp] !== null && datanull[kp] !== "") {
                         $("<div><b>" + kp + "</b>: " + datanull[kp] + "</div>").appendTo(SoDo.currentMeta);
                     }
                 }
@@ -1715,7 +1712,7 @@ function GetPlaylists() {
     $(".playlist").remove();
     var request = SonosAjax("GetPlaylists");
     request.success(function (data) {
-        if (data == null || data.length === 0) {
+        if (data === null || typeof data === "undefined" || data.length === 0) {
             SonosLog("GetPlaylists ALL Leer nochmal in einer Sekunde laden");
             window.setTimeout("GetPlaylists()", 1000);
             return;
@@ -1801,7 +1798,7 @@ function SonosWindows(sobj, remove, setobj) {
     }
     var objectindex = SoVa.swindowlist.indexOf(sobj);
     var rem = "notset";
-    if (typeof remove != "undefined") {
+    if (typeof remove !== "undefined") {
         rem = remove;
     }
     var overlay = false;

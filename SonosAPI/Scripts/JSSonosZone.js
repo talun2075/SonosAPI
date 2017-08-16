@@ -111,7 +111,6 @@ function SonosZone(uuid, name) {
     });
     Object.defineProperty(this, "PlayMode", {
         get: function () {
-            console.log("getPlaymode");
             return _PlayMode;
         },
         set: function (value) {
@@ -424,16 +423,6 @@ function SonosZone(uuid, name) {
             _LastChange = value;
         }
     });
-    Object.defineProperty(this, "dummy", {
-        get: function () {
-            return true;
-        },
-        set: function (value) {
-            var t = this;
-
-        }
-    });
-
     //Methoden
     this.RenderTrackTime = function () {
         if (this.Playlist.IsEmpty === true || (this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple")) {
@@ -538,7 +527,7 @@ function SonosZone(uuid, name) {
             return;
         }
         var nexttracknumber = this.CurrentTrackNumber;
-        if ((this.PlayMode === "REPEAT_ALL" || this.PlayMode === "SHUFFLE") && this.Playlist.Playlist.length <= this.CurrentTrackNumber) {
+        if (this.Playlist.Playlist.length <= this.CurrentTrackNumber && (this.PlayMode === "REPEAT_ALL" || this.PlayMode === "SHUFFLE")) {
             nexttracknumber = 0;
         }
         if (!this.Playlist.IsEmpty && typeof this.Playlist.Playlist[nexttracknumber] !== "undefined") {

@@ -1261,7 +1261,7 @@ namespace SonosAPI.Controllers
                         var k = MP3ReadWrite.listOfCurrentErrors.Find(x => x.Pfad == v);
                         if (k != null) return k;
                     }
-                    return MP3ReadWrite.ReadMetaData(v);
+                return MP3ReadWrite.ReadMetaData(v);
                
             }
             catch (Exception ex)

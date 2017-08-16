@@ -1,4 +1,91 @@
-﻿@media screen and (max-width: 500px) {
+﻿@media screen and (max-height: 640px) {
+        #Cover {
+        width: 280px;
+        height: 280px;
+    }
+}
+@media screen and (max-width: 769px) {
+    #Bodydiv {
+        width: 766px;
+    }
+    #Currentplaylist {
+        top: 250px;
+    }
+    #Cover {
+        width: 220px;
+        height: 220px;
+        left: 200px;
+        top: 5px;
+    }
+    #Playlist {
+        display: none;
+    }
+    #BewertungN {
+        top: 200px;
+        left: 260px;
+    }
+    #CurrentBomb {
+        top: 199px;
+        left: 257px;
+    }
+    #AktSongInfo {
+        top: 600px;
+        left: 30px;
+    }
+    #CurrentMeta {
+        position: absolute;
+        left: 150px;
+        top: -100px;
+    }
+    #CurrentMeta:after {
+        border-color: transparent #000 transparent transparent;
+        top: 40%;
+        left: -10%;
+    }
+    #Shuffle, #Pre {
+        left: 450px;
+    }
+    #Play, #Next {
+        left: 550px;
+    }
+    #Repeat {
+        top: 0;
+        left: 650px;
+    }
+    #Fade {
+        top: 90px;
+        left: 650px;
+    }
+    #Ratingerrors {
+        left: 630px;
+    }
+    #RatingerrorsList {
+        left: 500px;
+    }
+    #Ratinglist, #Filterlist {
+        left: 300px;
+    }
+    .box_settings {
+        left: 100px;
+        bottom: 225px
+    }
+    .box_settings:before {
+        border-right-color: transparent;
+        border-top-color: #000000;
+        border-width: 40px;
+        top: 100%;
+        margin-top: 0; 
+        left: 2%;
+    }
+    .alarmclockarrow {
+        left: 160px;
+        top: 310px;
+    }
+    .alarmclockarrow:before {
+        border: transparent;
+    }
+}
+@media screen and (max-width: 500px) {
     #Bodydiv {
         width: 99%;
     }
@@ -6,6 +93,7 @@
         display: none;
     }
     #AktSongInfo {
+        top: initial;
         bottom: 140px;
         left: 30px;
     }
@@ -18,9 +106,6 @@
     }
     #CurrentMeta:after {
         bottom: -11%;
-    }
-    #Slider {
-        width: 280px;
     }
     #CurrentSongRuntime {
         left: 150px;
@@ -56,7 +141,8 @@
         top: 260px;
     }
     #LabelVolume {
-        top: 240px;
+        top: 440px;
+        left: 20px;
     }
     #AlarmClockOpen {
         top: 250px;
@@ -75,6 +161,7 @@
         width: 25px;
     }
     #BewertungN {
+        top: initial;
         bottom: 100px;
         left: 20px;
     }
@@ -82,20 +169,15 @@
         left: 75px;
         bottom: 30px;
     }
-    #PlaylistCount.moveleft,#PlaylistCount.movedown,#AktSongInfo.moveleft,#Cover.moveright,#AktSongInfo.moveright {
-    -webkit-transform: translate(0,0);
-            -moz-transform: translate(0,0);
-            -o-transform: translate(0,0);
-            -ms-transform: translate(0,0);
+    #Play {
+        top: 120px;
+        left: 220px;
     }
     .mediabutton {
         height: 50px;
         width: 50px;
     }
-    #Play {
-        top: 120px;
-        left: 220px;
-    }
+
     #Next {
         left: 255px;
         top:180px;
@@ -137,7 +219,6 @@
 
     .box_settings {
         left: 5px;
-        width: auto;
         bottom: 10px;
         max-width: 348px;
         width: calc(100% - 60px);
@@ -193,7 +274,8 @@
     }
     #CurrentBomb {
         left: 17px;
-        top: 606px;
+        top: initial;
+        bottom: 98px;
     }
     #Currentplaylist {
         left: 0;
@@ -231,5 +313,33 @@
         text-align: center;
         line-height: 50px;
     }
-
+    .alarmclockarrow {
+        left: 5px;
+        width: calc(100% - 55px);
+    }
+    .roomname {
+        width: 100px;
+    }
+    #AlarmClock {
+        height: 250px;
+        overflow: auto;
+    }
+    #SleepModeWrapper:after,#CurrentMeta:after {
+        border-style: none;
+    }
+    #Ratinglist, #Filterlist {
+        left: 50px;
+    }
+    #Ratingerrors {
+        left: 280px;
+    }
+    #RatingerrorsList {
+       left: 50px;
+    }
 }
+/*#PlaylistCount.moveleft,#PlaylistCount.movedown,#AktSongInfo.moveleft,#Cover.moveright,#AktSongInfo.moveright,#Play,#Next,#Pre,#Shuffle,#Repeat,#Fade {
+    -webkit-transform: translate(0,0);
+            -moz-transform: translate(0,0);
+            -o-transform: translate(0,0);
+            -ms-transform: translate(0,0);
+}*/

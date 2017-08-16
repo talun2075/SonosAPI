@@ -26,7 +26,6 @@ namespace SonosAPI.Classes
         /// Dictonary mit UUID und DateTimes für die letzten Änderungen. Wird Über Events aktualisiert
         /// </summary>
         internal static Dictionary<String, DateTime> ZoneChangeList = new Dictionary<String, DateTime>();
-
         /// <summary>
         /// Liste mir allen Server Errors.
         /// </summary>
@@ -57,6 +56,7 @@ namespace SonosAPI.Classes
                     retval = InitialSonos();
                     Sonos_TopologyChanged();
                     WasInitialed = retval;
+                    InternalId = Guid.NewGuid();
                     SonosStreamRating.LoadRatedItems();
                 }
                 return retval;

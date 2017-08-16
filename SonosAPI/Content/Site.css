@@ -216,7 +216,6 @@ div#AppList ul {
     -webkit-border-radius: 25px;
     -webkit-box-shadow: 5px 5px 7px #888;
     box-shadow: 5px 5px 7px #888;
-    -webkit-border-radius: 25px;
     border-radius: 25px 25px 25px 25px;
     overflow: hidden;
     display: none;
@@ -237,11 +236,10 @@ div#AppList ul {
     left: 0;
     width: 1020px;
     height: 99%;
-    min-height: 650px;
+    min-height: 635px;
     border-radius: 25px 25px 25px 25px;
     border: 1px solid;
     border-color: black;
-    position: absolute;
     background: white;
     z-index: 1;
 }
@@ -562,7 +560,6 @@ div#AppList ul {
     -webkit-border-radius: 25px;
     -webkit-box-shadow: 5px 5px 7px #888;
     box-shadow: 5px 5px 7px #888;
-    -webkit-border-radius: 25px;
     border-radius: 25px 25px 25px 25px;
     text-align: center;
     vertical-align: middle;
@@ -580,7 +577,6 @@ div#AppList ul {
     -webkit-border-radius: 25px;
     -webkit-box-shadow: 5px 5px 7px #888;
     box-shadow: 5px 5px 7px #888;
-    -webkit-border-radius: 25px;
     border-radius: 25px 25px 25px 25px;
     text-align: center;
     vertical-align: middle;
@@ -629,7 +625,6 @@ div#AppList ul {
     -webkit-border-radius: 25px;
     -webkit-box-shadow: 5px 5px 7px #888;
     box-shadow: 5px 5px 7px #888;
-    -webkit-border-radius: 25px;
     border-radius: 25px 25px 25px 25px;
     text-align: center;
     vertical-align: middle;
@@ -675,6 +670,7 @@ div#AppList ul {
 
 .groupdevicesshown {
     -webkit-border-radius: 25px;
+    border-radius: 25px;
     -webkit-box-shadow: 5px 5px 7px #888;
     box-shadow: 5px 5px 7px #888;
 }
@@ -712,9 +708,9 @@ div#AppList ul {
     overflow: hidden;
     display: flex;
     cursor: pointer;
-    display: -webkit-flexbox;
+    /*display: -webkit-flexbox;
     display: -ms-flexbox;
-    display: -webkit-flex;
+    display: -webkit-flex;*/
 }
 
 #SetGroupMembers {
@@ -764,9 +760,12 @@ div#AppList ul {
     background-size: 100% 100%;
     background-repeat: no-repeat;
     Background-Color: white;
+    -o-transition: all 1s ease-in-out;
+    -webkit-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
 }
 
-    #Play.aktiv {
+#Play.aktiv {
         Background: URL("/Images/play_red.png");
         background-size: 100% 100%;
         background-repeat: no-repeat;
@@ -779,6 +778,9 @@ div#AppList ul {
     Background: URL("/Images/shuffle_red.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
+    -o-transition: all 1s ease-in-out;
+    -webkit-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
 }
 
     #Shuffle.aktiv {
@@ -791,6 +793,9 @@ div#AppList ul {
     Background: URL("/Images/repeat_red.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
+    -o-transition: all 1s ease-in-out;
+    -webkit-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
 }
 
     #Repeat.aktiv {
@@ -803,6 +808,9 @@ div#AppList ul {
     Background: URL("/Images/fade_red.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
+    -o-transition: all 1s ease-in-out;
+    -webkit-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
 }
 
     #Fade.aktiv {
@@ -816,6 +824,9 @@ div#AppList ul {
     background-size: 100% 100%;
     background-repeat: no-repeat;
     Background-Color: white;
+    -o-transition: all 1s ease-in-out;
+    -webkit-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
 }
 
 #Pre {
@@ -824,6 +835,9 @@ div#AppList ul {
     Background: URL("/Images/zur_red.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
+    -o-transition: all 1s ease-in-out;
+    -webkit-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
 }
 
 #SetMute {
@@ -850,39 +864,36 @@ div#AppList ul {
     -webkit-border-radius: 25px;
     -webkit-box-shadow: 5px 5px 7px #888;
     box-shadow: 5px 5px 7px #888;
-    -webkit-border-radius: 25px;
     border-radius: 25px 25px 25px 25px;
     width: 300px;
     height: 300px;
     right: 115px;
     bottom: 80px;
+    -o-transition: all 1s ease-in-out;
     -webkit-transition: all 1s ease-in-out;
-            -moz-transition: all 1s ease-in-out;
-            -o-transition: all 1s ease-in-out;
-            -ms-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
 }
 #Cover.moveright,#AktSongInfo.moveright {
     -webkit-transform: translate(100px,0);
-            -moz-transform: translate(100px,0);
-            -o-transform: translate(100px,0);
-            -ms-transform: translate(100px,0);
+    -o-transform: translate(100px,0);
+    transform: translate(100px,0);
 }
+
 #AktSongInfo {
     bottom: 35px;
     left: 630px;
     position: absolute;
     cursor: pointer;
+    -o-transition: all 1s ease-in-out;
     -webkit-transition: all 1s ease-in-out;
-            -moz-transition: all 1s ease-in-out;
-            -o-transition: all 1s ease-in-out;
-            -ms-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
 }
 #AktSongInfo.moveleft {
-        -webkit-transform: translate(-100px,0);
-            -moz-transform: translate(-100px,0);
-            -o-transform: translate(-100px,0);
-            -ms-transform: translate(-100px,0);
+    -webkit-transform: translate(-100px,0);
+    -o-transform: translate(-100px,0);
+    transform: translate(-100px,0);
 }
+
 #Akttitle {
     height: 20px;
     overflow: hidden;
@@ -915,7 +926,8 @@ div#AppList ul {
     position: absolute;
     left: 25px;
     bottom: 10px;
-    width: 960px;
+    /*width: 960px;*/
+    width: calc(100% - 50px);
 }
 
 #Volume {
@@ -934,7 +946,6 @@ div#AppList ul {
     -webkit-border-radius: 25px;
     -webkit-box-shadow: 5px 5px 7px #888;
     box-shadow: 5px 5px 7px #888;
-    -webkit-border-radius: 25px;
     border-radius: 25px 25px 25px 25px;
     background: white;
     padding: 25px 15px 15px;
@@ -971,7 +982,6 @@ div#AppList ul {
     -webkit-border-radius: 25px;
     -webkit-box-shadow: 5px 5px 7px #888;
     box-shadow: 5px 5px 7px #888;
-    -webkit-border-radius: 25px;
     border-radius: 25px 25px 25px 25px;
     overflow: hidden;
     padding-top: 10px;
@@ -1010,23 +1020,22 @@ div#AppList ul {
     position: absolute;
     left: 530px;
     bottom: 50px;
+    -o-transition: all 1s ease-in-out;
     -webkit-transition: all 1s ease-in-out;
-            -moz-transition: all 1s ease-in-out;
-            -o-transition: all 1s ease-in-out;
-            -ms-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
 }
 #PlaylistCount.movedown {
     -webkit-transform: translate(0,20px);
-            -moz-transform: translate(0,20px);
-            -o-transform: translate(0,20px);
-            -ms-transform: translate(0,20px);
+    -o-transform: translate(0,20px);
+    transform: translate(0,20px);
 }
+
 #PlaylistCount.moveleft {
     -webkit-transform: translate(-100px,20px);
-            -moz-transform: translate(-100px,20px);
-            -o-transform: translate(-100px,20px);
-            -ms-transform: translate(-100px,20px);
+    -o-transform: translate(-100px,20px);
+    transform: translate(-100px,20px);
 }
+
 #PlaylistCount > DIV {
     float: left;
 }
@@ -1041,7 +1050,6 @@ div#AppList ul {
     -webkit-border-radius: 25px;
     -webkit-box-shadow: 5px 5px 7px #888;
     box-shadow: 5px 5px 7px #888;
-    -webkit-border-radius: 25px;
     border-radius: 25px 25px 25px 25px;
     overflow: hidden;
     padding-top: 5px;
@@ -1178,7 +1186,6 @@ div#AppList ul {
     -webkit-border-radius: 25px;
     -webkit-box-shadow: 5px 5px 7px #888;
     box-shadow: 5px 5px 7px #888;
-    -webkit-border-radius: 25px;
     border-radius: 25px 25px 25px 25px;
     text-align: center;
     vertical-align: middle;
@@ -1637,26 +1644,22 @@ div#AppList ul {
 
 #AlbumArtisttrue {
     background: #000000 url("/Images/check.png") no-repeat scroll 0 0 / 100% 100%;
-    background: rgba(0, 0, 0, 0) url("/Images/check.png") no-repeat scroll 0 0 / 100% 100%;
 }
 
     #AlbumArtisttrue.selected {
         background: #000000 url("/Images/check_red.png") no-repeat scroll 0 0 / 100% 100%;
-        background: rgba(0, 0, 0, 0) url("/Images/check_red.png") no-repeat scroll 0 0 / 100% 100%;
     }
 
 #AlbumArtistfalse {
     background: #000000 url("/Images/erase_black.png") no-repeat scroll 0 -5px / 150% 150%;
-    background: rgba(0, 0, 0, 0) url("/Images/erase_black.png") no-repeat scroll 0 -5px / 150% 150%;
 }
 
     #AlbumArtistfalse.selected {
         background: #000000 url("/Images/erase_red.png") no-repeat scroll 0 -5px / 150% 150%;
-        background: rgba(0, 0, 0, 0) url("/Images/erase_red.png") no-repeat scroll 0 -5px / 150% 150%;
     }
 /*Export An / Aus Schalter  */
 #onoffswitchWrapper {
-    width: 140px;
+    width: 150px;
     position: absolute;
     right: 20px;
     bottom: 20px;
@@ -1855,7 +1858,7 @@ div#AppList ul {
 /*Aufwecken An / Aus Schalter  ENDE*/
 /*Nur CurrentRatingAn / Aus Schalter  */
 #curonoffswitchWrapper {
-    width: 180px;
+    width: 190px;
     position: absolute;
     right: 20px;
     bottom: 50px;
@@ -1867,6 +1870,8 @@ div#AppList ul {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    /* ReSharper disable once CssBrowserCompatibility */
+    user-select: none;
     float: right;
 }
 
@@ -1965,6 +1970,8 @@ div#AppList ul {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    /* ReSharper disable once CssBrowserCompatibility */
+    user-select: none;
     float: right;
 }
 

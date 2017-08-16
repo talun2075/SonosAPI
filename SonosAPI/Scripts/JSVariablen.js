@@ -137,6 +137,6 @@ function SonosDOMObjects() {
     this.SetErrorLogging = function() {
         this.errorlogging.appendTo(this.bodydiv);
         this.errorloggingDOM.appendTo(this.bodydiv);
-    }
+    };
 }
 //} Variablen Verarbeitung
