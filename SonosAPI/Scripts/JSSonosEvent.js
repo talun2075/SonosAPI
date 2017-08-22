@@ -11,7 +11,7 @@ function GetTopologieChange() {
             rinconpropcounterReset++;
             var request = SonosAjax("GetTopologieChanged");
             request.success(function(data) {
-                if (data == null) {
+                if (data === null) {
                     SonosLog("GetTopologieChange Data Error");
                     ReloadSite("GetTopologieChange:Data:Null");
                     return;
@@ -54,12 +54,12 @@ function GetTopologieChange() {
                     } else {
                         //Player überprüfen
                         //Wenn der Player noch kein Change hat, dann Stop/Pause setzen, sorgt dafür, dass eine Änderung geladen wird.
-                        if (typeof SonosZones[propzone] != "undefined") {
+                        if (typeof SonosZones[propzone] !== "undefined") {
                             if (SonosZones[propzone].LastChange !== proplastchange && SonosZones[propzone].GetPlayerChangeEventIsRunning === false) {
                                 SonosZones[propzone].GetPlayerChangeEventIsRunning = true;
                                 request =  SonosAjax("GetZonebyRincon","",propzone);
                                 request.success(function(data2) {
-                                    if (data2 != null) {
+                                    if (data2 !== null && typeof data2 !== "undefined") {
                                         SonosLog("GetTopologieChange:Geänderte Playerinfos geladen");
                                         try {
                                             SonosZones[data2.CoordinatorUUID].SetBySonosItem(data2);
@@ -116,11 +116,11 @@ function GetAktSongInfo() {
             var request_cur = SonosAjax("GetAktSongInfo", { '': cturi }, getmp3);
             request_cur.success(function(data) {
                 //Wenn null Seite neu Laden.
-                if (data == null && SonosZones.CheckActiveZone() && SonosZones[SonosZones.ActiveZoneUUID].NumberOfTracks > 0) {
-                    SonosLog("GetAktSongInfo: Daten nicht ok aber NumberofTRacks vorhanden. Data:" + data);
+                if (data === null && SonosZones.CheckActiveZone() && SonosZones[SonosZones.ActiveZoneUUID].NumberOfTracks > 0) {
+                    SonosLog("GetAktSongInfo: Daten nicht ok aber NumberofTRacks vorhanden. Data");
                     ReloadSite("GetAktSongInfo:Data:null");
                 }
-                if (data == null || data.CurrentTrack == null) {
+                if (data === null || typeof data === "undefined" || data.CurrentTrack === null) {
                     SonosLog("GetAktSongInfo: server Daten NULL");
                     SoVa.GetAktSongInfoTimerID = window.setTimeout("GetAktSongInfo()", 10000);
                     return;

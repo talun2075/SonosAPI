@@ -44,13 +44,13 @@ function NanoleafAurora(option) {
             _PowerDom.prop("checked", !_data.state.on.value);
         }
         //Scenarios
-        if (_data.effects.list.length === 0) {
+        if (_data.effects.effectsList.length === 0) {
             alert("Keine Scenarien geliefert");
             return false;
         }
         var sd = $("#" + _ScenariosDOM);
         sd.empty();
-        $.each(_data.effects.list, function(index, item) {
+        $.each(_data.effects.effectsList, function (index, item) {
             var newdiv;
             if (item === _data.effects.select) {
                 newdiv = $("<div class=" + _SelectedScenarioClass + ">" + item + "</div>");

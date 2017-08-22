@@ -56,7 +56,6 @@ namespace SonosAPI.Classes
                     retval = InitialSonos();
                     Sonos_TopologyChanged();
                     WasInitialed = retval;
-                    InternalId = Guid.NewGuid();
                     SonosStreamRating.LoadRatedItems();
                 }
                 return retval;

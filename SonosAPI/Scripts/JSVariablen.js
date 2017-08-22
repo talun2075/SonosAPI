@@ -27,7 +27,7 @@ function SonosVariablen() {
     this.overlayDVIObject = ""; //Object, welches das Overlay initialisiert hat SonosWindow
     this.selectetdivs = []; //Liste mit Objecten, die zusätzlich über dem Overlay liegen sollen.SonosWindow	
     this.TopologieChangeID=0; //TopologieChange SetTimeout ProzessID, damit nicht doppelt Topologiechange gemacht wird.
-    this.GetAktSongInfoTimerID=0; //GetAktsongInfo Timer ID
+    this.GetAktSongInfoTimerID = 0; //GetAktsongInfo Timer ID
     this.metaUse = new Array("Jahr", "Genre", "Pfad", "Komponist", "Verlag", "Album","Typ"); //Propertys aus Currenttrack.MP3 die als Details angezeigt werden sollen.
     this.GlobalPlaylistLoaded = false;
     this.eventErrorChangeID = 0;// Sollten Fehler auftreten beim JSSonosEvent.js wird dieser Prozess immer und immer wieder aufgerufen, bis der Fehler weg ist, danach werden die Events wieder gestartet.

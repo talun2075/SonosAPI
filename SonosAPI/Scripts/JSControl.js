@@ -737,7 +737,7 @@ function AddToPlaylist(item) {
 }
 //Setzen des Songs in der aktuellen Playlist
 function SetCurrentPlaylistSong(apsnumber, source) {
-    if (typeof apsnumber == "undefined" || apsnumber == null) {
+    if (typeof apsnumber === "undefined" || apsnumber === null) {
         if (typeof SonosZones[SonosZones.ActiveZoneUUID] !== "undefined" && typeof SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber !== "undefined" && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber !== null && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber !== 0) {
             apsnumber = SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber;
         } else {

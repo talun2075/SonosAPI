@@ -18,7 +18,7 @@ namespace ExternalDevices
         private static String _ip;
         private static Int16 _port;
         private const string _Statepath = "/state";
-        private const string _Apipath = "/api/beta/";
+        private const string _Apipath = "/api/v1/";
         #region PublicMethods
         /// <summary>
         /// Init the aurora
@@ -359,7 +359,7 @@ namespace ExternalDevices
     {
         [DataMember(Name = "select")]
         public string Selected { get; set; }
-        [DataMember(Name = "list")]
+        [DataMember(Name = "effectsList")]
         public List<String> Scenarios { get; set; }
     }
     [DataContract]
