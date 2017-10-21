@@ -2,35 +2,38 @@
     margin: 0;
     padding: 0;
 }
-#AuroraWrapper {
-    width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+.auroraName {
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
 }
-#AuroraCentered {
-    display: inline-flex;
-}
-#AuroraCentered > DIV {
-    margin-top: 55px;
+#AuroraWrapper > DIV {
+    margin: 55px 25px 15px 55px;
+    /*margin-top: 55px;
     margin-bottom: 15px;
     margin-left: 55px;
-    margin-right: 25px;
+    margin-right: 25px;*/
+    float: left;
 }
-#BrightnessSlider {
-    height: 220px;
+.scenarios {
+    margin-top: 30px;
+}
+.brightnessSlider {
+    height: 220px !important;
+    left: 60px;
 }
 .ssc {
     font-style: italic;
     font-weight: bold;
 }
-#BrightnessSliderLabel {
+.brightnessSliderLabel {
     word-wrap: break-word;
     width: 5px;
     position: relative;
     right: -25px;
     color: black;
 }
-#BrightnessSliderValue {
+.brightnessSliderValue {
     color: black;
     position: relative;
     left: -40px;
@@ -46,7 +49,7 @@
   
 }
 
-#power {
+.powerCheck {
   display : none;
 }
 
@@ -67,7 +70,7 @@ label {
   font-size   : 40px;
   color       : #0f0;
   line-height : 100px;
-  text-shadow : -1px -1px 0px #FFF , 1px 1px 0px #FFF;
+  text-shadow : -1px -1px 0 #FFF , 1px 1px 0 #FFF;
   transition : all .1s ease-in-out;
 }
 
@@ -169,7 +172,7 @@ label:after {
   transition : all .1s ease-in-out;
 }
 
-#power:checked + label {
+.powerCheck:checked + label {
   background : -webkit-radial-gradient(center , ellipse cover, #ddd 0% , #EEE 80% , #efefef 100%);
   background :         radial-gradient(center , ellipse cover, #ddd 0% , #EEE 80% , #efefef 100%);
   background :         radial-gradient(center , ellipse cover, #ddd 0% , #EEE 80% , #efefef 100%);
@@ -178,7 +181,7 @@ label:after {
   
 }
 
-#power:checked + label .light { 
+.powerCheck:checked + label .light { 
   background : -webkit-radial-gradient(center , ellipse cover, #fcc 0% , #f88 60% , #f00 100%);
   background :    -moz-radial-gradient(center , ellipse cover, #fcc 0% , #f88 60% , #f00 100%);
   background :         radial-gradient(center , ellipse cover, #fcc 0% , #f88 60% , #f00 100%);
@@ -186,18 +189,18 @@ label:after {
   transition : all .1s linear;
 }
 
-#power:checked + label .icon-off {
+.powerCheck:checked + label .icon-off {
   background : transparent;
   box-shadow : inset 0 0 5px 0 #777;
   transition : all .1s linear;
 } 
 
-#power:checked + label .icon-off:after {
+.powerCheck:checked + label .icon-off:after {
   background : inherit;
   box-shadow : 0 0 5px 0 #777;
 } 
 
-#power:checked + label .icon-off:before {
+.powerCheck:checked + label .icon-off:before {
   background   : #ddd;
   border-color : #dfdfdf;
   box-shadow   : inherit;

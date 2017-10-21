@@ -81,13 +81,17 @@ namespace SonosAPI.Classes
 
                     Sonos.StartScan();
                     Boolean ok = false;
+                    DateTime startnow = DateTime.Now;
                     while (!ok)
                     {
-                        if (Sonos.Players.Count > 0)
+                        //Timer, falls das suchen länger als 360 Sekunden dauet abbrechen
+                        int tdelta = (DateTime.Now - startnow).Seconds;
+                        if (Sonos.Players.Count > 0 || tdelta > 360)
                         {
                             ok = true;
                         }
                     }
+                    
                     Sonos.TopologyChanged += Sonos_TopologyChanged;
                 }
                 return true;
@@ -442,7 +446,7 @@ namespace SonosAPI.Classes
                     TraceLogMessageQueue(DateTime.Now.ToString(CultureInfo.CurrentCulture));
                     //Get Player
                     SonosPlayer sp = GetPlayer(sonosCheckChangesObject.PlayerName);
-                    if (sp == null) continue;//todo: überlegen ob das Sinn macht, wenn External Devices dabei sein können. Evtl. vorher prüfen, ob es sich um ein solches Gerät handelt?
+                    if (sp == null) continue;
 
                     switch (sonosCheckChangesObject.Changed)
                     {
@@ -552,20 +556,6 @@ namespace SonosAPI.Classes
                             }
                             itemsToRemove.Add(sonosCheckChangesObject);
                             TraceLogMessageQueue("Marantz Power Ende");
-                            break;
-                        case SonosCheckChangesConstants.NanoleafSelectedScenario:
-                            TraceLogMessageQueue("Nanoleaf Selected Scenario Start");
-                            if (Nanoleaf.Initialisieren())
-                            {
-                                TraceLogMessageQueue("Nanoleaf Selected Scenario:"+ Nanoleaf.SelectedScenario);
-                                if (Nanoleaf.SelectedScenario != sonosCheckChangesObject.Value)
-                                {
-                                    TraceLogMessageQueue("Nanoleaf Selected Scenario muss geändert werden auf:" + sonosCheckChangesObject.Value);
-                                    Nanoleaf.SelectedScenario = sonosCheckChangesObject.Value;
-                                }
-                             }
-                            itemsToRemove.Add(sonosCheckChangesObject);
-                            TraceLogMessageQueue("Nanoleaf Selected Scenario Ende");
                             break;
                     }
                 }

@@ -28,12 +28,11 @@ function SonosVariablen() {
     this.selectetdivs = []; //Liste mit Objecten, die zusätzlich über dem Overlay liegen sollen.SonosWindow	
     this.TopologieChangeID=0; //TopologieChange SetTimeout ProzessID, damit nicht doppelt Topologiechange gemacht wird.
     this.GetAktSongInfoTimerID = 0; //GetAktsongInfo Timer ID
-    this.metaUse = new Array("Jahr", "Genre", "Pfad", "Komponist", "Verlag", "Album","Typ"); //Propertys aus Currenttrack.MP3 die als Details angezeigt werden sollen.
+    this.metaUse = new Array("Jahr", "Genre", "Pfad", "Komponist", "Verlag", "Album", "Typ", "Kommentar"); //Propertys aus Currenttrack.MP3 die als Details angezeigt werden sollen.
     this.GlobalPlaylistLoaded = false;
     this.eventErrorChangeID = 0;// Sollten Fehler auftreten beim JSSonosEvent.js wird dieser Prozess immer und immer wieder aufgerufen, bis der Fehler weg ist, danach werden die Events wieder gestartet.
     this.eventErrorsSource = "";//Quelle, die den Fehler ursächlich gemeldet hat.
     this.currentplaylistScrolled = false; //Zeigt an, ob ein Anwender manuel gescrollt hat.
-    this.smallDevice = false; //Schalter ob es ein schmalses Gerät ist. (z.B: Handy oder Ipad Multiapp
     this.VolumeConfirmCounter = 20; //Wenn die Lautstärke erhöht wird, gibt es diesen Schwellenwert ab dem gefragt wird ob die Lautstärke wirklich erhöht werden soll. 
 }
 

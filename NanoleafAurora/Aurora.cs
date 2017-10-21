@@ -7,55 +7,58 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace ExternalDevices
+namespace NanoleafAurora
 {
     /// <summary>
     /// Class to Communicate with a Nanoleaf Aurora
     /// </summary>
-    public static class Nanoleaf
+    [DataContract]
+    public class Aurora
     {
-        private static String _tokenAuth;
-        private static String _ip;
-        private static Int16 _port;
+        private readonly int _port;
         private const string _Statepath = "/state";
         private const string _Apipath = "/api/v1/";
         #region PublicMethods
+
         /// <summary>
         /// Init the aurora
         /// </summary>
-        /// <param name="token">User Token</param>
-        /// <param name="ip">IP of the Aurora</param>
+        /// <param name="token">User Token type "New" for new User</param>
+        /// <param name="_ip">IP of the Aurora</param>
+        /// <param name="_Name"></param>
         /// <param name="port">Port (Default 16021)</param>
-        /// <returns>Was the Init Successfull</returns>
-        public static Boolean Initialisieren(string token= "JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3", string ip="192.168.0.166", Int16 port=16021)
+        public Aurora(string token, string _ip,string _Name, int port=16021)
         {
-            if (String.IsNullOrEmpty(ip) || String.IsNullOrEmpty(token)) return false;
-            if (ip.StartsWith("http://"))
-                ip = ip.Replace("http://", "");
-            if (!Regex.IsMatch(ip, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$")) return false;
-            if (port == 0) return false;
-            _tokenAuth = token;
-            _ip = ip;
+            if (String.IsNullOrEmpty(_ip) || String.IsNullOrEmpty(token)) throw new ArgumentNullException(nameof(_ip), "ip or token is Empty");
+            if (_ip.StartsWith("http://"))
+                _ip = _ip.Replace("http://", "");
+            if (!Regex.IsMatch(_ip, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$")) throw new ArgumentOutOfRangeException(nameof(_ip), _ip, "This is not a IP");
+            if (port == 0) throw new ArgumentOutOfRangeException(nameof(port), port, "Need Port grater then Zero");
+            Token = token;
+            Ip = _ip;
             _port = port;
-            return token == "new" || GetNanoLeafInformations();
+            Name = _Name;
+            if (Token.ToLower() != "new")
+            {
+              GetNanoLeafInformations();
+            }
+            else
+            {
+                NewAurora = true;
+            }
         }
         /// <summary>
         /// Use to Get a New Token
         /// Push the On Button for 5 till 7 Seconds on the Aurora and then Call this Method. You have 30 Seconds time.
         /// </summary>
         /// <returns>New Token</returns>
-        public static String NewUser(string ip, Int16 port=16021)
+        public String NewUser()
         {
-            if (Initialisieren("new", ip, port))
-            {
-                return ConnectToNanoleaf(NanoleafRequest.POST, "new");
-            }
-            return "Es ist ein Fehler beim Anlegen des neuen Users entstanden!";
+            return ConnectToNanoleaf(NanoleafRequest.POST, "new");
         }
 
-        public static String SetRandomScenario()
+        public String SetRandomScenario()
         {
-            CheckIniState();
             Random rng = new Random();
             int k = rng.Next(NLJ.Effects.Scenarios.Count);
             SelectedScenario = NLJ.Effects.Scenarios[k];
@@ -67,7 +70,7 @@ namespace ExternalDevices
         /// <summary>
         /// GET/SET the Powerstate
         /// </summary>
-        public static Boolean PowerOn
+        public Boolean PowerOn
         {
             get
             {
@@ -85,7 +88,7 @@ namespace ExternalDevices
         /// <summary>
         /// Selected Scenario
         /// </summary>
-        public static String SelectedScenario
+        public String SelectedScenario
         {
             get { return NLJ.Effects.Selected; }
             set
@@ -102,11 +105,11 @@ namespace ExternalDevices
         /// <summary>
         /// All Knowing Scenarios
         /// </summary>
-        public static List<String> Scenarios => NLJ.Effects.Scenarios;
+        public List<String> Scenarios => NLJ.Effects.Scenarios;
         /// <summary>
         /// Helligkeit
         /// </summary>
-        public static int Brightness
+        public int Brightness
         {
             get
             {
@@ -123,7 +126,7 @@ namespace ExternalDevices
         /// <summary>
         /// Farbton (Hue)
         /// </summary>
-        public static int Hue
+        public int Hue
         {
             get
             {
@@ -139,7 +142,7 @@ namespace ExternalDevices
         /// <summary>
         /// Saturation
         /// </summary>
-        public static int Saturation
+        public int Saturation
         {
             get
             {
@@ -155,7 +158,7 @@ namespace ExternalDevices
         /// <summary>
         /// ColorTemperature
         /// </summary>
-        public static int ColorTemperature
+        public int ColorTemperature
         {
             get
             {
@@ -168,21 +171,36 @@ namespace ExternalDevices
                 ConnectToNanoleaf(NanoleafRequest.PUT, _Statepath, "{\"ct\":" + NLJ.State.Saturation.Value + "}");
             }
         }
-        #endregion PublicProperties
-
-        #region PrivateMethods
-        /// <summary>
-        /// Check The Ini state and Initilaized if not set
-        /// </summary>
-        private static void CheckIniState()
-        {
-                Initialisieren();
-        }
-
         /// <summary>
         /// This Object is generated by the Json Informations of the Nanoleaf
         /// </summary>
-        public static NanoLeafJson NLJ { get; private set; }
+        [DataMember]
+        public NanoLeafJson NLJ { get; private set; }
+        /// <summary>
+        /// User Token
+        /// </summary>
+        [DataMember]
+        public String Token { get; private set; }
+        [DataMember]
+        public Boolean NewAurora { get; private set; }
+        /// <summary>
+        /// IP of Aurora
+        /// </summary>
+        [DataMember]
+        public String Ip { get;private set; }
+        /// <summary>
+        /// SerialNumber of Aurora
+        /// </summary>
+        [DataMember]
+        public String SerialNo { get; private set; }
+        [DataMember]
+        public String ErrorMessage { get; set; }
+        [DataMember]
+        public String Name { get; set; }
+        #endregion PublicProperties
+
+        #region PrivateMethods
+
         /// <summary>
         /// Connect to the Naoleaf
         /// </summary>
@@ -190,8 +208,9 @@ namespace ExternalDevices
         /// <param name="call">Call need to get State of Something like PowerOn (Path)</param>
         /// <param name="value">Value to set on PUT or Post</param>
         /// <returns></returns>
-        private static String ConnectToNanoleaf(NanoleafRequest nr, string call, string value = "")
+        private String ConnectToNanoleaf(NanoleafRequest nr, string call, string value = "")
         {
+            HttpWebResponse response = null;
             try
             {
                 string retval;
@@ -200,13 +219,13 @@ namespace ExternalDevices
                 {
                     if (call == "new")
                     {
-                        urlstate = new Uri("http://" + _ip + ":" + _port + _Apipath +  call);
+                        urlstate = new Uri("http://" + Ip + ":" + _port + _Apipath +  call);
                     }
                     else
                     {
                         if (call == "INIT")
                             call = String.Empty;
-                        urlstate = new Uri("http://" + _ip + ":" + _port + _Apipath + _tokenAuth + call);
+                        urlstate = new Uri("http://" + Ip + ":" + _port + _Apipath + Token + call);
                     }
                 }
                 else
@@ -243,7 +262,7 @@ namespace ExternalDevices
                     // Get the response.
                     dataStream.Dispose();
                 }
-                var response = (HttpWebResponse)webRequest.GetResponse();
+                response = (HttpWebResponse)webRequest.GetResponse();
                 // ReSharper disable once AssignNullToNotNullAttribute
                 using (var reader = new StreamReader(response.GetResponseStream()))
                 {
@@ -254,8 +273,12 @@ namespace ExternalDevices
             }
             catch (Exception ex)
             {
-                return ex.Message;
-
+                if (response != null)
+                {
+                    response.Dispose();
+                }
+                ErrorMessage = ex.Message;
+                return String.Empty;
             }
         }
         /// <summary>
@@ -263,34 +286,24 @@ namespace ExternalDevices
         /// On Each Change its to call, that the Changes Knowing
         /// </summary>
         /// <returns></returns>
-        private static Boolean GetNanoLeafInformations()
+        private void GetNanoLeafInformations()
         {
-            string json;
-            try
+
+            var json = ConnectToNanoleaf(NanoleafRequest.GET, "INIT");
+
+            if (String.IsNullOrEmpty(json))
             {
-                json = ConnectToNanoleaf(NanoleafRequest.GET, "INIT");
+                return;
             }
-            catch
-            {
-                return false;
-            }
-            try
-            {
-                if (String.IsNullOrEmpty(json)) return false;
                 using (var ms = new MemoryStream(Encoding.Unicode.GetBytes(json)))
                 {
                     // Deserialization from JSON  
                     DataContractJsonSerializer deserializer = new DataContractJsonSerializer(typeof(NanoLeafJson));
                     NLJ = (NanoLeafJson)deserializer.ReadObject(ms);
-                    NLJ.State.ColorTemperature.Max = 6500;
-                    NLJ.State.ColorTemperature.Min = 1200;
+                    SerialNo = NLJ.SerialNo;
                 }
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
+
+
         }
         #endregion PrivateMethods
     }

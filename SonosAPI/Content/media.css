@@ -84,6 +84,9 @@
     .alarmclockarrow:before {
         border: transparent;
     }
+    #PlaylistCount {
+        bottom: 30px;
+    }
 }
 @media screen and (max-width: 500px) {
     #Bodydiv {

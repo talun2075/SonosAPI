@@ -1,5 +1,5 @@
 ﻿@media screen and (max-width: 550px) {
-#Scenarios {
+/*#Scenarios {
     position: absolute;
     left: 150px;
 }
@@ -23,6 +23,6 @@
 .container {
     left: 80px;
     position: relative;
-}
+}*/
 
 }

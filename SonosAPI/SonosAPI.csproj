@@ -306,6 +306,10 @@
       <Project>{BEB80EEA-46A0-4C9E-B125-35589052F52F}</Project>
       <Name>MP3File</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NanoleafAurora\NanoleafAurora.csproj">
+      <Project>{e21735ca-d072-4ff7-91e2-28b9133a2c35}</Project>
+      <Name>NanoleafAurora</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SonosUPnPRead\SonosUPNP.csproj">
       <Project>{9DE76BE9-A61B-4754-92DE-05B9FD2EEC5A}</Project>
       <Name>SonosUPNP</Name>

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Web.Http;
 using ExternalDevices;
+using NanoleafAurora;
 using SonosAPI.Classes;
 using SonosUPNP;
 
@@ -18,11 +19,8 @@ namespace SonosAPI.Controllers
         private const string kzPlaylist = SonosConstants.SQ+"77";
         private const string defaultPlaylist = "S://NAS/MUSIK/Playlists/3%20Sterne%20Beide.m3u";
 
-        public string Get()
+        public void Get()
         {
-            
-            Nanoleaf.Initialisieren();
-            return "get";
 
         }
         /// <summary>
@@ -186,10 +184,14 @@ namespace SonosAPI.Controllers
                         Marantz.PowerOn = false;
                     }
                     SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.MarantzPower, PlayerName = SonosConstants.EsszimmerName, Value = "off" });
-                    if (Nanoleaf.Initialisieren())
+                    
+                    if (AuroraWrapper.AurorasList.Count > 0)
                     {
-                        if (Nanoleaf.PowerOn)
-                            Nanoleaf.PowerOn = false;
+                        foreach (Aurora aurora in AuroraWrapper.AurorasList)
+                        {
+                            if (aurora.PowerOn)
+                                aurora.PowerOn = false;
+                        }    
                     }
                     return "ok, Musik wurde ausgeschaltet.";
                 }
@@ -202,10 +204,16 @@ namespace SonosAPI.Controllers
             //Aurora einschalten zwischen 18 Uhr und 5 Uhr.
             if (DateTime.Now.Hour > 17 || DateTime.Now.Hour < 6)
             {
-                if (Nanoleaf.Initialisieren())
+                if (AuroraWrapper.AurorasList.Count > 0)
                 {
-                    SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.NanoleafSelectedScenario, PlayerName = SonosConstants.EsszimmerName, Value = Nanoleaf.SetRandomScenario()});
+                    foreach (Aurora aurora in AuroraWrapper.AurorasList)
+                    {
+                        //todo: Prüfen
+                        aurora.SetRandomScenario();
+                        aurora.Brightness = 50;
+                    }
                 }
+
             }
 
             SonosPlayer esszimmer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
@@ -349,7 +357,7 @@ namespace SonosAPI.Controllers
         [HttpGet]
         public string Dash5(string id)
         {
-            const string rsh = "x-sonosapi-stream:s18353?sid=254&amp;flags=8224&amp;sn=0";
+            const string rsh = @"x-rincon-mp3radio://http://regiocast.hoerradar.de/rsh-live-mp3-hq?sABC=59nspp3o%230%233o235r1oo3ps56085s2r8pr26r3n3699%23gharva&amsparams=playerid:tunein;skey:1504693307";
             try
             {
                 SonosPlayer essPlayer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
@@ -398,7 +406,7 @@ namespace SonosAPI.Controllers
                 var aktUri = essPlayer.GetMediaInfoURIMeta()[0];
                 if (aktUri != rsh)
                 {
-                    essPlayer.SetAVTransportURI(rsh, "<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns:r=\"urn:schemas-rinconnetworks-com:metadata-1-0/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\"><item id=\"F00092020s18353\" parentID=\"F00082064y1%3apopular\" restricted=\"true\"><dc:title>R.SH 102.4 (Top 40/Pop)</dc:title><upnp:class>object.item.audioItem.audioBroadcast</upnp:class><desc id=\"cdudn\" nameSpace=\"urn:schemas-rinconnetworks-com:metadata-1-0/\">SA_RINCON65031_</desc></item></DIDL-Lite>");
+                    essPlayer.SetAVTransportURI(rsh, "<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns:r=\"urn:schemas-rinconnetworks-com:metadata-1-0/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\"><item id=\"-1\" parentID=\"-1\" restricted=\"true\"><res protocolInfo=\"x-rincon-mp3radio:*:*:*\">x-rincon-mp3radio://http://regiocast.hoerradar.de/rsh-live-mp3-hq?sABC=59nspp3o%230%233o235r1oo3ps56085s2r8pr26r3n3699%23gharva&amp;amsparams=playerid:tunein;skey:1504693307</res><r:streamContent></r:streamContent><dc:title>RSH</dc:title><upnp:class>object.item.audioItem.audioBroadcast</upnp:class></item></DIDL-Lite>");
                     Thread.Sleep(300);
                 }
                 essPlayer.SetPlay();

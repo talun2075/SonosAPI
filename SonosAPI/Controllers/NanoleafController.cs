@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Http;
-using ExternalDevices;
+using NanoleafAurora;
 
 namespace SonosAPI.Controllers
 {
@@ -9,84 +11,111 @@ namespace SonosAPI.Controllers
     /// </summary>
     public class NanoleafController : ApiController
     {
+        #region ClassVariables
+
+        readonly List<AuroraKnowingDevices> listAuroraKnowingDeviceses = new List<AuroraKnowingDevices>()
+        {
+           new AuroraKnowingDevices("C8:EF:29:5C:91:24", "JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3","Wohnzimmer"),
+           new AuroraKnowingDevices("94:9F:5B:E9:5F:A8", "68AeTERgauJl02Fhbnel3Eh64UNY2pX9","Esszimmer")
+        };
+        #endregion ClassVariables
         /// <summary>
         /// Get Data
         /// </summary>
         /// <returns>Nanoleaf Object</returns>
         [HttpGet]
-        public NanoLeafJson Get()
+        public async Task<List<Aurora>> Get()
         {
-            if (Nanoleaf.Initialisieren())
+            //var ls = AuroraWrapper.StaticListWithoutDiscovery(listAuroraKnowingDeviceses);
+            //if (ls.Count > 0) return ls;
+
+            if (AuroraWrapper.AurorasList == null || AuroraWrapper.AurorasList.Count == 0)
             {
-                return Nanoleaf.NLJ;
+              return await AuroraWrapper.InitAuroraWrapper(listAuroraKnowingDeviceses);
             }
-            
-            return new NanoLeafJson() {Name = "ERROR"};
+            return AuroraWrapper.AurorasList;
         }
+
         /// <summary>
         /// Set Scenario
         /// </summary>
         /// <param name="id">Name of Scenario</param>
+        /// <param name="v"></param>
         /// <returns></returns>
         [HttpGet]
-        public string SetSelectedScenario(string id)
+        public string SetSelectedScenario(string id, string v)
         {
-            if (Nanoleaf.Scenarios.Contains(id) && Nanoleaf.SelectedScenario != id)
+            try
             {
-                Nanoleaf.SelectedScenario = id;
+                Aurora a = AuroraWrapper.GetAurorabySerial(id);
+                if (a.Scenarios.Contains(v) && a.SelectedScenario != v)
+                {
+                    a.SelectedScenario = v;
+                }
+                return a.SelectedScenario;
             }
-            return Nanoleaf.SelectedScenario;
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
+
         /// <summary>
         /// Set Powerstate
         /// </summary>
         /// <param name="id">true/false</param>
+        /// <param name="v">Value of Powerstate</param>
         /// <returns></returns>
         [HttpGet]
-        public Boolean SetPowerState(string id)
+        public Boolean SetPowerState(string id, string v)
         {
-            if (string.IsNullOrEmpty(id)) return Nanoleaf.PowerOn;
-            Boolean tid;
-            if (Boolean.TryParse(id, out tid))
-            {
-                if (Nanoleaf.PowerOn != tid)
+            Boolean po;
+            Aurora a = AuroraWrapper.GetAurorabySerial(id);
+            Boolean.TryParse(v, out po);
+            if (a == null) return false;
+            if (string.IsNullOrEmpty(v)) return a.PowerOn;
+            if (a.PowerOn != po)
                 {
-                    Nanoleaf.PowerOn = tid;
+                    a.PowerOn = po;
                 }
-            }
-            return Nanoleaf.PowerOn;
+            return a.PowerOn;
         }
+
         /// <summary>
         /// Brightness /Helligkeit
         /// </summary>
         /// <param name="id">Number between min and max</param>
+        /// <param name="v">Value of Brightness</param>
         /// <returns>Brightness</returns>
         [HttpGet]
-        public int SetBrightness(int id)
+        public int SetBrightness(string id, int v)
         {
-            if (id > Nanoleaf.NLJ.State.Brightness.Max || id < Nanoleaf.NLJ.State.Brightness.Min) return 0;
-            if (Nanoleaf.NLJ.State.Brightness.Value != id)
+            Aurora a = AuroraWrapper.GetAurorabySerial(id);
+            if (v > a.NLJ.State.Brightness.Max || v < a.NLJ.State.Brightness.Min) return 0;
+            if (a.NLJ.State.Brightness.Value != v)
             {
-                Nanoleaf.Brightness = id;
+                a.Brightness = v;
             }
-            return Nanoleaf.Brightness;
+            return a.Brightness;
         }
         /// <summary>
         /// Setzen eins zufälligen Scenarios
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="serial">Serial of the Aurora</param>
         /// <returns></returns>
         [HttpGet]
-        public String SetRandomScenario(int id)
+        public String SetRandomScenario(string serial)
         {
-            return Nanoleaf.SetRandomScenario();
+            Aurora a = AuroraWrapper.GetAurorabySerial(serial);
+            return a.SetRandomScenario();
         }
 
         [HttpGet]
-        public Boolean SetHue(int id)
+        public Boolean SetHue(string id, int v)
         {
-            if (id < Nanoleaf.NLJ.State.Hue.Min || id > Nanoleaf.NLJ.State.Hue.Max) return false;
-            Nanoleaf.Hue = id;
+            Aurora a = AuroraWrapper.GetAurorabySerial(id);
+            if (v < a.NLJ.State.Hue.Min || v > a.NLJ.State.Hue.Max) return false;
+            a.Hue = v;
             return true;
         }
     }

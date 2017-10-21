@@ -1140,6 +1140,7 @@ namespace SonosAPI.Controllers
                         if (pl.isDefault())
                         {
                             //MediaInfo lesen
+                            //todo: evtl. auf GetpositionInfo wechseln, bei Radio Stream. 
                             var mi = pla.GetMediaInfoURIMeta();
                             if (mi != null && mi.Count == 3)
                             {

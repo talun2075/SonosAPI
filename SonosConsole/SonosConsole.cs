@@ -31,7 +31,7 @@ namespace SonosConsole
         {
             if (args == null) throw new ArgumentNullException(nameof(args));
             //Liste der DashButtons definieren.MAC ohne Doppelpunkte
-            dashlist.Add(PhysicalAddress.Parse("AC63BEC64066"));//Seriennummer 213544
+            dashlist.Add(PhysicalAddress.Parse("50F5DAEB018B"));//Seriennummer 114460
             dashlist.Add(PhysicalAddress.Parse("AC63BE9D0BE7"));//Seriennummer 277109
             dashlist.Add(PhysicalAddress.Parse("AC63BE3AC1CF"));//Seriennummer 832769
             dashlist.Add(PhysicalAddress.Parse("AC63BE0EA91A"));//Seriennummer 823671
@@ -177,14 +177,14 @@ namespace SonosConsole
                 switch (mactostring)
                 {
                     //Dashbutton 1
-                    case "AC63BEC64066":
+                    case "50F5DAEB018B":
                         var now = DateTime.Now;
-                        if (now - DuplicateIgnoreInterval > DiclastEventTime["AC63BEC64066"])
+                        if (now - DuplicateIgnoreInterval > DiclastEventTime["50F5DAEB018B"])
                         {
                             //Prüfen, ob der Button zweimal Zeitnah (<45 Sekunden) geklickt wurde.
                             var id = 0;
-                            var dicLastclick = DiclastEventTime["AC63BEC64066"];
-                            var sincelastclick = (now - DiclastEventTime["AC63BEC64066"]).TotalSeconds;
+                            var dicLastclick = DiclastEventTime["50F5DAEB018B"];
+                            var sincelastclick = (now - DiclastEventTime["50F5DAEB018B"]).TotalSeconds;
                             if (sincelastclick < 45)
                             {
                                 id = 1;
@@ -194,7 +194,7 @@ namespace SonosConsole
                             {
                                 Console.WriteLine("Gästezimmer wurde gedrückt");
                             }
-                            DiclastEventTime["AC63BEC64066"] = now;
+                            DiclastEventTime["50F5DAEB018B"] = now;
                             try
                             {
                                 string call = initialSonosUrl+ "/Sonos/dash/dash1/" + id;

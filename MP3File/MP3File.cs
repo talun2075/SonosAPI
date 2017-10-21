@@ -22,6 +22,7 @@ namespace MP3File
             HatCover = true;
             Verlag = String.Empty;
             Typ = String.Empty;
+            Kommentar = String.Empty;
         }
         public String Titel { get; set; }
         public String Artist { get; set; }
@@ -44,6 +45,7 @@ namespace MP3File
         public Boolean HatCover { get; set; }
         public String Verlag { get; set; }
         public String Typ { get; set; }
+        public String Kommentar { get; set; }
     }
     /// <summary>
     /// Verarbeitet Fehler beim Schreiben von Songs
@@ -382,6 +384,7 @@ namespace MP3File
                     lied.Typ = taglibobjekt.MimeType;
                     lied.Genre = (taglibobjekt.Tag.Genres != null && taglibobjekt.Tag.Genres.Length > 0 ? taglibobjekt.Tag.Genres[0] : "leer");
                     lied.Laufzeit = taglibobjekt.Properties.Duration;
+                    lied.Kommentar = taglibobjekt.Tag.Comment;
                     //Cover
                     if (taglibobjekt.Tag.Pictures.Length == 0)
                     {

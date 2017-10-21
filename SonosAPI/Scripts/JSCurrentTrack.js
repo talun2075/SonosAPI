@@ -10,23 +10,23 @@ function SonosCurrentTrack() {
     this.Uri = "leer";
     this.BaseURL = "leer";
     this.StreamContent = "leer";
-    this.SetCurrentTrack = function (ct) {
+    this.SetCurrentTrack = function(ct) {
         var haschanged = false;
         var mp3change = false;
-        if (typeof ct == "undefined" || ct == null) {
+        if (typeof ct === "undefined" || ct === null) {
             return haschanged;
         }
-        if (this.Album !== ct.Album && ct.Album != null) {
-            SonosLog("CurrenTRack: Album vs Neues Album: " +this.Album +" vs "+ ct.Album);
+        if (this.Album !== ct.Album && ct.Album !== null) {
+            SonosLog("CurrenTRack: Album vs Neues Album: " + this.Album + " vs " + ct.Album);
             this.Album = ct.Album;
             haschanged = true;
         }
-        if (this.AlbumArtURI !== ct.AlbumArtURI && ct.AlbumArtURI != null) {
+        if (this.AlbumArtURI !== ct.AlbumArtURI && ct.AlbumArtURI !== null) {
             SonosLog("CurrenTRack: AlbumArtURI vs Neues AlbumArtURI: " + this.AlbumArtURI + " vs " + ct.AlbumArtURI);
             this.AlbumArtURI = ct.AlbumArtURI;
             haschanged = true;
         }
-        if (this.Artist !== ct.Artist && ct.Artist != null) {
+        if (this.Artist !== ct.Artist && ct.Artist !== null) {
             //hier nun prüfen, ob einer der Artisten mit the beginnt und beim vergleich das dann entsprechend entfernen.
             var artold = this.Artist;
             var artnew = ct.Artist;
@@ -42,50 +42,50 @@ function SonosCurrentTrack() {
                 haschanged = true;
             }
         }
-        if (this.MetaData !== ct.MetaData && ct.MetaData != null) {
+        if (this.MetaData !== ct.MetaData && ct.MetaData !== null) {
             this.MetaData = ct.MetaData;
             haschanged = true;
         }
-        if (ct.MetaData == null && this.MetaData !=="leer") {
+        if (ct.MetaData === null && this.MetaData !== "leer") {
             this.MetaData = "leer";
             haschanged = true;
         }
-        if (this.Stream !== ct.Stream && ct.Stream != null) {
+        if (this.Stream !== ct.Stream && ct.Stream !== null) {
             this.Stream = ct.Stream;
             haschanged = true;
         }
-        if (this.StreamContent !== ct.StreamContent && ct.StreamContent != null) {
+        if (this.StreamContent !== ct.StreamContent && ct.StreamContent !== null) {
             this.StreamContent = ct.StreamContent;
         }
-        if (this.Title !== ct.Title && ct.Title != null) {
+        if (this.Title !== ct.Title && ct.Title !== null) {
             SonosLog("CurrenTRack: Title vs Neues Title: " + this.Title + " vs " + ct.Title);
             this.Title = ct.Title;
             haschanged = true;
         }
-        if (this.Uri !== ct.Uri && ct.Uri != null) {
+        if (this.Uri !== ct.Uri && ct.Uri !== null) {
             this.Uri = ct.Uri;
             haschanged = true;
         }
         //MP3 Verarbeitung
-        if (typeof ct.MP3 != "undefined" && ct.MP3 != null) {
+        if (typeof ct.MP3 !== "undefined" && ct.MP3 !== null) {
             //Daten MP3 Anpassen
-            if ((this.MP3.Album === "leer" || this.MP3.Album == null) && this.Album !== "leer") {
+            if ((this.MP3.Album === "leer" || this.MP3.Album === null) && this.Album !== "leer") {
                 this.MP3.Album = this.Album;
             }
-            if ((this.MP3.Title === "leer" || this.MP3.Title == null) && this.Title !== "leer") {
+            if ((this.MP3.Title === "leer" || this.MP3.Title === null) && this.Title !== "leer") {
                 this.MP3.Title = this.Title;
             }
-            if ((this.MP3.Artist === "leer" || this.MP3.Artist == null) && this.Artist !== "leer") {
+            if ((this.MP3.Artist === "leer" || this.MP3.Artist === null) && this.Artist !== "leer") {
                 this.MP3.Artist = this.Artist;
             }
             //CurrentTrack durch MP3 Anpassen
-            if (this.Artist === "leer" && ct.MP3.Artist != null && ct.MP3.Artist !== "leer") {
+            if (this.Artist === "leer" && ct.MP3.Artist !== null && ct.MP3.Artist !== "leer") {
                 this.Artist = ct.MP3.Artist;
             }
-            if (this.Album === "leer" && ct.MP3.Album != null && ct.MP3.Album !== "leer") {
+            if (this.Album === "leer" && ct.MP3.Album !== null && ct.MP3.Album !== "leer") {
                 this.Album = ct.MP3.Album;
             }
-            if (this.Title === "leer" && ct.MP3.Titel != null && ct.MP3.Titel !== "leer") {
+            if (this.Title === "leer" && ct.MP3.Titel !== null && ct.MP3.Titel !== "leer") {
                 this.Title = ct.MP3.Titel;
             }
             //Daten an MP3 Uebergeben
@@ -102,10 +102,10 @@ function SonosCurrentTrack() {
         } else {
             return true;
         }
-    }
+    };
     this.RenderCurrentTrack = function(tracknumber) {
         //Wenn kein Stream MP3 Rendern ansonsten Stream
-        if (typeof tracknumber == "undefined") {
+        if (typeof tracknumber === "undefined") {
             tracknumber = 0;
         }
         if (this.Stream === false) {
@@ -129,11 +129,10 @@ function SonosCurrentTrack() {
             if (SoDo.runtimeSlider.is(":hidden")) {
                 SoDo.runtimeSlider.show();
             }
-        }
-        else {
+        } else {
             //Stream
             //Elemente ausblenden
-            if (!this.StreamContent ==="Apple") {
+            if (!this.StreamContent === "Apple") {
                 if (SoDo.bewertungWidth.is(":visible")) {
                     SoDo.bewertungWidth.hide();
                 }
@@ -152,7 +151,7 @@ function SonosCurrentTrack() {
                     SoDo.runtimeSlider.show();
                 }
             }
-            if (typeof this.StreamContent !== "undefined" && !this.StreamContent ==="Dienst" && !this.StreamContent ==="Apple") {
+            if (typeof this.StreamContent !== "undefined" && !this.StreamContent === "Dienst" && !this.StreamContent === "Apple") {
                 if (SoDo.aktTitle.text() !== this.StreamContent) {
                     SoDo.aktTitle.text(this.StreamContent);
                 }
@@ -178,11 +177,11 @@ function SonosCurrentTrack() {
                         SoDo.aktArtist.text("");
                     }
                 }
-                if (this.StreamContent ==="Apple") {
+                if (this.StreamContent === "Apple") {
                     this.MP3.RenderMP3(true);
                 }
             }
-            
+
         }
         //Unabhängig vom Stream
         //AlbumCover
@@ -195,8 +194,8 @@ function SonosCurrentTrack() {
                 SoDo.cover.attr("src", SoVa.nocoverpfad);
             }
         }
-    }
-    
+    };
+
 }
 function MP3() {
     this.Album = "leer";
@@ -211,6 +210,7 @@ function MP3() {
     this.HatCover = false;
     this.Jahr = 0;
     this.Komponist = "leer";
+    this.Kommentar = "leer";
     this.Laufzeit = "leer";
     this.Lyric = "leer";
     this.Pfad = "leer";
@@ -222,98 +222,102 @@ function MP3() {
     this.Verlag = "leer";
 
     this.SetMP3 = function(mp3) {
-        var haschanged = false;//Wenn Änderungen gemacht wurden true zurück, damit neu gerendert werden kann.
-        if (typeof mp3 == "undefined" || mp3 == null) {
+        var haschanged = false; //Wenn Änderungen gemacht wurden true zurück, damit neu gerendert werden kann.
+        if (typeof mp3 === "undefined" || mp3 === null) {
             return haschanged;
         }
-        if (this.Album !== mp3.Album && mp3.Album != null) {
+        if (this.Album !== mp3.Album && mp3.Album !== null) {
             this.Album = mp3.Album;
             haschanged = true;
         }
-        if (this.Artist !== mp3.Artist && mp3.Artist != null) {
+        if (this.Artist !== mp3.Artist && mp3.Artist !== null) {
             this.Artist = mp3.Artist;
             haschanged = true;
         }
-        if (this.ArtistPlaylist !== mp3.ArtistPlaylist && mp3.ArtistPlaylist != null) {
+        if (this.ArtistPlaylist !== mp3.ArtistPlaylist && mp3.ArtistPlaylist !== null) {
             this.ArtistPlaylist = mp3.ArtistPlaylist;
             //haschanged = true;
         }
-        if (this.Aufwecken !== mp3.Aufwecken && mp3.Aufwecken != null) {
+        if (this.Aufwecken !== mp3.Aufwecken && mp3.Aufwecken !== null) {
             this.Aufwecken = mp3.Aufwecken;
             //haschanged = true;
         }
-        if (this.Bewertung !== parseInt(mp3.Bewertung) && mp3.Bewertung != null) {
+        if (this.Bewertung !== parseInt(mp3.Bewertung) && mp3.Bewertung !== null) {
             this.Bewertung = parseInt(mp3.Bewertung);
             haschanged = true;
         }
-        if (this.BewertungMine !== parseInt(mp3.BewertungMine) && mp3.BewertungMine != null) {
+        if (this.BewertungMine !== parseInt(mp3.BewertungMine) && mp3.BewertungMine !== null) {
             this.BewertungMine = parseInt(mp3.BewertungMine);
             haschanged = true;
         }
-        if (this.Gelegenheit !== mp3.Gelegenheit && mp3.Gelegenheit != null) {
+        if (this.Gelegenheit !== mp3.Gelegenheit && mp3.Gelegenheit !== null) {
             this.Gelegenheit = mp3.Gelegenheit;
             //haschanged = true;
         }
-        if (this.Geschwindigkeit !== mp3.Geschwindigkeit && mp3.Geschwindigkeit != null) {
+        if (this.Geschwindigkeit !== mp3.Geschwindigkeit && mp3.Geschwindigkeit !== null) {
             this.Geschwindigkeit = mp3.Geschwindigkeit;
             //haschanged = true;
         }
-        if (this.Genre !== mp3.Genre && mp3.Genre != null) {
+        if (this.Genre !== mp3.Genre && mp3.Genre !== null) {
             this.Genre = mp3.Genre;
             haschanged = true;
         }
-        if (this.HatCover !== mp3.HatCover && mp3.HatCover != null) {
+        if (this.HatCover !== mp3.HatCover && mp3.HatCover !== null) {
             this.HatCover = mp3.HatCover;
             haschanged = true;
         }
-        if (this.Jahr !== mp3.Jahr && mp3.Jahr != null) {
+        if (this.Jahr !== mp3.Jahr && mp3.Jahr !== null) {
             this.Jahr = mp3.Jahr;
             //haschanged = true;
         }
-        if (this.Komponist !== mp3.Komponist && mp3.Komponist != null) {
+        if (this.Komponist !== mp3.Komponist && mp3.Komponist !== null) {
             this.Komponist = mp3.Komponist;
             //haschanged = true;
         }
-        if (this.Laufzeit !== mp3.Laufzeit && mp3.Laufzeit != null) {
+        if (this.Kommentar !== mp3.Kommentar && mp3.Kommentar !== null) {
+            this.Kommentar = mp3.Kommentar;
+            //haschanged = true;
+        }
+        if (this.Laufzeit !== mp3.Laufzeit && mp3.Laufzeit !== null) {
             this.Laufzeit = mp3.Laufzeit;
             //haschanged = true;
         }
-        if (this.Lyric !== mp3.Lyric && mp3.Lyric != null) {
+        if (this.Lyric !== mp3.Lyric && mp3.Lyric !== null) {
             this.Lyric = mp3.Lyric;
             haschanged = true;
         }
-        if (this.Pfad !== mp3.Pfad && mp3.Pfad != null) {
+        if (this.Pfad !== mp3.Pfad && mp3.Pfad !== null) {
             this.Pfad = mp3.Pfad;
             //haschanged = true;
         }
-        if (this.Stimmung !== mp3.Stimmung && mp3.Stimmung != null) {
+        if (this.Stimmung !== mp3.Stimmung && mp3.Stimmung !== null) {
             this.Stimmung = mp3.Stimmung;
             //haschanged = true;
         }
-        if (this.Title !== mp3.Titel && mp3.Titel != null) {
+        if (this.Title !== mp3.Titel && mp3.Titel !== null) {
             this.Title = mp3.Titel;
             haschanged = true;
         }
-        if (this.Tracknumber !== parseInt(mp3.Tracknumber) && mp3.Tracknumber != null) {
+        if (this.Tracknumber !== parseInt(mp3.Tracknumber) && mp3.Tracknumber !== null) {
             this.Tracknumber = parseInt(mp3.Tracknumber);
             //haschanged = true;
         }
-        if (this.Typ !== mp3.Typ && mp3.Typ != null) {
+        if (this.Typ !== mp3.Typ && mp3.Typ !== null) {
             this.Typ = mp3.Typ;
             //haschanged = true;
         }
-        if (this.VerarbeitungsFehler !== mp3.VerarbeitungsFehler && mp3.VerarbeitungsFehler != null) {
+        if (this.VerarbeitungsFehler !== mp3.VerarbeitungsFehler && mp3.VerarbeitungsFehler !== null) {
             this.VerarbeitungsFehler = mp3.VerarbeitungsFehler;
             //haschanged = true;
         }
-        if (this.Verlag !== mp3.Verlag && mp3.Verlag != null) {
+        if (this.Verlag !== mp3.Verlag && mp3.Verlag !== null) {
             this.Verlag = mp3.Verlag;
             //haschanged = true;
         }
         return haschanged;
-    }
-    this.RenderMP3 = function (changeafterrating) {
-        if (typeof changeafterrating == "undefined") {
+    };
+    this.RenderMP3 = function(changeafterrating) {
+        if (typeof changeafterrating === "undefined") {
             changeafterrating = false;
         }
         //Nach einem Rating bestimmte Dinge nicht neu Rendern
@@ -353,13 +357,13 @@ function MP3() {
                 SoDo.aktArtist.text("");
             }
         }
-    }
-    this.RenderLyric = function () {
+    };
+    this.RenderLyric = function() {
         SoDo.lyricWrapper.children().remove();
         if (this.Lyric !== "leer") {
             $('<div>' + this.Lyric + '</div>').appendTo(SoDo.lyricWrapper);
         } else {
             $('<div>No Lyrics in Song</div>').appendTo(SoDo.lyricWrapper);
         }
-    }
+    };
 }

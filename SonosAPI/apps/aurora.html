@@ -26,30 +26,18 @@
 
 </head>
 <body>
-<div id="AuroraWrapper">
-    <div id="AuroraCentered">
-        <div class="container">
-                <input type="checkbox" id="power" name="power" checked="checked"/>
-                <label for="power" class="power">
-                    <span class="icon-off"></span>
-                    <span class="light"></span>
-                </label>
-            </div>
-        <div id="BrightnessSlider">
-            <div id="BrightnessSliderLabel">Helligkeit</div><div id="BrightnessSliderValue">50</div></div>
-            <div id="Scenarios"></div>
-    </div>
-</div>
-<script>
-        var aurora;
-        var options = { PowerDom: "power", ScenariosDOM: "Scenarios", SelectedScenarioClass: "ssc", BrightnessDOM: "BrightnessSlider", BrightnessDOMValueDOM: "BrightnessSliderValue", PowerClassOff: "pwroff" }
-        $(document).ready(function () {
-            aurora = new NanoleafAurora(options);
-            aurora.Init();
-        });
-        
+    <div id="AuroraWrapper"></div>
+        <script>
+            //todo: Dom in Init aufbauen und nur noch primären wrapper mitgeben.
+            var aurora;
+            var options = { Wrapper: "AuroraWrapper", Name: "aurora" }
+            $(document).ready(function () {
+                aurora = new NanoleafAurora(options);
+                aurora.Init();
+            });
 
 
-    </script>
+
+        </script>
 </body>
 </html>

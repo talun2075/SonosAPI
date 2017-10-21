@@ -425,7 +425,7 @@ function SonosZone(uuid, name) {
     });
     //Methoden
     this.RenderTrackTime = function () {
-        if (this.Playlist.IsEmpty === true || (this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple")) {
+        if (this.Playlist.IsEmpty === true || this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple") {
             if (SoDo.runtimeCurrentSong.is(":visible")) {
                 SoDo.runtimeCurrentSong.hide();
             }
@@ -463,7 +463,7 @@ function SonosZone(uuid, name) {
     };
     this.RenderPlaylistCounter = function (source) {
         SonosLog("RenderPlaylistCounter Callby:" + source);
-        if (this.Playlist.IsEmpty === true || (this.CurrentTrack !== null && this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple")) {
+        if (this.Playlist.IsEmpty === true || this.CurrentTrack !== null && this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple") {
             if (SoDo.playlistCount.is(":visible")) {
                 SoDo.playlistCount.hide();
             }
@@ -520,7 +520,7 @@ function SonosZone(uuid, name) {
     this.RenderNextTrack = function (source) {
         SonosLog("RenderNextTrack CalledBy:" + source);
         //Stream
-        if ((this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple") || this.Playlist.IsEmpty) {
+        if (this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple" || this.Playlist.IsEmpty) {
             if (SoDo.nextSongWrapper.is(":visible")) {
                 SoDo.nextSongWrapper.hide();
             }
@@ -675,7 +675,7 @@ function SonosZone(uuid, name) {
         }
     };
     this.CheckCurrenTrackRefesh = function () {
-        if (this.Playlist.IsEmpty === false && (this.CurrentTrack.Artist === "leer" || this.CurrentTrack.MP3.Artist === "leer" || (this.CurrentTrack.MP3.Genre === "leer" && this.CurrentTrack.MP3.Jahr === 0 && this.CurrentTrack.MP3.Typ === "leer"))) {
+        if (this.Playlist.IsEmpty === false && (this.CurrentTrack.Artist === "leer" || this.CurrentTrack.MP3.Artist === "leer" || this.CurrentTrack.MP3.Genre === "leer" && this.CurrentTrack.MP3.Jahr === 0 && this.CurrentTrack.MP3.Typ === "leer")) {
             return true;
         }
         return false;
@@ -791,7 +791,7 @@ function SonosZone(uuid, name) {
         if (this.NumberOfTracks === 0 && s.NumberOfTracks !== null) {
             this.NumberOfTracks = parseInt(s.NumberOfTracks);
         }
-        if (this.CurrentTrackNumber !== parseInt(s.CurrentTrackNumber) || mp3state === true || (s.CurrentTrack !== null && s.CurrentTrack.Title !== null && this.CurrentTrack.Title.toUpperCase() !== s.CurrentTrack.Title.toUpperCase())) {
+        if (this.CurrentTrackNumber !== parseInt(s.CurrentTrackNumber) || mp3state === true || s.CurrentTrack !== null && s.CurrentTrack.Title !== null && this.CurrentTrack.Title.toUpperCase() !== s.CurrentTrack.Title.toUpperCase()) {
             this.CurrentTrackNumber = parseInt(s.CurrentTrackNumber);
             //Erst jetzt, da beim Rendern, die TrackNumber benötigt wird.
             this.SetCurrentTrack(s.CurrentTrack, "SetAktSongInfo");

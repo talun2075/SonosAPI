@@ -65,9 +65,6 @@ $(document).ready(function () {
     //SonosLog("Document Ready");
     window.SoDo = new SonosDOMObjects();
     window.SoVa = new SonosVariablen();
-    if (document.body.clientWidth < 770) {
-        SoVa.smallDevice = true;
-    }
     window.SonosZones = new SonosZonesObject();
     SoDo.errorloggingDOM.on("click", function () {
         SonosWindows(SoDo.errorlogging);
@@ -76,7 +73,7 @@ $(document).ready(function () {
         var al = $("#AppList");
         al.toggle(200,function() {
             if (al.is(":hidden")) {
-                $("#AppIframe").hide();
+                $("#AppIframeWrapper").hide();
             }
         });
 
@@ -146,8 +143,8 @@ $(document).ready(function () {
         //Curenttrack ändern, danach die Nummer Ändern und somit den Nexttrack rendern.
         if (SonosZones.CheckActiveZone()) {
             SoVa.currentplaylistScrolled = false;
-            SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber =(SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber + 1);
-            SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrack(SonosZones[SonosZones.ActiveZoneUUID].Playlist.Playlist[(SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1)], "Nextclick");
+            SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber = SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber + 1;
+            SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrack(SonosZones[SonosZones.ActiveZoneUUID].Playlist.Playlist[SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1], "Nextclick");
             doit('Next');
             if (SoVa.ratingonlycurrent === false && SoDo.ratingListBox.is(":visible")) {
                 SonosWindows(SoDo.ratingListBox, true);
@@ -158,10 +155,10 @@ $(document).ready(function () {
     SoDo.prevButton.on("click", function () {
         if (SonosZones.CheckActiveZone()) {
             SoVa.currentplaylistScrolled = false;
-            if ((SonosZones[SonosZones.ActiveZoneUUID].PlayMode !== "REPEAT_ALL" && SonosZones[SonosZones.ActiveZoneUUID].PlayMode !== "SHUFFLE") && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber === 1) {
+            if (SonosZones[SonosZones.ActiveZoneUUID].PlayMode !== "REPEAT_ALL" && SonosZones[SonosZones.ActiveZoneUUID].PlayMode !== "SHUFFLE" && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber === 1) {
                 return false;
             }
-            SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber =(SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1);
+            SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber =SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1;
             SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrack(SonosZones[SonosZones.ActiveZoneUUID].Playlist.Playlist[SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber], "PreClick");
             doit('Previous');
             SonosWindows(SoDo.ratingListBox, true);
@@ -199,7 +196,7 @@ $(document).ready(function () {
         value: 1,
         stop: function (event, ui) {
             //Prüfen, ob die Läutstärke über 80% verändert wird. 
-            if (ui.value > SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume && (ui.value - SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume) > SoVa.VolumeConfirmCounter) {
+            if (ui.value > SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume && ui.value - SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume > SoVa.VolumeConfirmCounter) {
                 var answer = confirm("Du willst die Lautstärke um " + SoVa.VolumeConfirmCounter + " von 100 Schritten erhöhen. Klicke Ok, wenn das gewollt ist");
                 if (!answer) {
                     SoDo.labelVolume.html(SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume);
@@ -219,7 +216,7 @@ $(document).ready(function () {
     SoDo.saveQueue.keyup(function (e) {
         // 'enter' key was pressed
         var $suggest = SoDo.suggestionInput;
-        var code = (e.keyCode ? e.keyCode : e.which);
+        var code = e.keyCode ? e.keyCode : e.which;
         if (code === 13) {
             $(this).val($suggest.val());
             $suggest.val("");
@@ -490,7 +487,7 @@ function PlayPress() {
 function PlayPressSmall(k) {
     var playid = $(k).parent().parent().attr("id");
     SonosLog("PlayPressSmall:" + playid);
-    var PressKey = (GetIDfromCurrentPlaylist(playid) + 1);
+    var PressKey = GetIDfromCurrentPlaylist(playid) + 1;
     SonosLog("PlayPressSmall:" + PressKey);
     if (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber === PressKey) {
         //Play bei aktuellem Song
@@ -498,7 +495,7 @@ function PlayPressSmall(k) {
         PlayPress();
     } else {
         SonosLog("PlayPressSmall läd doitValue");
-        SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrack(SonosZones[SonosZones.ActiveZoneUUID].Playlist.Playlist[(PressKey - 1)], "PlaypressSmall");
+        SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrack(SonosZones[SonosZones.ActiveZoneUUID].Playlist.Playlist[PressKey - 1], "PlaypressSmall");
         SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber =PressKey;
         SonosZones[SonosZones.ActiveZoneUUID].PlayState ="PLAYING";
         doitValue("SetSongInPlaylist", PressKey);
@@ -585,7 +582,7 @@ function SetVolume(k) {
             value: SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume,
             stop: function (event, ui) {
                 //Prüfen, ob die Läutstärke über 80% verändert wird. 
-                if (ui.value > SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume && (ui.value - SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume) > SoVa.VolumeConfirmCounter) {
+                if (ui.value > SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume && ui.value - SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume > SoVa.VolumeConfirmCounter) {
                     var answer = confirm("Du willst die Lautstärke um " + SoVa.VolumeConfirmCounter + " von 100 Schritten erhöhen. Klicke Ok, wenn das gewollt ist");
                     if (!answer) {
                         SoDo.labelVolume.html(SonosZones[SonosZones.ActiveZoneUUID].CordinatorVolume);
@@ -618,7 +615,7 @@ function SetVolume(k) {
                 value: item.Volume,
                 stop: function (event, ui) {
                     //Prüfen, ob die Läutstärke über 80% verändert wird. 
-                    if (ui.value > item.Volume && (ui.value - item.Volume) > SoVa.VolumeConfirmCounter) {
+                    if (ui.value > item.Volume && ui.value - item.Volume> SoVa.VolumeConfirmCounter) {
                         var answer = confirm("Du willst die Lautstärke um " + SoVa.VolumeConfirmCounter + " von 100 Schritten erhöhen. Klicke Ok, wenn das gewollt ist");
                         if (!answer) {
                             $("#Multivolumeslider_" + item.UUID).slider({ value: item.Volume });
@@ -646,7 +643,7 @@ function SetVolume(k) {
             value: SonosZones[SonosZones.ActiveZoneUUID].GroupVolume,
             stop: function (event, ui) {
                 //Prüfen, ob die Läutstärke über 80% verändert wird. 
-                if (ui.value > SonosZones[SonosZones.ActiveZoneUUID].GroupVolume && (ui.value - SonosZones[SonosZones.ActiveZoneUUID].GroupVolume) > SoVa.VolumeConfirmCounter) {
+                if (ui.value > SonosZones[SonosZones.ActiveZoneUUID].GroupVolume && ui.value - SonosZones[SonosZones.ActiveZoneUUID].GroupVolume > SoVa.VolumeConfirmCounter) {
                     var answer = confirm("Du willst die Lautstärke um " + SoVa.VolumeConfirmCounter + " von 100 Schritten erhöhen. Klicke Ok, wenn das gewollt ist");
                     if (!answer) {
                         $("#multivolumesliderAll").slider({ value: SonosZones[SonosZones.ActiveZoneUUID].GroupVolume });
@@ -905,7 +902,7 @@ function ShowPlaylistLyric(t) {
     var dataparent = $(t).parent();
     var curentid = GetIDfromCurrentPlaylist(dataparent.parent().parent().attr("id"));
     var uri = dataparent.attr("data-uri");
-    if ((curentid + 1) === SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber) {
+    if (curentid + 1 === SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber) {
         SonosLog("ShowPlaylistLyric current");
         //Wenn der gewählte Song dem current entspricht soll die currentbox aufgehen.
         $('#Lyric').click();
@@ -944,10 +941,10 @@ function ShowPlaylistLyricCurrent() {
 }
 function MoveAktArtist() {
 
-    if (SoVa.smallDevice === true) {
+    if (document.body.clientWidth < 850) {
         return;
     }
-    var hivi = (SoDo.lyric.is(":hidden") && SoDo.browse.is(":hidden") && SoDo.lyricsPlaylist.is(":hidden"));
+    var hivi = SoDo.lyric.is(":hidden") && SoDo.browse.is(":hidden") && SoDo.lyricsPlaylist.is(":hidden");
     if (SoVa.ratingonlycurrent === false && hivi === false) {
         SoDo.aktSongInfo.addClass("moveright");
         SoDo.cover.addClass("moveright");
@@ -981,10 +978,10 @@ function RemoveFromPlaylist(k) {
     SoVa.aktcurpopdown = "leer"; //Reset der Playlist Informationen
     var playid = $(k).parent().parent().attr("id");
     var PressKey = GetIDfromCurrentPlaylist(playid);
-    SonosAjax("RemoveSongInPlaylist", "", (PressKey + 1)).success(function (data) {
+    SonosAjax("RemoveSongInPlaylist", "", PressKey + 1).success(function (data) {
         if (data === true) {
             if (PressKey < SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber) {
-                SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber =(SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1);
+                SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber =SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1;
             }
             //Playlist wird automatisch neu geladen. 
             SonosZones[SonosZones.ActiveZoneUUID].Playlist.RemoveFromPlaylist(PressKey);
@@ -1029,14 +1026,14 @@ function ResortPlaylist(ui) {
             //var positionen = GetIDfromCurrentPlaylist(cpl) + "#" + (i + 1);
             var old = GetIDfromCurrentPlaylist(cpl);
             SonosZones[SonosZones.ActiveZoneUUID].Playlist.ReorderPlaylist(old, i);
-            SonosAjax("ReorderTracksinQueue","", (old + 1),(i + 1)).fail(function (jqXHR) {
+            SonosAjax("ReorderTracksinQueue","", old + 1,i + 1).fail(function (jqXHR) {
                 if (jqXHR.statusText === "Internal Server Error") {
                     ReloadSite("ResortPlaylist");
                 } else { alert("Beim der Aktion:ResortPlaylist(" + ui + ") ist ein Fehler aufgetreten."); }
             });
             SonosLog("ResortPlaylist IDOld:" + cpl + " IdNew:" + i + " send to server Done");
         }
-        $(item).attr("id", "Currentplaylist_" + (i));
+        $(item).attr("id", "Currentplaylist_" + i);
     });
     ResortPlaylistDisable();
 }
@@ -1217,8 +1214,8 @@ function ShowPlaylistRating(t) {
     var dstimm = $(dataparent).attr("data-stimmung");
     var drating = $(dataparent).attr("data-rating");
     var dratingmine = $(dataparent).attr("data-bewertungmine");
-    var daufweck = ($(dataparent).attr("data-aufwecken") === 'true');
-    var dartistpl = ($(dataparent).attr("data-artistplaylist") === 'true');
+    var daufweck = $(dataparent).attr("data-aufwecken") === 'true';
+    var dartistpl = $(dataparent).attr("data-artistplaylist") === 'true';
     SoDo.ratingListBox.attr("data-gelegenheit", dgelegenheit);
     SoDo.ratingListBox.attr("data-geschwindigkeit", dgeschw);
     SoDo.ratingListBox.attr("data-stimmung", dstimm);
@@ -1276,7 +1273,7 @@ function ShowCurrentRating(t) {
         }
     }
     SoDo.ratingListBox.attr("data-type", "current");
-    SoDo.ratingListBox.attr("data-playlistid", (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1));
+    SoDo.ratingListBox.attr("data-playlistid", SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1);
     SoDo.ratingListBox.attr("data-uri", SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Uri);
     SoDo.ratingListBox.attr("data-gelegenheit", SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3.Gelegenheit);
     SoDo.ratingListBox.attr("data-geschwindigkeit", SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3.Geschwindigkeit);
@@ -1321,7 +1318,7 @@ function SetRatingLyric() {
     var pid = parseInt(SoDo.ratingListBox.attr("data-playlistid"));
     SonosAjax("SetSongMeta",{ '': uri + "#" + rating + "#" + gelegenheit + "#" + geschwindigkeit + "#" + stimmung + "#" + aufwecken + "#" + artistpl + "#" + rmine }).done(function () {
         SonosLog("SetRatingLyric rated to Server");
-        if ((SoDo.ratingListBox.attr("data-type") === "current" || pid === (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1)) && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3 !== null) {
+        if ((SoDo.ratingListBox.attr("data-type") === "current" || pid === SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber - 1) && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3 !== null) {
             SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3.Gelegenheit = gelegenheit;
             SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3.Geschwindigkeit = geschwindigkeit;
             SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.MP3.Stimmung = stimmung;
@@ -1641,11 +1638,14 @@ function UpdateMusicIndex() {
 }
 //Zeigt Songsdetails an aus dem Currenttrack, die in metaUse definiert wurden.
 function ShowCurrentSongMeta() {
+    var tempzindex = SoVa.szindex;
     SonosWindows(SoDo.currentMeta);
     if (SoDo.currentMeta.is(":hidden")) {
+        SoDo.aktSongInfo.css("z-index", 99);
         return;
     }
-    if (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Stream === true && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.StreamContent !=="Apple") {
+    SoDo.aktSongInfo.css("z-index", tempzindex);
+    if (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Stream === true && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.StreamContent !== "Apple") {
         SonosWindows(SoDo.currentMeta, true);
         return;
     }
@@ -1961,7 +1961,7 @@ function Hour(wert) {
         var sign = n < 0 ? '-' : '';
         n = Math.abs(n);
         var h = parseInt(n / 3600);
-        var m = parseInt((n / 60) % 60);
+        var m = parseInt(n / 60 % 60);
         var sec = parseInt(n % 60);
         return sign + Hourfrmt(h) + ':' + Hourfrmt(m) + ':' + Hourfrmt(sec);
     }
