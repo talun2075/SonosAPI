@@ -88,6 +88,7 @@ namespace SonosAPI.Controllers
             }
 
         }
+
         /// <summary>
         /// Ändert den Aktivierungsstatus eines Weckers
         /// </summary>
@@ -970,7 +971,7 @@ namespace SonosAPI.Controllers
         {
             try
             {
-                if (SonosHelper.Sonos == null)
+                if (SonosHelper.Sonos == null || SonosHelper.Sonos.Zones.Count ==0)
                 {
                     SonosHelper.Initialisierung();
                     //AddServerErrors("GetPlayerbyRincon", new Exception("Sonos ist null"));
@@ -1455,12 +1456,19 @@ namespace SonosAPI.Controllers
         [HttpPost]
         public Boolean SetRatingFilter(string id, [FromBody] SonosRatingFilter v)
         {
-            var pl = GetPlayerbyRincon(id);
-            if (pl != null && v.IsValid)
+            try
             {
-                if (pl.RatingFilter.CheckSonosRatingFilter(v)) return false;
-                pl.RatingFilter = v;
-                pl.ManuellStateChange(DateTime.Now);
+                var pl = GetPlayerbyRincon(id);
+                if (pl != null && v.IsValid)
+                {
+                    if (pl.RatingFilter.CheckSonosRatingFilter(v)) return false;
+                    pl.RatingFilter = v;
+                    pl.ManuellStateChange(DateTime.Now);
+                }
+            }
+            catch
+            {
+                return false;
             }
             return true;
         }

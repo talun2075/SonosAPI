@@ -13,11 +13,11 @@ namespace SonosAPI.Controllers
     {
         #region ClassVariables
 
-        readonly List<AuroraKnowingDevices> listAuroraKnowingDeviceses = new List<AuroraKnowingDevices>()
-        {
-           new AuroraKnowingDevices("C8:EF:29:5C:91:24", "JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3","Wohnzimmer"),
-           new AuroraKnowingDevices("94:9F:5B:E9:5F:A8", "68AeTERgauJl02Fhbnel3Eh64UNY2pX9","Esszimmer")
-        };
+        //public static readonly List<AuroraKnowingDevices> listAuroraKnowingDeviceses = new List<AuroraKnowingDevices>()
+        //{
+        //   new AuroraKnowingDevices("C8:EF:29:5C:91:24", "JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3","Wohnzimmer"),
+        //   new AuroraKnowingDevices("94:9F:5B:E9:5F:A8", "68AeTERgauJl02Fhbnel3Eh64UNY2pX9","Esszimmer")
+        //};
         #endregion ClassVariables
         /// <summary>
         /// Get Data
@@ -31,7 +31,7 @@ namespace SonosAPI.Controllers
 
             if (AuroraWrapper.AurorasList == null || AuroraWrapper.AurorasList.Count == 0)
             {
-              return await AuroraWrapper.InitAuroraWrapper(listAuroraKnowingDeviceses);
+              return await AuroraWrapper.InitAuroraWrapper();
             }
             return AuroraWrapper.AurorasList;
         }
@@ -80,7 +80,13 @@ namespace SonosAPI.Controllers
                 }
             return a.PowerOn;
         }
-
+        [HttpGet]
+        public Boolean SetGroupPowerState(string id)
+        {
+            Boolean po;
+            Boolean.TryParse(id, out po);
+            return AuroraWrapper.GroupPowerOn(po);
+        }
         /// <summary>
         /// Brightness /Helligkeit
         /// </summary>
@@ -109,7 +115,28 @@ namespace SonosAPI.Controllers
             Aurora a = AuroraWrapper.GetAurorabySerial(serial);
             return a.SetRandomScenario();
         }
+        /// <summary>
+        /// Ermitteln der Gruppenscenarien
+        /// </summary>
+        /// <param name="id">Dummy</param>
+        /// <returns></returns>
+        [HttpGet]
+        public List<String> GetGroupScenario(string id)
+        {
 
+            return AuroraWrapper.GetGroupScenarios();
+        }
+        /// <summary>
+        /// Setzen der Gruppen Scenarien
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public String SetGroupScenario(string id)
+        {
+            return AuroraWrapper.SetGroupScenarios(id);
+
+        }
         [HttpGet]
         public Boolean SetHue(string id, int v)
         {
@@ -117,6 +144,48 @@ namespace SonosAPI.Controllers
             if (v < a.NLJ.State.Hue.Min || v > a.NLJ.State.Hue.Max) return false;
             a.Hue = v;
             return true;
+        }
+        /// <summary>
+        /// Registriert einen neuen User bei allen gefundenen Aurroas.
+        /// Funktioniert nur, wenn auch bei der Aurora 5-7 Sekunden geklickt wurde. 
+        /// </summary>
+        /// <param name="id">Dummy</param>
+        /// <returns></returns>
+        [HttpGet]
+        public List<String> RegisterNewUser(string id)
+        {
+            List<String> newUser = new List<string>();
+            if (AuroraWrapper.AurorasList == null || AuroraWrapper.AurorasList.Count == 0) return newUser;
+            foreach (Aurora aurora in AuroraWrapper.AurorasList)
+            {
+                try
+                {
+                    String n = "Name:" + aurora.Name + " Token:" + aurora.NewUser();
+                    if (!String.IsNullOrEmpty(n))
+                        newUser.Add(n);
+                }
+                catch(Exception exception)
+                {
+                    newUser.Add(aurora.Name+" Exception:"+exception.Message);
+                }
+            }
+            return newUser;
+
+        }
+        /// <summary>
+        /// Umbenennen von Scenarien
+        /// </summary>
+        /// <param name="id">Serial der Auroras</param>
+        /// <param name="v">Altes Scenario @ Neues Scenario Beispiel old@new</param>
+        /// <returns>True wenn es geklappt hat.</returns>
+        [HttpGet]
+        public Boolean RenameScenario(string id, string v)
+        {
+            Aurora a = AuroraWrapper.GetAurorabySerial(id);
+            if (a == null || !v.Contains("@")) return false;
+            var sp = v.Split('@');
+            if (string.IsNullOrEmpty(sp[0]) || string.IsNullOrEmpty(sp[1])) return false;
+            return a.RenameScenario(sp[0], sp[1]);
         }
     }
 }

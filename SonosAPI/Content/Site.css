@@ -33,7 +33,7 @@ a {
     right: 0;
     border: 2px solid black;
     height: 100%;
-    width: 50%;
+    width: 100%;
     border-radius: 25px 0 0 25px;
     background-color: white;
 }
@@ -54,7 +54,7 @@ iframe {
     overflow: auto;
     border: 0;
 }
-div#AppList ul {
+#AppList ul {
     -webkit-padding-start: 30px;
     /*padding-left: 30px;*/
 }
@@ -802,7 +802,16 @@ div#AppList ul {
     #Repeat.aktiv {
         Background-Color: grey;
     }
-
+#Aurora {
+    top: 280px;
+    right: 0;
+    Background: URL("/Images/nanoleaflogo.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    -o-transition: all 1s ease-in-out;
+    -webkit-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
+}
 #Fade {
     top: 180px;
     right: 0;
@@ -814,9 +823,9 @@ div#AppList ul {
     transition: all 1s ease-in-out;
 }
 
-    #Fade.aktiv {
-        Background-Color: grey;
-    }
+#Fade.aktiv {
+    Background-Color: grey;
+}
 
 #Next {
     top: 90px;
@@ -1056,7 +1065,9 @@ div#AppList ul {
     padding-top: 5px;
     padding-bottom: 5px;
 }
-
+#CurrentPlaylistClose,#CurrentPlaylistOpen {
+    display: none;
+}
 #Currentplaylistwrapper {
     overflow: auto;
     -webkit-overflow-scrolling: touch;

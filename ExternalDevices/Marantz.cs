@@ -48,7 +48,7 @@ namespace ExternalDevices
                 }
                 catch
                 {
-                    _selectedMarantzInputs = MarantzInputs.PS3;
+                    _selectedMarantzInputs = MarantzInputs.Sonos;
                 }
             }
             catch
@@ -139,8 +139,6 @@ namespace ExternalDevices
 
             }
         }
-
-        public static Boolean IsInitialisiert { get; private set; }
     }
 
 }
@@ -152,5 +150,6 @@ public enum MarantzInputs
     Sonos,
     Film,
     PS3,
+    PS4,
     TV
 }

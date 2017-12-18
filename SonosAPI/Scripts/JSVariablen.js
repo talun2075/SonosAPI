@@ -58,6 +58,8 @@ function SonosDOMObjects() {
     this.currentBomb = $("#CurrentBomb"); //Currentbomb
     this.currentMeta = $("#CurrentMeta"); //Zeigt mit klick die aktuellen Meta Daten eines Songs an.
     this.currentplaylistwrapper = $("#Currentplaylistwrapper"); //Wrapper für die current Playlist
+    this.currentplaylist = $("#Currentplaylist");
+    this.currentplaylistclose = $("#CurrentPlaylistClose");
     this.deviceClass = $(".device");//Muss später initialisiert werden, weil es noch keine Klassen gibt.
     this.deviceLoader = $("#Loader"); //Loader für die Devices
     this.devices = $("#Devices"); //Oberste Box für die Player und Zonen

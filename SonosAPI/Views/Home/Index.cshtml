@@ -38,6 +38,7 @@
 <div id="Shuffle" class="mediabutton" onclick="SetPlaymode('Shuffle');"></div>
 <div id="Repeat" class="mediabutton" onclick="SetPlaymode('Repeat');"></div>
 <div id="Fade" class="mediabutton" onclick="SetFade();"></div>
+<div id="Aurora" class="mediabutton" onClick="ShowAurora()"></div>
 <div id="SetMute" class="mediabuttonring" onclick="SetMute();"></div>
 <div id="Debug" class="mediabutton" onClick="WroteDebugInfos()">Debug</div>
 <div id="Browse" class="mediabuttonring" onclick="BrowsePress();"></div>
@@ -89,7 +90,7 @@
             <ul>
                 <li><a target="_blank" data-appname="Clock" onclick="LoadApp(this); return false;" href="/apps/clock.html">Clock</a></li>
                 <li><a target="_blank" data-appname="Dash" onclick="LoadApp(this); return false;" href="/apps/dash.html">Dash Buttons</a></li>
-                <li><a target="_blank" data-appname="Aurora" onclick="LoadApp(this); return false;" href="/apps/aurora.html">Aurora</a></li>
+                @*<li><a target="_blank" data-appname="Aurora" onclick="LoadApp(this); return false;" href="/apps/aurora.html">Aurora</a></li>*@
             </ul>
         </div>
         <div id="Bewertungsfilter" class="mediabuttonring"></div>
@@ -129,6 +130,10 @@
 </div>
 <div id="Currentplaylist"><img alt="Current Playlist Loader" id="PlaylistLoader" src="/Images/ajax-loader2.gif"/>
     <div id="Currentplaylistwrapper"></div>
+</div>
+<div id="CurrentPlaylistClose" onclick="ToggleCurrentPlaylist()">Schließen</div>
+<div id="CurrentPlaylistOpen" onclick="ToggleCurrentPlaylist()" class="mediabuttonring">
+    <img src="/Images/playlist.png" />
 </div>
 <div id="CurrentBomb" onclick="ShowCurrentRating('show');"><img src="/Images/bombe.png" alt="Currentbomb"/>
 </div>

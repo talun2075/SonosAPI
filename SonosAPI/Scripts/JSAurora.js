@@ -10,6 +10,7 @@ function NanoleafAurora(option) {
     var _BrightnessSliderValue = [];
     var _opjectname = option.Name || "aurora";
     var Timer = 0;
+    var _newData = true;
     var CallServer = function(url) {
         return $.ajax({
             type: "GET",
@@ -17,6 +18,31 @@ function NanoleafAurora(option) {
             dataType: "json"
         });
     };
+    this.SetGroupScenario = function(v) {
+        var sgs =  CallServer("SetGroupScenario/" + v);
+        sgs.success(function(data) {
+            if (data !== "Done") {
+                alert("Es ist ein Fehler aufgetreten:" + data);
+            }
+            internalaurora.UpdateData();
+        });
+        
+    };
+    function GetGroupScenarios() {
+        var ggs = CallServer("GetGroupScenario/0");
+        ggs.success(function(data) {
+            var newdiv = $('<div class="groupcontainer scenarios" id="GroupPowerScenarios"></div>');
+            newdiv.appendTo($("#Aurora_Group"));
+            var gs = $("#GroupPowerScenarios");
+            for (var i = 0; i < data.length; i++) {
+                var newscendiv = $('<div class="groupscenario">'+data[i]+'</div>');
+                newscendiv.appendTo(gs);
+                newscendiv.on("click", function () {
+                    internalaurora.SetGroupScenario($(this).html());
+                });
+            }
+        });
+    }
     this.GetAurora = function(serial) {
         for (var i = 0; i < _data.length; i++) {
             if (_data[i].NewAurora === true) continue;
@@ -56,7 +82,7 @@ function NanoleafAurora(option) {
             alert("Aurora ist nicht initialisiert");
             return false;
         }
-        if (_Wrapper.is(":empty")) {
+        if (_newData ===true) {
             for (var x = 0; x < _data.length; x++) {
                 var faid = "new";
                 if (_data[x].NewAurora === false) {
@@ -65,11 +91,28 @@ function NanoleafAurora(option) {
                 var newAurora = $('<div id="Aurora_' + faid + '" class="auroraContainer"><div class="auroraName">' + _data[x].Name + '</div><div class="container"><input type="checkbox" onClick="' + _opjectname + '.SetPower(\'' + faid + '\')" id="power_' + faid + '" class="powerCheck" name="power_' + faid + '" checked="checked"/><label for="power_' + faid + '" class="power"><span class="icon-off"></span><span class="light"></span></label></div><div class="brightnessSlider" id="BrightnessSlider_' + faid + '" data="' + faid + '"><div id="BrightnessSliderLabel_' + faid + '" class="brightnessSliderLabel">Helligkeit</div><div id="BrightnessSliderValue_' + faid + '" class="brightnessSliderValue">50</div></div><div id="Scenarios_' + faid + '" data="' + faid + '" class="scenarios"></div></div>');
                 newAurora.appendTo(_Wrapper);
             }
+            if (_data.length > 0) {
+                var newAuroraG = $('<div id="Aurora_Group" class="auroraContainer"><div class="auroraName">Alle Aurora</div><div class="groupcontainer" id="GroupPowerOn">Power On</div><div class="groupcontainer" id="GroupPowerOff">Power Off</div></div>');
+                newAuroraG.appendTo(_Wrapper);
+                GetGroupScenarios();
+                $("#GroupPowerOn").on("click", function() {
+                    CallServer("SetGroupPowerState/true").success(function () {
+                        internalaurora.UpdateData();
+                    });
+                    
+                });
+                $("#GroupPowerOff").on("click", function () {
+                    CallServer("SetGroupPowerState/false").success(function () {
+                        internalaurora.UpdateData();
+                    });
+                });
+
+            }
+            _newData = false;
         }
         for (var i = 0; i < _data.length; i++) {
             //Check new Aurora and continue
             if (_data[i].NewAurora === true) {
-                //todo: Erfassen vom Token machen
                 continue;
             }
             var aid = _data[i].NLJ.serialNo;
@@ -83,7 +126,7 @@ function NanoleafAurora(option) {
                 alert("Keine Scenarien geliefert Aurora Serial:" + _data[i].NLJ.serialNo);
                 continue;
             }
-            var sd = $("#Scenarios_" + aid);//todo: Prüfen, ob wirklich immer gellerrt werden muss evtl. childs zählen und wenn länge gleich nur noch die Klasse setzen
+            var sd = $("#Scenarios_" + aid);//todo: Prüfen, ob wirklich immer gelerrt werden muss evtl. childs zählen und wenn länge gleich nur noch die Klasse setzen
             sd.empty();
             var internalI = i;
             $.each(_data[i].NLJ.effects.effectsList, function(index, item) {
@@ -139,7 +182,6 @@ function NanoleafAurora(option) {
     };
     this.Init = function() {
         this.UpdateData();
-
     };
     this.UpdateData = function() {
         clearTimeout(Timer);
@@ -151,9 +193,25 @@ function NanoleafAurora(option) {
                     alert("Fehler beim Initialisieren am Server");
                     return false;
                 }
-                alert("Fehler beim Initialisieren: Object enthält kein Namen");
+                if (!_Wrapper.is(":empty")) {
+                    _Wrapper.empty();
+                }
+                console.log("Fehler beim Initialisieren: Object enthält kein Namen");
 
             } else {
+                var pl = $("#PreLoad");
+                if (pl.is(":visible")) {
+                    pl.hide();
+                }
+                //todo: Änderung der bekannten seriennummer bzw. länge
+                if (typeof _data === "undefined" || _data.length !== data.length) {
+                    _newData = true;
+                    _Wrapper.empty();
+                    _PowerDom = [];
+                    _BrightnessDOM = [];
+                } else {
+                    _newData = false;
+                }
                 _data = data;
                 internalaurora.RenderAurora();
             }

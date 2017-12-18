@@ -95,6 +95,7 @@ function SonosCurrentTrack() {
             //Daten für MP3 Sind null und nun wenn ein anderer Song diese Resetten.
             if (this.MP3.Title !== this.Title || this.MP3.Album !== this.Album) {
                 this.MP3 = new MP3();
+                SoDo.bewertungWidth.width(this.MP3.Bewertung + "%");
             }
         }
         if (mp3change === false && haschanged === false) {
@@ -188,6 +189,7 @@ function SonosCurrentTrack() {
         if (this.AlbumArtURI !== "leer") {
             if (SoDo.cover.attr("src") !== "http://" + this.BaseURL + this.AlbumArtURI) {
                 SoDo.cover.attr("src", "http://" + this.BaseURL + this.AlbumArtURI);
+                UpdateImageOnErrors();
             }
         } else {
             if (SoDo.cover.attr("src") !== SoVa.nocoverpfad) {

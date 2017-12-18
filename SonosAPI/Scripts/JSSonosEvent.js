@@ -104,12 +104,11 @@ function GetTopologieChange() {
         alert("GetTopologieChange: "+ ex.message);
     }
 }
-
 function GetAktSongInfo() {
     clearTimeout(SoVa.GetAktSongInfoTimerID);
     try {
         //Bei Refreshstop sich selber aufrufen bis das wieder normal ist
-        if (SonosZones.Refreshstop === false && SonosZones.CheckActiveZone() && (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Stream === false || SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.StreamContent ==="Dienst" || SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.StreamContent ==="Apple" ) && (SonosZones[SonosZones.ActiveZoneUUID].PlayState === "PLAYING" || SonosZones[SonosZones.ActiveZoneUUID].CheckCurrenTrackRefesh())) {
+        if (SonosZones.Refreshstop === false && SonosZones.CheckActiveZone() && (typeof SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Stream === "undefined" || SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Stream === false || SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.StreamContent === "Dienst" || SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.StreamContent === "Apple") && (SonosZones[SonosZones.ActiveZoneUUID].PlayState === "PLAYING" || SonosZones[SonosZones.ActiveZoneUUID].CheckCurrenTrackRefesh())) {
             //Wenn MP3 im CurrentTrack leer ist wird dieses auf jedenfall geladen.
             var getmp3 = SonosZones[SonosZones.ActiveZoneUUID].CheckCurrenTrackRefesh();
             var cturi = SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Uri;
@@ -165,4 +164,58 @@ function EventErrorsCheck(sourcejqXHR, Source) {
         //Position der Fehlermeldung definieren und Animieren, damit kein Memoryeffekt eintritt.
         SoDo.eventError.animate({ left: Math.floor((Math.random() * 100) + 1)+'%', top: Math.floor((Math.random() * 100) + 1)+'%' }, 40000);
     });
+}
+
+function Eventing() {
+    //todo: Eventing deaktivert
+    if (typeof (window.EventSource) === "undefined" || 1+1 === 2) {
+        console.log("SSE not Supported");
+        SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", 100);
+        return;
+    }
+
+    var source = new window.EventSource("/sonos/Event");
+    source.onopen = function (event) {
+        console.log("Event:Connection Opened " + event.data);
+    };
+    source.onerror = function (event) {
+        if (event.eventPhase === window.EventSource.CLOSED) {
+            console.log("Event:Connection Closed " + event.data);
+        } else {
+            console.log("Event:Connection Closed Spezial " + event.data);
+            if (confirm("Die SSE Verbindung war Fehlerhaft und es wird versucht auf den Fallback zu gehen!") === true) {
+                SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", 100);
+                this.close();
+            }
+        }
+    };
+    source.onmessage = function (event) {
+        // document.getElementById('test').innerHTML += event.data;  
+        try {
+            console.log("Event:Message " + event.data);
+            if (typeof event.data === "undefined" || event.data === "") {
+                return;
+            }
+            if (event.data === "ZoneChange") {
+                    SonosLog("Eventing:ZonenÄnderung");
+                    GetZones();
+            } else {
+                var PlayerEventData = JSON.parse(event.data);
+                if (typeof SonosZones[PlayerEventData.Coordinator.UUID] === "undefined") {
+                    GetZones(); //Dann müssen die Zonen neu sein.
+                } else {
+                    SonosZones[PlayerEventData.Coordinator.UUID].SetBySonosItem(PlayerEventData);
+                }
+            }
+        } catch (ex) {
+            alert(ex.message+"\n\n"+event.data+"\n");
+            console.log("Fehlerhafte Event Daten:" + event.data);
+        }
+
+        /*
+        
+        */
+        
+    };
+    console.log("SSE started");
 }

@@ -1,9 +1,14 @@
 ﻿"use strict";
 function SonosPlaylist() {
     this.Playlist = [];
-    this.IsEmpty = false;
     this.RenderPlaylist = function (stream) {
-        if (this.Playlist.length === 0 || !SonosZones.CheckActiveZone()) {
+        if ($(".currentplaylist").length > 0) {
+            $(".currentplaylist").remove();
+        }
+        if (this.CheckIsEmpty() || !SonosZones.CheckActiveZone()) {
+            if (SoDo.playListLoader.is(":visible")) {
+                SoDo.playListLoader.slideUp();
+            }
             return;
         }
         if (typeof stream === "undefined") {
@@ -14,11 +19,7 @@ function SonosPlaylist() {
         if (SoDo.playListLoader.is(":hidden")) {
             SoDo.playListLoader.slideDown();
         }
-        if ($(".currentplaylist").length > 0) {
-            $(".currentplaylist").remove();
-        }
-
-        if (stream === true || this.IsEmpty === true) {
+        if (stream === true || this.CheckIsEmpty() === true) {
             SoDo.playListLoader.slideUp();
         } else {
             for (var i = 0; i < this.Playlist.length; i++) {
@@ -59,10 +60,6 @@ function SonosPlaylist() {
         }
         var c =$(".currentplaylist");
         var clength = c.length;
-        //Playliste IsEmpty Prüfen.
-        if (clength > 0 && this.IsEmpty === true) {
-            this.IsEmpty = false;
-        }
         var internalmax = (clength - 1);
         if (clength === _playlist.length && clength > 0) {
             //wenn alles gleich, dann ersten und letzten Eintrag testen, evtl. auch noch zwei drei aus der mitte.
@@ -83,6 +80,12 @@ function SonosPlaylist() {
             //hier ist nichts gleich, daher neu rendern
             return true;
         }
+    }
+    this.CheckIsEmpty = function() {
+        if (this.Playlist.length === 0 || this.Playlist.length === 1 && this.Playlist[0].Artist === "Leer" && this.Playlist[0].Album === "Leer" && this.Playlist[0].Title === "Leer") {
+            return true;
+        }
+        return false;
     }
 
 }

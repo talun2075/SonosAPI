@@ -21,8 +21,13 @@ namespace SonosAPI.Classes
                 var xml = pl.GetPlaylistWithTotalNumbers(NumberReturned, 0);
                 if (xml[0] == null || xml[0].Length == 0)
                 {
+                    xml = pl.GetPlaylistWithTotalNumbers(NumberReturned, 0,500);
+                }
+                if (xml[0] == null || xml[0].Length == 0)
+                {
                     SonosHelper.ServerErrorsAdd("Playlist:FillPlaylist:Block1", new Exception("Zurückgelieferte Liste Leer"));
                 }
+
                 if (xml[1] != null)
                 {
                     TotalMatches = Convert.ToInt16(xml[1]);

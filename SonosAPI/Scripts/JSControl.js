@@ -272,7 +272,7 @@ function LoadDevices() {
                 if (debug === false) {
                     clearTimeout(SoVa.TopologieChangeID);
                     clearTimeout(SoVa.GetAktSongInfoTimerID);
-                    SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", 3000);
+                    window.setTimeout("Eventing()", 3000);
                     SoVa.GetAktSongInfoTimerID = window.setTimeout("GetAktSongInfo()", 1000);
                 }
                 SonosZones.Refreshstop = false;
@@ -501,6 +501,12 @@ function PlayPressSmall(k) {
         doitValue("SetSongInPlaylist", PressKey);
     }
 
+}
+function SetPlayState(uuid, value) {
+    if (typeof SonosZones[uuid] === "undefined") {
+        alert("Player nicht gefunden:" + uuid);
+    }
+    SonosZones[uuid].PlayState = value;
 }
 //Setzen des Wiedergabemodus
 function SetPlaymode(v) {
@@ -1871,6 +1877,13 @@ function SetSleepModeState() {
     });
 
 }
+function ToggleCurrentPlaylist() {
+    //todo: Anzeigen von currentplaylist (add active) und 
+    //Currentplaylist
+    SoDo.currentplaylist.toggleClass("active");
+    SoDo.currentplaylistclose.toggle();
+
+}
 //} Settings und Global Functions
 
 function DevTest(da) {
@@ -1883,7 +1896,9 @@ function DevTest(da) {
 
 function LoadApp(t) {
     var tdata = $(t).data("appname");
-    
+    if (typeof tdata === "undefined") {
+        tdata = t;
+    }
     switch (tdata) {
         case 'Clock':
             $("#AppIframe").html("<iframe src='/apps/clock.html'></iframe>");
@@ -1892,32 +1907,20 @@ function LoadApp(t) {
             $("#AppIframe").html("<iframe src='/apps/dash.html'></iframe>");
             break;
         case 'Aurora':
-            $("#AppIframe").html("<iframe src='/apps/aurora.html' scrolling='no'></iframe>");
+            $("#AppIframe").html("<iframe src='/apps/aurora.html'></iframe>");
             break;
     }
     $("#AppIframeWrapper").slideDown(100);
 }
-//Eventing?
-/*
-function Eventing() {
-    var source = new window.EventSource("/sonos/Event");
-    source.onopen = function (event) {
-        //   document.getElementById('test').innerHTML += 'Connection Opened.';  
-    };
-    source.onerror = function (event) {
-        if (event.eventPhase == window.EventSource.CLOSED) {
-            document.getElementById('test').innerHTML += 'Connection Closed.';
-        }
-    };
-    source.onmessage = function (event) {
-        //	   document.getElementById('test').innerHTML += event.data;  
-        var PlayerEventData = JSON.parse(event.data);
 
-        var k = "h";
-
-    };
+function ShowAurora() {
+    LoadApp("Aurora");
 }
-/*
+
+//Eventing?
+
+
+
 //} In Work
 
 

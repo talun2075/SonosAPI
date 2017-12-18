@@ -185,6 +185,7 @@
     <Content Include="Images\gold.png" />
     <Content Include="Images\grau.png" />
     <Content Include="Images\mstile-150x150.png" />
+    <Content Include="Images\nanoleaflogo.png" />
     <Content Include="Images\pfeil1.png" />
     <Content Include="Images\pfeil1rot.png" />
     <Content Include="Images\pfeil2.png" />
@@ -196,6 +197,7 @@
     <Content Include="Images\pfeil5.png" />
     <Content Include="Images\pfeil5rot.png" />
     <Content Include="Images\playing.gif" />
+    <Content Include="Images\playlist.png" />
     <Content Include="Images\romantisch rot.png" />
     <Content Include="Images\romantisch.png" />
     <Content Include="Images\party rot.png" />

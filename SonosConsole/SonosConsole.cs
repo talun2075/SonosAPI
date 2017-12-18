@@ -98,7 +98,7 @@ namespace SonosConsole
                 Console.WriteLine(DateTime.Now + " IE Wird gestartet und "+ (firstrun ? "60" : "30")+" Sekunden gewartet.");
                 // Start ieexplorer.exe and go to SonosUrl.
                 System.Diagnostics.Process.Start(@"C:\Program Files\Internet Explorer\iexplore.exe", initialSonosUrl);
-                // Waite 10 seconds.
+                // Waite x seconds.
                 Thread.Sleep(firstrun ? 60000 : timeoutMilliseconds);
                 // Get all IEXPLORE processes.
                 System.Diagnostics.Process[] procs = System.Diagnostics.Process.GetProcessesByName("IEXPLORE");

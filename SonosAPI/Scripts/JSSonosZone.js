@@ -21,9 +21,6 @@ function SonosZone(uuid, name) {
     this.CurrentRelTime = new Hour("0:00:00");
     this.CurrentRelTimeString = "INITIAL";
     this.SetTrackTimechanged = false;
-    //todos:
-    //todo: Coverart als Hash auf server ablegen und von dort ausliefern lassen?
-
     //Propertys over DefinePropertys
     var _PlayState = "INITIAL";
     var _NumberOfTracks = 0;
@@ -49,7 +46,7 @@ function SonosZone(uuid, name) {
                 console.log("SetPlayState ist Null und wird vom Server geladen");
                 var suuid = t.ZoneUUID;
                 var SetPlayStaterequest = SonosAjax("GetPlayState", "", t.ZoneUUID);
-                SetPlayStaterequest.done(function (data) {
+                SetPlayStaterequest.success(function (data) {
                     SonosZones[suuid].PlayState = data;
                     return;
                 });
@@ -72,6 +69,26 @@ function SonosZone(uuid, name) {
                     op = 1; //Playstate anzeigen
                     playtext = "Pause";
                     playinternal = "Pause";
+                    }
+                //Jqueryelement erzeugen und anpassen
+                $("#" + t.ZoneUUID).next('img').css("opacity", op);
+                $("#" + t.ZoneUUID + "_GroupPlayState").html("&nbsp;&nbsp;" + playtext + "&nbsp;&nbsp;").attr("onClick", "SetPlayState('" + t.ZoneUUID + "','" + playinternal + "')");
+                _PlayState = value;
+                if (t.ActiveZone === true) {
+                    if (value === "PLAYING") {
+                        if (!SoDo.playButton.hasClass("aktiv")) {
+                            SoDo.playButton.addClass("aktiv");
+                        }
+                    } else {
+                        if (SoDo.playButton.hasClass("aktiv")) {
+                            SoDo.playButton.removeClass("aktiv");
+                        }
+                    }
+                    if (t.CurrentTrack.Stream === false) {
+                        SetCurrentPlaylistSong(t.CurrentTrackNumber, "SetPlaySTate"); //Diese Methode greift auf den PlayState zu daher erst jetzt ausführen.
+                    }
+                }
+                if (value === "PLAYING") {
                     if (_PlayState !== "INITIAL" && t.GetPlayerChangeEventIsRunning === false) {
                         //Ajax Request
                         var request = SonosAjax("Play", "", t.ZoneUUID);
@@ -88,25 +105,9 @@ function SonosZone(uuid, name) {
                         });
                     }
                 }
-                //Jqueryelement erzeugen und anpassen
-                $("#" + t.ZoneUUID).next('img').css("opacity", op);
-                $("#" + t.ZoneUUID + "_GroupPlayState").html("&nbsp;&nbsp;" + playtext + "&nbsp;&nbsp;").attr("onClick", "SonosZones." + t.ZoneUUID + ".SetPlayState('" + playinternal + "')");
-                if (t.ActiveZone === true) {
-                    if (value === "PLAYING") {
-                        if (!SoDo.playButton.hasClass("aktiv")) {
-                            SoDo.playButton.addClass("aktiv");
-                        }
-                    } else {
-                        if (SoDo.playButton.hasClass("aktiv")) {
-                            SoDo.playButton.removeClass("aktiv");
-                        }
-                    }
-                    if (t.CurrentTrack.Stream === false) {
-                        SetCurrentPlaylistSong(t.CurrentTrackNumber, "SetPlaySTate"); //Diese Methode greift auf den PlayState zu daher erst jetzt ausführen.
-                    }
-                }
             }
-            _PlayState = value;
+
+            
         }
     });
     Object.defineProperty(this, "PlayMode", {
@@ -154,8 +155,7 @@ function SonosZone(uuid, name) {
                     break;
                 default:
                     ogrs = "Shuffle";
-                    //todo: Hier prüfen ob Shuffle war bzw. neu dazu gekommen ist. 
-            }
+ }
             if (t.ActiveZone === true) {
                 if (_PlayMode !== "INITIAL" && t.GetPlayerChangeEventIsRunning === false && ogrs !== _PlayMode) {
                     SonosAjax("SetPlaymode", "", value).complete(function () { });
@@ -393,9 +393,7 @@ function SonosZone(uuid, name) {
     });
     Object.defineProperty(this, "BaseURL", {
         get: function () {
-            //todo: if initinal after x seconds then reload from server.
             return _BaseURL;
-
         },
         set: function (value) {
             var t = this;
@@ -425,7 +423,7 @@ function SonosZone(uuid, name) {
     });
     //Methoden
     this.RenderTrackTime = function () {
-        if (this.Playlist.IsEmpty === true || this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple") {
+        if (this.Playlist.CheckIsEmpty() === true || this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple") {
             if (SoDo.runtimeCurrentSong.is(":visible")) {
                 SoDo.runtimeCurrentSong.hide();
             }
@@ -463,7 +461,7 @@ function SonosZone(uuid, name) {
     };
     this.RenderPlaylistCounter = function (source) {
         SonosLog("RenderPlaylistCounter Callby:" + source);
-        if (this.Playlist.IsEmpty === true || this.CurrentTrack !== null && this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple") {
+        if (this.Playlist.CheckIsEmpty() === true || this.CurrentTrack !== null && this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple") {
             if (SoDo.playlistCount.is(":visible")) {
                 SoDo.playlistCount.hide();
             }
@@ -520,7 +518,7 @@ function SonosZone(uuid, name) {
     this.RenderNextTrack = function (source) {
         SonosLog("RenderNextTrack CalledBy:" + source);
         //Stream
-        if (this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple" || this.Playlist.IsEmpty) {
+        if (this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple" || this.Playlist.CheckIsEmpty()) {
             if (SoDo.nextSongWrapper.is(":visible")) {
                 SoDo.nextSongWrapper.hide();
             }
@@ -530,7 +528,7 @@ function SonosZone(uuid, name) {
         if (this.Playlist.Playlist.length <= this.CurrentTrackNumber && (this.PlayMode === "REPEAT_ALL" || this.PlayMode === "SHUFFLE")) {
             nexttracknumber = 0;
         }
-        if (!this.Playlist.IsEmpty && typeof this.Playlist.Playlist[nexttracknumber] !== "undefined") {
+        if (!this.Playlist.CheckIsEmpty() && typeof this.Playlist.Playlist[nexttracknumber] !== "undefined") {
             if (SoDo.nextSongWrapper.is(":hidden")) {
                 SoDo.nextSongWrapper.show();
             }
@@ -618,8 +616,10 @@ function SonosZone(uuid, name) {
             case "AlbpumInterpretFilter":
                 if (this.RatingFilter.AlbpumInterpretFilter !== wert) {
                     this.RatingFilter.AlbpumInterpretFilter = wert;
-                    changed = true;
+                } else {
+                    this.RatingFilter.AlbpumInterpretFilter = "unset";
                 }
+                changed = true;
                 break;
         }
         if (changed === true) {
@@ -675,7 +675,7 @@ function SonosZone(uuid, name) {
         }
     };
     this.CheckCurrenTrackRefesh = function () {
-        if (this.Playlist.IsEmpty === false && (this.CurrentTrack.Artist === "leer" || this.CurrentTrack.MP3.Artist === "leer" || this.CurrentTrack.MP3.Genre === "leer" && this.CurrentTrack.MP3.Jahr === 0 && this.CurrentTrack.MP3.Typ === "leer")) {
+        if (this.Playlist.CheckIsEmpty() === false && (this.CurrentTrack.Artist === "leer" || this.CurrentTrack.MP3.Artist === "leer" || this.CurrentTrack.MP3.Genre === "leer" && this.CurrentTrack.MP3.Jahr === 0 && this.CurrentTrack.MP3.Typ === "leer")) {
             return true;
         }
         return false;
@@ -703,10 +703,6 @@ function SonosZone(uuid, name) {
                 var tm = data.TotalMatches;
                 if (tm !== 0) {
                     SonosZones[cuuid].NumberOfTracks = tm;
-                }
-            } else {
-                if (data.PlayListItems.length === 1 && data.PlayListItems[0].Artist === "Leer" && data.PlayListItems[0].Album === "Leer" && data.PlayListItems[0].Title === "Leer") {
-                    SonosZones[cuuid].Playlist.IsEmpty = true;
                 }
             }
             if (v === true && SonosZones[cuuid].Playlist.CheckToRender()) {
@@ -803,8 +799,8 @@ function SonosZone(uuid, name) {
         if (this.BaseURL !== s.Coordinator.BaseUrl) {
             this.BaseURL = s.Coordinator.BaseUrl;
         }
-        if (parseInt(s.Coordinator.CurrentState.LastStateChange) !== this.LastChange) {
-            this.LastChange =s.Coordinator.CurrentState.LastStateChange;
+        if (s.Coordinator.CurrentState.LastStateChange !== this.LastChange) {
+            this.LastChange = s.Coordinator.CurrentState.LastStateChange;
         }
         if (this.HasAudioIn !== s.Coordinator.HasAudioIn) {
             this.HasAudioIn =s.Coordinator.HasAudioIn;
@@ -822,7 +818,7 @@ function SonosZone(uuid, name) {
             this.CurrentTrackNumber =parseInt(s.Coordinator.CurrentState.CurrentTrackNumber);
         }
         this.SetCurrentTrack(s.Coordinator.CurrentState.CurrentTrack, "SetBySonosItem");
-        if (this.PlayState !== s.Coordinator.CurrentState.TransportState) {
+        if (this.PlayState !== s.Coordinator.CurrentState.TransportStateString) {
             this.PlayState =s.Coordinator.CurrentState.TransportStateString;
         }
         if (this.RatingFilter !== s.Coordinator.RatingFilter) {

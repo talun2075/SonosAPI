@@ -11,7 +11,7 @@ function SonosZonesObject() {
     this.GetTopologieChangeTime = "INITIAL";
     this.CheckRendering = function() {
         var devplayer = $(".device");
-        $.each(devplayer, function (i, item) {
+        $.each(devplayer, function(i, item) {
             if (typeof SonosZones[item.id] !== "undefined") {
                 if (parseInt(item.dataset.players) !== SonosZones[item.id].GetCordinatedPlayer().length) {
                     SonosZones.RenderZones();
@@ -20,7 +20,7 @@ function SonosZonesObject() {
             }
             return true;
         });
-    }
+    };
     this.RenderZones = function() {
         //Alles leeren
         if (SoDo.devicesWrapper.children(".groupdevicewrapper").length > 0) {
@@ -46,7 +46,7 @@ function SonosZonesObject() {
                         playtext = "Pause";
                         playinternal = playtext;
                     }
-                    $('<div class="groupdevicewrapper"><div id="' + SonosZones[p].ZoneUUID + '" data-players="' + SonosZones[p].GetCordinatedPlayer().length + '" class="device' + aktdev + '" onclick="SetDevice(\'' + SonosZones[p].ZoneUUID + '\');"><p>' + SonosZones[p].ZoneName + '</p>' + SonosZones[p].GetCordinatedPlayerasStringFormat() + '</div><img id="deviceplayinggif_' + SonosZones[p].ZoneUUID + '" class="deviceplayinggif" ' + playstateimg + ' src="/images/playing.gif"><div id="GroupDevice_' + SonosZones[p].ZoneUUID + '" onclick="SetDeviceGroupFor(\'' + SonosZones[p].ZoneUUID + '\')" class="groupdeviceclass">&nbsp;&nbsp;Gruppe&nbsp;&nbsp;</div><div class="groupdeviceclass" onclick="SonosZones.' + SonosZones[p].ZoneUUID + '.PlayState =\'' + playinternal + '\'" id="' + SonosZones[p].ZoneUUID + '_GroupPlayState">&nbsp;&nbsp;' + playtext + '&nbsp;&nbsp;</div></div>').appendTo(SoDo.devicesWrapper);
+                    $('<div class="groupdevicewrapper"><div id="' + SonosZones[p].ZoneUUID + '" data-players="' + SonosZones[p].GetCordinatedPlayer().length + '" class="device' + aktdev + '" onclick="SetDevice(\'' + SonosZones[p].ZoneUUID + '\');"><p>' + SonosZones[p].ZoneName + '</p>' + SonosZones[p].GetCordinatedPlayerasStringFormat() + '</div><img id="deviceplayinggif_' + SonosZones[p].ZoneUUID + '" class="deviceplayinggif" ' + playstateimg + ' src="/images/playing.gif"><div id="GroupDevice_' + SonosZones[p].ZoneUUID + '" onclick="SetDeviceGroupFor(\'' + SonosZones[p].ZoneUUID + '\')" class="groupdeviceclass">&nbsp;&nbsp;Gruppe&nbsp;&nbsp;</div><div class="groupdeviceclass" onclick="SetPlayState(\'' + SonosZones[p].ZoneUUID + '\',\'' + playinternal + '\');" id="' + SonosZones[p].ZoneUUID + '_GroupPlayState">&nbsp;&nbsp;' + playtext + '&nbsp;&nbsp;</div></div>').appendTo(SoDo.devicesWrapper);
                     zcounter++;
                 }
             }
@@ -84,7 +84,7 @@ function SonosZonesObject() {
         var i;
         for (i = 0; i < data.length; i++) {
             var rincon = data[i].Coordinator.UUID;
-            if (typeof SonosZones[rincon] == "undefined") {
+            if (typeof SonosZones[rincon] === "undefined") {
                 //Wenn nicht definiert ein neuen anlegen	
                 SonosZones[rincon] = new SonosZone(rincon, data[i].Coordinator.Name);
             }
@@ -132,7 +132,7 @@ function SonosZonesObject() {
         var prop = Object.getOwnPropertyNames(this);
         //var zcounter=0; //Anzahl der Zonen;
         for (var i = 0; i < prop.length; i++) {
-            if (prop[i].substring(0, Checker.length) === Checker && (prop[i] !== rincon)) {
+            if (prop[i].substring(0, Checker.length) === Checker && prop[i] !== rincon) {
                 //Es handelt sich um einen Sonosplayer
                 var p = prop[i];
                 SonosZones[p].ActiveZone =false;
@@ -250,4 +250,4 @@ function SonosZonesObject() {
         }
 
     };
-};
+}

@@ -181,7 +181,6 @@ namespace SonosUPNP
             catch
             {
                 HasAudioIn = false;
-                //ServerErrorsAdd("SubscripteToEventsAudio", ex); Brauch nicht geloggt werden.
             }
         }
         /// <summary>
@@ -211,6 +210,7 @@ namespace SonosUPNP
             try
             {
                 string newState = sender.Value.ToString();
+                Boolean changed = false;
                 var xEvent = XElement.Parse(newState);
                 XNamespace ns = "urn:schemas-upnp-org:metadata-1-0/RCS/";
                 XElement instance = xEvent.Element(ns + "InstanceID");
@@ -219,13 +219,23 @@ namespace SonosUPNP
                 XElement vol = instance.Element(ns + "Volume");
                 if (vol != null && vol.Attribute("channel").Value == "Master")
                 {
-                    CurrentState.Volume = Convert.ToInt16(vol.Attribute("val").Value);
+                    var tvol = Convert.ToInt16(vol.Attribute("val").Value);
+                    if (tvol != CurrentState.Volume)
+                    {
+                        CurrentState.Volume = tvol;
+                        changed = true;
+                    }
                 }
                 //Mute
                 XElement mutElement = instance.Element(ns + "Mute");
                 if (mutElement != null && mutElement.Attribute("channel").Value == "Master")
                 {
-                    Mute = (mutElement.Attribute("val").Value == "1");
+                    var tmute = (mutElement.Attribute("val").Value == "1");
+                    if (Mute != tmute)
+                    {
+                        Mute = tmute;
+                        changed = true;
+                    }
                 }
                 /*
             XElement basElement = instance.Element(ns + "Bass");
@@ -259,7 +269,10 @@ namespace SonosUPNP
                 var HeadphoneConnected = Convert.ToBoolean(headphoneConnectedeElement.Attribute("val").Value);
             }
             */
-                ManuellStateChange(DateTime.Now);
+                if (changed)
+                {
+                    ManuellStateChange(DateTime.Now);
+                }
             }
             catch (Exception ex)
             {
@@ -328,6 +341,7 @@ namespace SonosUPNP
         /// <param name="newState"></param>
         private void ParseChangeXML(string newState)
         {
+            Boolean changed = false;
             XNamespace ns = "urn:schemas-upnp-org:metadata-1-0/AVT/";
             XNamespace nsnext = "urn:schemas-rinconnetworks-com:metadata-1-0/";
             XElement instance;
@@ -350,10 +364,13 @@ namespace SonosUPNP
                 if (sleepTimerGene != null)
                 {
                     int stg;
-                    int.TryParse(sleepTimerGene.Attribute("val").Value, out stg);
+                    var trystate = int.TryParse(sleepTimerGene.Attribute("val").Value, out stg);
                     //Hier wurde der SleepTimer geändert
-                    SleepTimerRunning = stg > 0;
-                    ManuellStateChange(DateTime.Now);
+                    if (trystate && (SleepTimerRunning == false && stg > 0 || SleepTimerRunning && stg <= 0))
+                    {
+                        SleepTimerRunning = stg > 0;
+                        ManuellStateChange(DateTime.Now);
+                    }
                     return; //Es kann kein Transportstate kommen. 
                 }
 
@@ -361,41 +378,56 @@ namespace SonosUPNP
                 {
                     return;
                 }
+
                 //Fademode
                 XElement currentCrossfadeMode = instance.Element(ns + "CurrentCrossfadeMode");
                 if (currentCrossfadeMode != null)
                 {
                     string t = currentCrossfadeMode.Attribute("val").Value;
-                    CurrentState.CurrentCrossfadeMode = t == "1";
+                    if (CurrentState.CurrentCrossfadeMode && t != "1" ||
+                        !CurrentState.CurrentCrossfadeMode&& t == "1")
+                    {
+                        CurrentState.CurrentCrossfadeMode = t == "1";
+                        changed = true;
+                    }
                 }
                 //Transportstate
                 XElement transportStatElement = instance.Element(ns + "TransportState");
                 if (transportStatElement != null)
                 {
                     var ts = transportStatElement.Attribute("val").Value;
-                    switch (ts)
+                    if (ts != CurrentState.TransportStateString)
                     {
-                        case "PLAYING":
-                            CurrentState.TransportState = PlayerStatus.PLAYING;
-                            break;
-                        case "PAUSED":
-                        case "PAUSED_PLAYBACK":
-                            CurrentState.TransportState = PlayerStatus.PAUSED_PLAYBACK;
-                            break;
-                        case "STOPPED":
-                            CurrentState.TransportState = PlayerStatus.STOPPED;
-                            break;
-                        default:
-                            CurrentState.TransportState = PlayerStatus.TRANSITIONING;
-                            break;
+                        changed = true;
+                        switch (ts)
+                        {
+                            case "PLAYING":
+                                CurrentState.TransportState = PlayerStatus.PLAYING;
+                                break;
+                            case "PAUSED":
+                            case "PAUSED_PLAYBACK":
+                                CurrentState.TransportState = PlayerStatus.PAUSED_PLAYBACK;
+                                break;
+                            case "STOPPED":
+                                CurrentState.TransportState = PlayerStatus.STOPPED;
+                                break;
+                            default:
+                                CurrentState.TransportState = PlayerStatus.TRANSITIONING;
+                                break;
+                        }
+                        CurrentState.TransportStateString = CurrentState.TransportState.ToString();
                     }
-                    CurrentState.TransportStateString = CurrentState.TransportState.ToString();
                 }
                 //Playmode
                 XElement currentPlayModeElement = instance.Element(ns + "CurrentPlayMode");
                 if (currentPlayModeElement != null)
                 {
-                    CurrentState.CurrentPlayMode = currentPlayModeElement.Attribute("val").Value;
+                    string tcpm = currentPlayModeElement.Attribute("val").Value;
+                    if (tcpm != CurrentState.CurrentPlayMode)
+                    {
+                        CurrentState.CurrentPlayMode = tcpm;
+                        changed = true;
+                    }
                 }
                 //NumberofTRacks
                 XElement numberOfTracksElement = instance.Element(ns + "NumberOfTracks");
@@ -403,32 +435,50 @@ namespace SonosUPNP
                 {
                     int not;
                     int.TryParse(numberOfTracksElement.Attribute("val").Value, out not);
-                    CurrentState.NumberOfTracks = not;
+                    if (CurrentState.NumberOfTracks != not)
+                    {
+                        CurrentState.NumberOfTracks = not;
+                        changed = true;
+                    }
                 }
                 //CurrentTrackNumber
                 XElement currentTrackNumberElement = instance.Element(ns + "CurrentTrack");
                 if (currentTrackNumberElement != null)
                 {
-                    CurrentState.CurrentTrackNumber = Convert.ToInt32(currentTrackNumberElement.Attribute("val").Value);
+                    var tctn = Convert.ToInt32(currentTrackNumberElement.Attribute("val").Value);
+                    if (CurrentState.CurrentTrackNumber != tctn)
+                    {
+                        CurrentState.CurrentTrackNumber = tctn;
+                        changed = true;
+                    }
                 }
                 //CurrentTRackDuration
                 XElement currentTrackDurationElement = instance.Element(ns + "CurrentTrackDuration");
                 if (currentTrackDurationElement != null)
                 {
-                    CurrentState.CurrentTrackDuration = ParseDuration(currentTrackDurationElement.Attribute("val").Value);
+                    var tctd = ParseDuration(currentTrackDurationElement.Attribute("val").Value);
+                    if (CurrentState.CurrentTrackDuration != tctd)
+                    {
+                        CurrentState.CurrentTrackDuration = tctd;
+                        changed = true;
+                    }
                 }
                 //Wenn NextTrack aktiviert ist, diesen durchlaufgen lassen und entsprechend anzeigen lassen
-                SonosItem nextTrack = new SonosItem();
                 XElement nextTrackMetaData = instance.Element(nsnext + "NextTrackMetaData");
                 if (nextTrackMetaData != null)
                 {
                     string b = nextTrackMetaData.Attribute("val").Value;
                     if (!String.IsNullOrEmpty(b))
                     {
-                        nextTrack = SonosItem.ParseSingleItem(b);
+                        var tnext = SonosItem.ParseSingleItem(b);
+                        if (CurrentState.NextTrack == null || CurrentState.NextTrack.Title != tnext.Title && CurrentState.NextTrack.Artist != tnext.Artist)
+                        {
+                            CurrentState.NextTrack = tnext;
+                            changed = true;
+                        }
                     }
                 }
-                CurrentState.NextTrack = nextTrack;
+                
             }
             catch (Exception ex)
             {
@@ -438,7 +488,6 @@ namespace SonosUPNP
             {
                 //CurrentTrack
                 XElement currentTrackMetaDataElement = instance.Element(ns + "CurrentTrackMetaData");
-                XElement currentTrackUriElement = instance.Element(ns + "CurrentTrackURI");
                 string ctmdevalue = String.Empty;
                 if (currentTrackMetaDataElement != null)
                 {
@@ -446,12 +495,16 @@ namespace SonosUPNP
                 }
                 if (!string.IsNullOrEmpty(ctmdevalue))
                 {
-                    CurrentState.CurrentTrack = SonosItem.ParseSingleItem(ctmdevalue);
-                    if (currentTrackUriElement != null && !string.IsNullOrEmpty(CurrentState.CurrentTrack.Uri))
+
+                    var tct = SonosItem.ParseSingleItem(ctmdevalue);
+                    if (CurrentState.CurrentTrack.Artist != tct.Artist && CurrentState.CurrentTrack.Title != tct.Title &&
+                        CurrentState.CurrentTrack.Album != tct.Album)
                     {
-                        CurrentState.CurrentTrack.Uri = currentTrackUriElement.Attribute("val").Value;
+                        CurrentState.CurrentTrack = SonosItemHelper.CheckItemForStreaming(tct,this);
+                        changed = true;
                     }
-                    CurrentState.CurrentTrack = SonosItemHelper.CheckItemForStreaming(CurrentState.CurrentTrack, this);
+                    
+                    
                 }
             }
             catch (Exception ex)
@@ -460,7 +513,10 @@ namespace SonosUPNP
                 CurrentState.CurrentTrack = xyz;
                 ServerErrorsAdd("ParseChangeXMLCurrentTrack", ex);
             }
-            ManuellStateChange(DateTime.Now);
+            if (changed)
+            {
+                ManuellStateChange(DateTime.Now);
+            }
         }
         /// <summary>
         /// Timer, der immer wieder den CurrentState und die Zone ermittelt
@@ -471,12 +527,12 @@ namespace SonosUPNP
             {
                 return;
             }
-            positionTimer = new Timer(UpdateCurrenStateTrack, null, TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(3));
+            positionTimer = new Timer(UpdateCurrenStateTrack, null, TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(10));
         }
         /// <summary>
         /// Wenn nicht gespielt wird, wird dieser hochgezählt beim dritten mal wird dennoch geprüft
         /// </summary>
-        private int UPdateStateCounter = 100;
+        private int UPdateStateCounter = 10;
         /// <summary>
         /// Prüft, ob der AudioIn vorhanden ist. Einige Player haben aber kein AudioIn und da ist immer Null
         /// </summary>
@@ -488,12 +544,12 @@ namespace SonosUPNP
         private void UpdateCurrenStateTrack(object state)
         {
             UPdateStateCounter++;
-            if (CurrentState.TransportState != PlayerStatus.PLAYING)
+            if (CurrentState.TransportState != PlayerStatus.PLAYING || IsZoneCoord != true && CurrentState.TransportState == PlayerStatus.PLAYING)
             {
-                if (UPdateStateCounter < 100)
+                if (UPdateStateCounter < 10)
                 {
                     UPdateStateCounter++;
-                    return; //theory nur jedes dritte mal wird alles geprüft.
+                    return; //theory nur jedes 9. mal wird alles geprüft.
                 }
             }
             UPdateStateCounter = 0;
@@ -563,19 +619,38 @@ namespace SonosUPNP
                 {
                     if (ct.Volume == 0)
                     {
-                        ct.Volume = GetVolume();
-                        changed = true;
+                        var tvol = GetVolume();
+                        if (ct.Volume != tvol)
+                        {
+                            ct.Volume = tvol;
+                            changed = true;
+                        }
                     }
                     if (string.IsNullOrEmpty(ct.CurrentPlayMode))
                     {
-                        ct.CurrentPlayMode = GetPlaymode();
-                        changed = true;
+                        var tplaymode = GetPlaymode();
+                        if (!string.IsNullOrEmpty(tplaymode))
+                        {
+                            ct.CurrentPlayMode = tplaymode;
+                            changed = true;
+                        }
                     }
                     if (ct.TransportState == PlayerStatus.TRANSITIONING)
                     {
-                        ct.TransportState = GetPlayerStatus();
-                        ct.TransportStateString = ct.TransportState.ToString();
-                        changed = true;
+                        var tplaystat = GetPlayerStatus();
+                        if (ct.TransportState != tplaystat)
+                        {
+                            ct.TransportState = tplaystat;
+                            ct.TransportStateString = ct.TransportState.ToString();
+                            if (IsZoneCoord != true && tplaystat == PlayerStatus.PLAYING)
+                            {
+
+                            }
+                            else
+                            {
+                                changed = true;
+                            }
+                        }
                     }
                     //GroupVolume
                     if (GroupVolume == 0)
@@ -597,8 +672,12 @@ namespace SonosUPNP
             }
             if (SleepTimerRunning)
             {
-                ct.RemainingSleepTimerDuration = GetRemainingSleepTimerDuration();
-                changed = true;
+                var tsellptimer = GetRemainingSleepTimerDuration();
+                if (ct.RemainingSleepTimerDuration != tsellptimer)
+                {
+                    ct.RemainingSleepTimerDuration = tsellptimer;
+                    changed = true;
+                }
             }
             if (changed)
             {
@@ -1158,15 +1237,17 @@ namespace SonosUPNP
             var xmlresult1 = SonosItem.Parse(xml[0]);
             return xmlresult1;
         }
+
         /// <summary>
         /// Erhalte die angeforderte Playlist mit einem Array der Gesamtzahl
         /// </summary>
         /// <param name="startindex"></param>
         /// <param name="maxresult"></param>
+        /// <param name="threadSleep"></param>
         /// <returns></returns>
-        public string[] GetPlaylistWithTotalNumbers(UInt32 startindex, UInt32 maxresult = 100u)
+        public string[] GetPlaylistWithTotalNumbers(UInt32 startindex, UInt32 maxresult = 100u,int threadSleep =0)
         {
-            return Browse("Q:0", startindex, maxresult);
+            return Browse("Q:0", startindex, maxresult, "BrowseDirectChildren",threadSleep);
         }
         /// <summary>
         /// Liefert eine Liste der Favoriten
@@ -1791,6 +1872,7 @@ namespace SonosUPNP
                 return TimeSpan.FromSeconds(0);
             return TimeSpan.Parse(value);
         }
+
         /// <summary>
         /// Ermöglicht das durchsuchen
         /// </summary>
@@ -1798,8 +1880,9 @@ namespace SonosUPNP
         /// <param name="startingIndex">Optional die _Zahl ab der wieder verarbeitet werden soll, falls mehr als 540 Einträge vorhanden sind</param>
         /// <param name="requestedCount">Anzahl der Songs, die maximal zurück geleifert werden sollen.</param>
         /// <param name="browseFlag">BrowseDirectChildren/BrowseMetadata</param>
+        /// <param name="sleep"></param>
         /// <returns>Stringarray 0 = XML mit Items 1= Anzahl der komplet vorhandene</returns>
-        private string[] Browse(string action, UInt32 startingIndex = 0u, UInt32 requestedCount = 0u, string browseFlag = "BrowseDirectChildren")
+        private string[] Browse(string action, UInt32 startingIndex = 0u, UInt32 requestedCount = 0u, string browseFlag = "BrowseDirectChildren", int sleep=0)
         {
             try
             {
@@ -1818,7 +1901,14 @@ namespace SonosUPNP
                 arguments[9] = new UPnPArgument("UpdateID", 0u);
 
                 ContentDirectory.InvokeSync("Browse", arguments);
-
+                if (sleep != 0)
+                {
+                    Thread.Sleep(sleep);
+                }
+                else
+                {
+                    Thread.Sleep(200);
+                }
                 string[] result = new String[2];
                 result[0] = arguments[6].DataValue as string;
                 result[1] = Convert.ToString(arguments[8].DataValue);

@@ -64,6 +64,29 @@ namespace NanoleafAurora
             SelectedScenario = NLJ.Effects.Scenarios[k];
             return NLJ.Effects.Scenarios[k];
         }
+        /// <summary>
+        /// Rename Scenario
+        /// </summary>
+        /// <param name="oldScenario">Name of Old Scenario. Must be in the EffectList (Scenarios)</param>
+        /// <param name="newScenario">New Name</param>
+        /// <returns>True if done or false on an Error</returns>
+        public Boolean RenameScenario(string oldScenario, string newScenario)
+        {
+            if(!Scenarios.Contains(oldScenario) || string.IsNullOrEmpty(newScenario)) return false;
+            try
+            {
+                string jsontemp = "{\"write\" : {\"command\" : \"rename\", \"animName\" : \"" + oldScenario +
+                                  "\",\"newName\" : \"" + newScenario + "\"}}";
+                ConnectToNanoleaf(NanoleafRequest.PUT, "/effects", jsontemp);
+                GetNanoLeafInformations();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return false;
+            }
+            return true;
+        }
         #endregion PublicMethods
 
         #region PublicProperties
