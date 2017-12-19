@@ -67,12 +67,12 @@ namespace SonosAPI.Controllers
                 return null;
             }
         }
-       
-            /// <summary>
+
+        /// <summary>
         /// Setzen des Wiedergabemodus wie Schuffe und Repeat
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="v">SHUFFLE,NORMAL,SHUFFLE_NOREPEAT,REPEAT_ALL</param>
+        /// <param name="v">SHUFFLE,NORMAL,SHUFFLE_NOREPEAT,REPEAT_ALL, REPEAT_ONE,SHUFFLE_REPEAT_ONE</param>
         [HttpGet]
         public Boolean SetPlaymode(string id, string v)
         {

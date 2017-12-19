@@ -511,7 +511,7 @@ function SetPlayState(uuid, value) {
 //Setzen des Wiedergabemodus
 function SetPlaymode(v) {
     SonosLog("SetPlaymode:" + v);
-    SonosZones[SonosZones.ActiveZoneUUID].PlayMode =v;
+    SonosZones[SonosZones.ActiveZoneUUID].SendPlayMode(v);
 }
 //Setzen des Layout des Wiedergabemodus
 function SetPlaymodeDivs(v) {
@@ -520,13 +520,31 @@ function SetPlaymodeDivs(v) {
             if (SoDo.repeatButton.hasClass("aktiv")) {
                 SoDo.repeatButton.removeClass("aktiv");
             }
+            if (SoDo.repeatButton.hasClass("aktiv_one")) {
+                SoDo.repeatButton.removeClass("aktiv_one");
+            }
             if (SoDo.shuffleButton.hasClass("aktiv")) {
                 SoDo.shuffleButton.removeClass("aktiv");
             }
             break;
+            //todo: Bild für repeat one
         case "REPEAT_ALL":
             if (!SoDo.repeatButton.hasClass("aktiv")) {
                 SoDo.repeatButton.addClass("aktiv");
+            }
+            if (SoDo.repeatButton.hasClass("aktiv_one")) {
+                SoDo.repeatButton.removeClass("aktiv_one");
+            }
+            if (SoDo.shuffleButton.hasClass("aktiv")) {
+                SoDo.shuffleButton.removeClass("aktiv");
+            }
+            break;
+        case "REPEAT_ONE":
+            if (SoDo.repeatButton.hasClass("aktiv")) {
+                SoDo.repeatButton.removeClass("aktiv");
+            }
+            if (!SoDo.repeatButton.hasClass("aktiv_one")) {
+                SoDo.repeatButton.addClass("aktiv_one");
             }
             if (SoDo.shuffleButton.hasClass("aktiv")) {
                 SoDo.shuffleButton.removeClass("aktiv");
@@ -536,11 +554,15 @@ function SetPlaymodeDivs(v) {
             if (SoDo.repeatButton.hasClass("aktiv")) {
                 SoDo.repeatButton.removeClass("aktiv");
             }
+            if (SoDo.repeatButton.hasClass("aktiv_one")) {
+                SoDo.repeatButton.removeClass("aktiv_one");
+            }
             if (!SoDo.shuffleButton.hasClass("aktiv")) {
                 SoDo.shuffleButton.addClass("aktiv");
             }
             break;
         case "SHUFFLE":
+        case "SHUFFLE_REPEAT_ONE":
             if (!SoDo.repeatButton.hasClass("aktiv")) {
                 SoDo.repeatButton.addClass("aktiv");
             }

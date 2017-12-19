@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using SonosUPNP;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web.Http;
 using Newtonsoft.Json;
 
@@ -14,11 +16,16 @@ namespace SonosAPI.Controllers
         static readonly List<StreamWriter> DisconnectedClients = new List<StreamWriter>();
         //private static readonly ConcurrentQueue<StreamWriter> _streammessage = new ConcurrentQueue<StreamWriter>();
         private static readonly List<StreamWriter> _streammessage = new List<StreamWriter>();
+        
         public HttpResponseMessage Get(HttpRequestMessage request)
         {
-            //Timer t = _timer.Value;
             HttpResponseMessage response = request.CreateResponse();
             response.Content = new PushStreamContent(OnStreamAvailable, "text/event-stream");
+            response.Headers.CacheControl = new CacheControlHeaderValue
+            {
+                Public = true,
+                MaxAge = new TimeSpan(0, 0, 0, 1)
+            };
             return response;
         }
 
@@ -54,13 +61,13 @@ namespace SonosAPI.Controllers
         public static void EventPlayerChange(SonosZone pl)
         {
             if (pl == null || pl.Coordinator.CurrentState.TransportState == PlayerStatus.TRANSITIONING || _streammessage == null) return;
-            foreach (var data in _streammessage)
+            foreach (var data in _streammessage.ToArray())
             {
                 try
                 {
+                    data.WriteLine("data:" + JsonConvert.SerializeObject(pl) + data.NewLine);
                     data.Flush();
                     data.WriteLine("data:" + JsonConvert.SerializeObject(pl) + data.NewLine);
-                   // data.WriteLine("data:" + JsonConvert.SerializeObject(pl) + data.NewLine);//manchmal wird das nicht gesendet daher zeimal. 
                     data.Flush();
                 }
                 catch

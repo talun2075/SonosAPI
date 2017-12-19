@@ -168,7 +168,7 @@ function EventErrorsCheck(sourcejqXHR, Source) {
 
 function Eventing() {
     //todo: Eventing deaktivert
-    if (typeof (window.EventSource) === "undefined" || 1+1 === 2) {
+    if (typeof (window.EventSource) === "undefined") {
         console.log("SSE not Supported");
         SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", 100);
         return;
@@ -196,6 +196,7 @@ function Eventing() {
             if (typeof event.data === "undefined" || event.data === "") {
                 return;
             }
+
             if (event.data === "ZoneChange") {
                     SonosLog("Eventing:ZonenÄnderung");
                     GetZones();
@@ -204,7 +205,10 @@ function Eventing() {
                 if (typeof SonosZones[PlayerEventData.Coordinator.UUID] === "undefined") {
                     GetZones(); //Dann müssen die Zonen neu sein.
                 } else {
-                    SonosZones[PlayerEventData.Coordinator.UUID].SetBySonosItem(PlayerEventData);
+                    //prüfen, ob LastChange neu ist.
+                    if (SonosZones[PlayerEventData.Coordinator.UUID].LastChange !== PlayerEventData.Coordinator.CurrentState.LastStateChange) {
+                        SonosZones[PlayerEventData.Coordinator.UUID].SetBySonosItem(PlayerEventData);
+                    }
                 }
             }
         } catch (ex) {

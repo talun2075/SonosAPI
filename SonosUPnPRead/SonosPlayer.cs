@@ -497,8 +497,8 @@ namespace SonosUPNP
                 {
 
                     var tct = SonosItem.ParseSingleItem(ctmdevalue);
-                    if (CurrentState.CurrentTrack.Artist != tct.Artist && CurrentState.CurrentTrack.Title != tct.Title &&
-                        CurrentState.CurrentTrack.Album != tct.Album)
+                    if (CurrentState.CurrentTrack.Artist != tct.Artist || CurrentState.CurrentTrack.Title != tct.Title ||
+                        CurrentState.CurrentTrack.Album != tct.Album || CurrentState.CurrentTrack.StreamContent != tct.StreamContent)
                     {
                         CurrentState.CurrentTrack = SonosItemHelper.CheckItemForStreaming(tct,this);
                         changed = true;
@@ -1486,13 +1486,13 @@ namespace SonosUPNP
         /// <summary>
         /// Wiedergabemodus definieren
         /// </summary>
-        /// <param name="playmode">NORMAL,REPEAT_ALL,SHUFFLE_NOREPEAT,SHUFFLE</param>
+        /// <param name="playmode">NORMAL,REPEAT_ALL,SHUFFLE_NOREPEAT,SHUFFLE,REPEAT_ONE,SHUFFLE_REPEAT_ONE</param>
         public void SetPlayMode(string playmode)
         {
             try
             {
                 if (playmode != "NORMAL" && playmode != "REPEAT_ALL" && playmode != "SHUFFLE_NOREPEAT" &&
-                    playmode != "SHUFFLE") return;
+                    playmode != "SHUFFLE" && playmode != "REPEAT_ONE" && playmode != "SHUFFLE_REPEAT_ONE") return;
                 var arguments = new UPnPArgument[2];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("NewPlayMode", playmode);

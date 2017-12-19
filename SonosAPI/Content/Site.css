@@ -784,9 +784,9 @@ iframe {
     transition: all 1s ease-in-out;
 }
 
-    #Shuffle.aktiv {
-        Background-Color: grey;
-    }
+#Shuffle.aktiv {
+    Background-Color: grey;
+}
 
 #Repeat {
     top: 180px;
@@ -799,9 +799,13 @@ iframe {
     transition: all 1s ease-in-out;
 }
 
-    #Repeat.aktiv {
-        Background-Color: grey;
-    }
+#Repeat.aktiv {
+    Background-Color: grey;
+}
+#Repeat.aktiv_one {
+    Background-Color: grey;
+    Background-image: URL("/Images/repeat_one_red.png");
+}
 #Aurora {
     top: 280px;
     right: 0;

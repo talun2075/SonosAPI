@@ -198,6 +198,7 @@
     <Content Include="Images\pfeil5rot.png" />
     <Content Include="Images\playing.gif" />
     <Content Include="Images\playlist.png" />
+    <Content Include="Images\repeat_one_red.png" />
     <Content Include="Images\romantisch rot.png" />
     <Content Include="Images\romantisch.png" />
     <Content Include="Images\party rot.png" />
@@ -262,10 +263,6 @@
     <Content Include="Images\wildrot.png" />
     <Content Include="Images\wildschwarz.png" />
     <Content Include="Images\zur_red.png" />
-    <Content Include="PlexIcons\doku.png" />
-    <Content Include="PlexIcons\eigene.png" />
-    <Content Include="PlexIcons\musik.png" />
-    <Content Include="PlexIcons\switchundco.png" />
     <Content Include="ScheduleTask\default.htm" />
     <Content Include="Scripts\AlarmClock.js" />
     <Content Include="Scripts\JSAurora.js" />

@@ -36,6 +36,7 @@ function SonosZone(uuid, name) {
     var _RatingFilter = "INITIAL";
     var _BaseURL = "INITIAL";
     var _LastChange = 0;
+
     Object.defineProperty(this, "PlayState", {
         get: function () {
             return _PlayState;
@@ -115,60 +116,14 @@ function SonosZone(uuid, name) {
             return _PlayMode;
         },
         set: function (value) {
-            var t = this;
-            if (value === null) {
-                return;
-            }
-            var ogrs = value;
-            switch (value) {
-                case "Shuffle":
-                    switch (_PlayMode) {
-                        case "NORMAL":
-                            value = "SHUFFLE_NOREPEAT";
-                            break;
-                        case "REPEAT_ALL":
-                            value = "SHUFFLE";
-                            break;
-                        case "SHUFFLE_NOREPEAT":
-                            value = "NORMAL";
-                            break;
-                        case "SHUFFLE":
-                            value = "REPEAT_ALL";
-                            break;
-                    }
-                    break;
-                case "Repeat":
-                    switch (_PlayMode) {
-                        case "NORMAL":
-                            value = "REPEAT_ALL";
-                            break;
-                        case "REPEAT_ALL":
-                            value = "NORMAL";
-                            break;
-                        case "SHUFFLE_NOREPEAT":
-                            value = "SHUFFLE";
-                            break;
-                        case "SHUFFLE":
-                            value = "SHUFFLE_NOREPEAT";
-                            break;
-                    }
-                    break;
-                default:
-                    ogrs = "Shuffle";
- }
-            if (t.ActiveZone === true) {
-                if (_PlayMode !== "INITIAL" && t.GetPlayerChangeEventIsRunning === false && ogrs !== _PlayMode) {
-                    SonosAjax("SetPlaymode", "", value).complete(function () { });
-                }
-                if (ogrs === "Shuffle") {
+            _PlayMode = value;
+            if (value.indexOf("SHUFFLE") !== -1) {
                     //hier nun die Playlist neu laden, weil Shuffle geändert wurde.
                     window.setTimeout("SonosZones[SonosZones.ActiveZoneUUID].SetPlaylist(true,'SetPlaystate')", 220);
                     //SetCurrentPlaylistSong(SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber);
                 }
                 SetPlaymodeDivs(value);
             }
-            _PlayMode = value;
-        }
     });
     Object.defineProperty(this, "ActiveZone", {
         get: function () {
@@ -422,6 +377,61 @@ function SonosZone(uuid, name) {
         }
     });
     //Methoden
+    this.SendPlayMode = function(value) {
+        if (value === null) {
+            return;
+        }
+        switch (value) {
+            case "Shuffle":
+                switch (_PlayMode) {
+                    case "NORMAL":
+                        value = "SHUFFLE_NOREPEAT";
+                        break;
+                    case "REPEAT_ALL":
+                        value = "SHUFFLE";
+                        break;
+                    case "SHUFFLE_NOREPEAT":
+                        value = "NORMAL";
+                        break;
+                    case "SHUFFLE":
+                        value = "REPEAT_ALL";
+                        break;
+                    case "SHUFFLE_REPEAT_ONE":
+                        value = "REPEAT_ONE";
+                        break;
+                    case "REPEAT_ONE":
+                        value = "SHUFFLE_REPEAT_ONE";
+                        break;
+                }
+                break;
+            case "Repeat":
+                switch (_PlayMode) {
+                    case "NORMAL":
+                        value = "REPEAT_ALL";
+                        break;
+                    case "REPEAT_ALL":
+                        value = "REPEAT_ONE";
+                        break;
+                    case "SHUFFLE_NOREPEAT":
+                        value = "SHUFFLE";
+                        break;
+                    case "SHUFFLE":
+                        value = "SHUFFLE_REPEAT_ONE";
+                        break;
+                    case "SHUFFLE_REPEAT_ONE":
+                        value = "SHUFFLE_NOREPEAT";
+                        break;
+                    case "REPEAT_ONE":
+                        value = "NORMAL";
+                        break;
+                }
+                break;
+            default:
+                alert("SendPlaymode Unbekannter Value:" + value);
+        }
+        this.PlayMode = value;
+        SonosAjax("SetPlaymode", "", value).complete(function () { });
+    }
     this.RenderTrackTime = function () {
         if (this.Playlist.CheckIsEmpty() === true || this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple") {
             if (SoDo.runtimeCurrentSong.is(":visible")) {
