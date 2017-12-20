@@ -116,12 +116,14 @@ function SonosZone(uuid, name) {
             return _PlayMode;
         },
         set: function (value) {
-            _PlayMode = value;
-            if (value.indexOf("SHUFFLE") !== -1) {
+
+            
+            if (value.indexOf("SHUFFLE") !== -1 || _PlayMode.indexOf("SHUFFLE") !== -1) {
                     //hier nun die Playlist neu laden, weil Shuffle geändert wurde.
                     window.setTimeout("SonosZones[SonosZones.ActiveZoneUUID].SetPlaylist(true,'SetPlaystate')", 220);
                     //SetCurrentPlaylistSong(SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber);
-                }
+            }
+                _PlayMode = value;
                 SetPlaymodeDivs(value);
             }
     });

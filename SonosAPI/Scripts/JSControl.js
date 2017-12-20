@@ -527,7 +527,6 @@ function SetPlaymodeDivs(v) {
                 SoDo.shuffleButton.removeClass("aktiv");
             }
             break;
-            //todo: Bild für repeat one
         case "REPEAT_ALL":
             if (!SoDo.repeatButton.hasClass("aktiv")) {
                 SoDo.repeatButton.addClass("aktiv");
@@ -562,9 +561,22 @@ function SetPlaymodeDivs(v) {
             }
             break;
         case "SHUFFLE":
-        case "SHUFFLE_REPEAT_ONE":
             if (!SoDo.repeatButton.hasClass("aktiv")) {
                 SoDo.repeatButton.addClass("aktiv");
+            }
+            if (SoDo.repeatButton.hasClass("aktiv_one")) {
+                SoDo.repeatButton.removeClass("aktiv_one");
+            }
+            if (!SoDo.shuffleButton.hasClass("aktiv")) {
+                SoDo.shuffleButton.addClass("aktiv");
+            }
+            break;
+        case "SHUFFLE_REPEAT_ONE":
+            if (SoDo.repeatButton.hasClass("aktiv")) {
+                SoDo.repeatButton.removeClass("aktiv");
+            }
+            if (!SoDo.repeatButton.hasClass("aktiv_one")) {
+                SoDo.repeatButton.addClass("aktiv_one");
             }
             if (!SoDo.shuffleButton.hasClass("aktiv")) {
                 SoDo.shuffleButton.addClass("aktiv");
