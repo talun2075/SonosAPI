@@ -168,11 +168,13 @@ namespace SonosAPI.Classes
             {
                 serverErrors.Add(Method, error);
             }
+
+            //todo: prüfen wie man das doppelte schreiben verhindern kann. 
+
             var dir = Directory.CreateDirectory(@"C:\NasWeb\Error");
             //string errorfile = error + ".txt";
             string file = dir.FullName + "\\Log.txt";
             //File.Create(file).Dispose();
-
             if (!File.Exists(file))
             {
                 // Create a file to write to.
@@ -247,15 +249,13 @@ namespace SonosAPI.Classes
 
                 }
             }
-            var tzone = GetZone(obj.Name);
+            var tzone = GetPlayer(obj.Name);
             if (tzone != null)
             {
-                EventController.EventPlayerChange(GetZone(obj.Name));
+                //Wenn Null ist der Player in einer Zone vorhanden und muss nicht ausgeliefert werden.
+                EventController.EventPlayerChange(tzone);
             }
-            else
-            {
-                ServerErrorsAdd("Sonos_Player_TopologieChanged",new Exception("Player für EventPlayer nicht gefunden:"+obj.Name));
-            }
+            
         }
 
         /// <summary>
@@ -336,26 +336,34 @@ namespace SonosAPI.Classes
         /// <returns></returns>
         public static Boolean CheckIsZoneCord(SonosPlayer sp, Boolean fromMessaQueue = false)
         {
-            if (sp.IsZoneCoord == false)
+            try
             {
-                sp.BecomeCoordinatorofStandaloneGroup();
-                Thread.Sleep(300);
-                return false;
-            }
-            if (sp.IsZoneCoord == null)
-            {
-                //Wenn IsZoneCoord Null und keine Zone gefunden wurde, dann ist der Player in einer Gruppe.
-                var sz = GetZone(sp.Name);
-                if (sz == null)
+                if (sp.IsZoneCoord == false)
                 {
-                    sp.IsZoneCoord = false;
                     sp.BecomeCoordinatorofStandaloneGroup();
-                    Thread.Sleep(300);
+                    Thread.Sleep(200);
                     return false;
                 }
-                sp.IsZoneCoord = true;
+                if (sp.IsZoneCoord == null)
+                {
+                    //Wenn IsZoneCoord Null und keine Zone gefunden wurde, dann ist der Player in einer Gruppe.
+                    var sz = GetZone(sp.Name);
+                    if (sz == null)
+                    {
+                        sp.IsZoneCoord = false;
+                        sp.BecomeCoordinatorofStandaloneGroup();
+                        Thread.Sleep(200);
+                        return false;
+                    }
+                    sp.IsZoneCoord = true;
+                }
+                return true;
             }
-            return true;
+            catch (Exception ex)
+            {
+                ServerErrorsAdd("CheckIsZoneCord bei Player:" + sp.Name, ex);
+                return true;
+            }
         }
         /// <summary>
         /// Liefert die Zone aufgrund des übergebenen Namen
@@ -366,7 +374,6 @@ namespace SonosAPI.Classes
         {
             if (Sonos == null || Sonos.Zones.Count == 0)
             {
-                InitialSonos();
                 return null;
             }
             lock (Sonos.Zones)
@@ -391,6 +398,7 @@ namespace SonosAPI.Classes
         {
             if (Sonos == null || Sonos.Players.Count == 0)
             {
+                ServerErrorsAdd("GetPlayer Sonos ist Null Player:"+playerName,new Exception("Sonos ist null und wird initialisiert"));
                 InitialSonos();
                 return null;
             }
@@ -410,19 +418,26 @@ namespace SonosAPI.Classes
         /// <param name="sp"></param>
         public static void WaitForTransitioning(SonosPlayer sp)
         {
-            if (sp.CurrentState.TransportState == PlayerStatus.TRANSITIONING)
+            try
             {
-                Boolean trans = false;
-                int counter = 0;
-                while (!trans)
+                if (sp.CurrentState.TransportState == PlayerStatus.TRANSITIONING)
                 {
-                    if (sp.CurrentState.TransportState != PlayerStatus.TRANSITIONING || counter > 5)
+                    Boolean trans = false;
+                    int counter = 0;
+                    while (!trans)
                     {
-                        trans = true;
+                        if (sp.CurrentState.TransportState != PlayerStatus.TRANSITIONING || counter > 5)
+                        {
+                            trans = true;
+                        }
+                        Thread.Sleep(200);
+                        counter++;
                     }
-                    Thread.Sleep(200);
-                    counter++;
                 }
+            }
+            catch (Exception ex)
+            {
+                ServerErrorsAdd("WaitForTransitioning bei Player: "+sp.Name,ex);
             }
         }
     }

@@ -40,7 +40,7 @@ namespace SonosUPNP
         /// </summary>
         /// <param name="Method"></param>
         /// <param name="ExceptionMes"></param>
-        private void ServerErrorsAdd(string Method, Exception ExceptionMes)
+        public void ServerErrorsAdd(string Method, Exception ExceptionMes)
         {
             if (ExceptionMes.Message.StartsWith("Could not connect to device")) return;
             string error = DateTime.Now.ToString("yyyy-M-d_-_hh-mm-ss") + "_" + DateTime.Now.Ticks + " " + Method + " " + ExceptionMes.Message;
@@ -711,6 +711,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AlarmClock == null)
+                {
+                    ServerErrorsAdd("GetAlarms", new Exception("GetAlarms AlarmClock ist null"));
+                    return new[] {String.Empty};
+                }
                 var arguments = new UPnPArgument[2];
                 arguments[0] = new UPnPArgument("CurrentAlarmList", null);
                 arguments[1] = new UPnPArgument("CurrentAlarmListVersion", null);
@@ -834,6 +839,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("GetRemainingSleepTimerDuration", new Exception("GetRemainingSleepTimerDuration AVTransport ist null"));
+                    return String.Empty;
+                }
                 var arguments = new UPnPArgument[3];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("RemainingSleepTimerDuration", null);
@@ -857,6 +867,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("SetRemainingSleepTimerDuration", new Exception("SetRemainingSleepTimerDuration AVTransport ist null"));
+                    return;
+                }
                 if (CurrentState != null)
                 {
                     CurrentState.RemainingSleepTimerDuration = sleeptimer;
@@ -919,6 +934,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (DevicePropertie == null)
+                {
+                    ServerErrorsAdd("SetLed:DevicePropertie", new Exception("SetLed:DevicePropertie ist null"));
+                    return;
+                }
                 string d = GetLedState();
                 string led = "Off";
                 if (d == "Off")
@@ -942,6 +962,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (DevicePropertie == null)
+                {
+                    ServerErrorsAdd("GetLedState:DevicePropertie", new Exception("GetLedState:DevicePropertie ist null"));
+                    return String.Empty;
+                }
                 var arguments = new UPnPArgument[1];
                 arguments[0] = new UPnPArgument("CurrentLEDState", null);
                 DevicePropertie.InvokeAsync("GetLEDState", arguments);
@@ -962,6 +987,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("BecomeCoordinatorofStandaloneGroup:AvTRansport", new Exception("BecomeCoordinatorofStandaloneGroup:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[3];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("DelegatedGroupCoordinatorID", null);
@@ -983,6 +1013,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("SaveQueueT:AvTRansport", new Exception("SaveQueueT:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[4];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("Title", _title);
@@ -1004,6 +1039,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("SaveQueue:AvTRansport", new Exception("SaveQueue:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[4];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("Title", _title);
@@ -1028,8 +1068,8 @@ namespace SonosUPNP
             {
                 if (AVTransport == null)
                 {
-                    ServerErrorsAdd("GetAktSongInfo:AvTRansport", new Exception("AVTransport ist null"));
-                    return null;
+                    ServerErrorsAdd("GetAktSongInfo:AvTRansport", new Exception("GetAktSongInfo:AVTransport ist null"));
+                    return new PlayerInfo();
                 }
                 var arguments = new UPnPArgument[9];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
@@ -1061,7 +1101,7 @@ namespace SonosUPNP
             catch (Exception ex)
             {
                 ServerErrorsAdd("GetAktSongInfo", ex);
-                return null;
+                return new PlayerInfo();
             }
         }
         /// <summary>
@@ -1072,6 +1112,11 @@ namespace SonosUPNP
             SetPause();
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("RemoveAllTracksFromQueue", new Exception("RemoveAllTracksFromQueue:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[1];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 AVTransport.InvokeAsync("RemoveAllTracksFromQueue", arguments);
@@ -1092,6 +1137,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("Enqueue", new Exception("Enqueue:AVTransport ist null"));
+                    return 0;
+                }
                 var arguments = new UPnPArgument[8];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("EnqueuedURI", track.Uri);
@@ -1121,6 +1171,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("EnqueueMulti", new Exception("EnqueueMulti:AVTransport ist null"));
+                    return 0;
+                }
                 var arguments = new UPnPArgument[13];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("UpdateID", 0u);
@@ -1153,6 +1208,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("Seek", new Exception("Seek:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[3];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("Unit", "REL_TIME");
@@ -1172,6 +1232,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("SetTrackInPlaylist", new Exception("SetTrackInPlaylist:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[3];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("Unit", "TRACK_NR");
@@ -1191,6 +1256,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("RemoveFromQueue", new Exception("RemoveFromQueue:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[3];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("ObjectID", "Q:0/" + songnumber);
@@ -1213,6 +1283,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("SetAVTransportURI", new Exception("SetAVTransportURI:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[3];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("CurrentURI", _uri);
@@ -1267,6 +1342,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (ContentDirectory == null)
+                {
+                    ServerErrorsAdd("DestroyObject", new Exception("DestroyObject:ContentDirectory ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[1];
                 arguments[0] = new UPnPArgument("ObjectID", item);
                 ContentDirectory.InvokeAsync("DestroyObject", arguments);
@@ -1285,6 +1365,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (ContentDirectory == null)
+                {
+                    ServerErrorsAdd("CreateObject", new Exception("CreateObject:ContentDirectory ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[4];
                 arguments[0] = new UPnPArgument("ContainerID", container);
                 arguments[1] = new UPnPArgument("Elements", metadata);
@@ -1304,6 +1389,11 @@ namespace SonosUPNP
         /// <returns></returns>
         public virtual void CreateFavorite(String objectID)
         {
+            if (ContentDirectory == null)
+            {
+                ServerErrorsAdd("CreateFavorite", new Exception("CreateFavorite:ContentDirectory ist null"));
+                return;
+            }
             String description;
             String didlmd;
             String didlstring;
@@ -1406,6 +1496,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("GetMediaInfo", new Exception("GetMediaInfo:AVTransport ist null"));
+                    return 0;
+                }
                 var arguments = new UPnPArgument[10];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("NrTracks", 0u);
@@ -1435,6 +1530,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("GetMediaInfoURIMeta", new Exception("GetMediaInfoURIMeta:AVTransport ist null"));
+                    return new List<string>();
+                }
                 var arguments = new UPnPArgument[10];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("NrTracks", 0u);
@@ -1467,6 +1567,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("ReorderTracksinQueue", new Exception("ReorderTracksinQueue:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[5];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("StartingIndex", Convert.ToUInt32(oldposition));
@@ -1491,6 +1596,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("SetPlayMode", new Exception("SetPlayMode:AVTransport ist null"));
+                    return;
+                }
                 if (playmode != "NORMAL" && playmode != "REPEAT_ALL" && playmode != "SHUFFLE_NOREPEAT" &&
                     playmode != "SHUFFLE" && playmode != "REPEAT_ONE" && playmode != "SHUFFLE_REPEAT_ONE") return;
                 var arguments = new UPnPArgument[2];
@@ -1510,6 +1620,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("SetPlay", new Exception("SetPlay:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[2];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("Speed", "1");
@@ -1527,6 +1642,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("SetStop", new Exception("SetStop:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[1];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 AVTransport.InvokeAsync("Stop", arguments);
@@ -1543,6 +1663,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("SetPlayNext", new Exception("SetPlayNext:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[1];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 AVTransport.InvokeAsync("Next", arguments);
@@ -1559,6 +1684,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("SetPlayPrevious", new Exception("SetPlayPrevious:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[1];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 AVTransport.InvokeAsync("Previous", arguments);
@@ -1575,6 +1705,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("SetPause", new Exception("SetPause:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[1];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 AVTransport.InvokeAsync("Pause", arguments);
@@ -1592,6 +1727,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("GetPlaymode", new Exception("GetPlaymode:AVTransport ist null"));
+                    return "NORMAL";
+                }
                 var arguments = new UPnPArgument[3];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("PlayMode", null);
@@ -1614,6 +1754,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("GetCrossfadeMode", new Exception("GetCrossfadeMode:AVTransport ist null"));
+                    return false;
+                }
                 var arguments = new UPnPArgument[2];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("CrossfadeMode", null);
@@ -1634,6 +1779,11 @@ namespace SonosUPNP
         {
             try
             {
+                if (AVTransport == null)
+                {
+                    ServerErrorsAdd("SetCrossfadeMode", new Exception("SetCrossfadeMode:AVTransport ist null"));
+                    return;
+                }
                 var arguments = new UPnPArgument[2];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("CrossfadeMode", v);
@@ -1654,6 +1804,7 @@ namespace SonosUPNP
             {
                 if (AVTransport == null)
                 {
+                    ServerErrorsAdd("GetPlayerStatus", new Exception("GetPlayerStatus:AVTransport ist null"));
                     return PlayerStatus.STOPPED;
                 }
                 var arguments = new UPnPArgument[4];
@@ -1684,7 +1835,7 @@ namespace SonosUPNP
             }
         }
         #endregion WiedergabeEinstellungen
-        #region Volumne
+        #region Volume
         /// <summary>
         /// Lautstärke anpassen (Wert von 0 - 100)
         /// </summary>
@@ -1715,6 +1866,12 @@ namespace SonosUPNP
         {
             try
             {
+                if (GroupRenderingControl == null)
+                {
+                    ServerErrorsAdd("SetGroupVolume:GroupRenderingControl", new Exception("SetGroupVolume:Kein GroupRenderingControl beim Player gefunden"));
+                    return;
+
+                }
                 if (vol > 0 && vol < 101)
                 {
                     var arguments = new UPnPArgument[2];
@@ -1733,6 +1890,13 @@ namespace SonosUPNP
         {
             try
             {
+                if (GroupRenderingControl == null)
+                {
+                    ServerErrorsAdd("GetGroupVolume:GroupRenderingControl", new Exception("GetGroupVolume:Kein GroupRenderingControl beim Player gefunden"));
+                    return 0;
+
+                }
+
                 var arguments = new UPnPArgument[2];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
                 arguments[1] = new UPnPArgument("CurrentVolume", null);
@@ -1788,6 +1952,12 @@ namespace SonosUPNP
         {
             try
             {
+                if (RenderingControl == null)
+                {
+                    ServerErrorsAdd("SetMute:KeinRenderingControl", new Exception("SetMute:Kein RenderingControl beim Player gefunden"));
+                    return;
+
+                }
                 var d = !Mute;
                 var arguments = new UPnPArgument[3];
                 arguments[0] = new UPnPArgument("InstanceID", 0u);
@@ -1808,6 +1978,12 @@ namespace SonosUPNP
         {
             try
             {
+                if (RenderingControl == null)
+                {
+                    ServerErrorsAdd("GetMute:KeinRenderingControl", new Exception("GetMute:Kein RenderingControl beim Player gefunden"));
+                    return false;
+
+                }
                 var arguments1 = new UPnPArgument[3];
                 arguments1[0] = new UPnPArgument("InstanceID", 0u);
                 arguments1[1] = new UPnPArgument("Channel", "Master");
@@ -1823,7 +1999,7 @@ namespace SonosUPNP
             }
 
         }
-        #endregion Volumne
+        #endregion Volume
         #region Browsing
         /// <summary>
         /// Durchsucht das Sonos Gerät nach angegeben Parametern
@@ -1886,7 +2062,11 @@ namespace SonosUPNP
         {
             try
             {
-                if (ContentDirectory == null) return new[] { String.Empty };
+                if (ContentDirectory == null)
+                {
+                    ServerErrorsAdd("Browse:" + action, new Exception("Browse ContentDirectory ist null"));
+                    return new[] { String.Empty };
+                }
 
                 var arguments = new UPnPArgument[10];
                 arguments[0] = new UPnPArgument("ObjectID", action);

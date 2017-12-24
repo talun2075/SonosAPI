@@ -58,17 +58,23 @@ namespace SonosAPI.Controllers
             DisconnectedClients.Clear();
         }
     }
-        public static void EventPlayerChange(SonosZone pl)
+        
+        public static void EventPlayerChange(SonosPlayer pl)
         {
-            if (pl == null || pl.Coordinator.CurrentState.TransportState == PlayerStatus.TRANSITIONING || _streammessage == null) return;
+            if (pl == null || pl.CurrentState.TransportState == PlayerStatus.TRANSITIONING || _streammessage == null) return;
             foreach (var data in _streammessage.ToArray())
             {
                 try
                 {
-                    data.WriteLine("data:" + JsonConvert.SerializeObject(pl) + data.NewLine);
+                    var t = new RinconLastChangeItem
+                    {
+                        UUID = pl.UUID,
+                        LastChange = pl.CurrentState.LastStateChange
+                    };
+                    data.WriteLine("data:" + JsonConvert.SerializeObject(t)+"\n\n");
                     data.Flush();
-                    data.WriteLine("data:" + JsonConvert.SerializeObject(pl) + data.NewLine);
-                    data.Flush();
+                    //data.WriteLine("data:" + JsonConvert.SerializeObject(t) + "\n\n");
+                    //data.Flush();
                 }
                 catch
                 {
@@ -100,6 +106,11 @@ namespace SonosAPI.Controllers
             }
             //_streammessage.Enqueue(streamwriter);
         }
+    }
 
+    public class RinconLastChangeItem
+    {
+        public String UUID { get; set; }
+        public DateTime LastChange { get; set; }
     }
 }

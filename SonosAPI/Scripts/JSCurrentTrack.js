@@ -119,6 +119,12 @@ function SonosCurrentTrack() {
                     SetCurrentPlaylistSong(tracknumber, "RenderCurrentTrack");
                 }
             }
+            if (SoDo.bewertungStars.is(":hidden")) {
+                SoDo.bewertungStars.show();
+            }
+            if (SoDo.bewertungWidth.is(":hidden")) {
+                SoDo.bewertungWidth.show();
+            }
             //Rating list verarbeiten und evtl. Ausblenden
             if (SoVa.ratingonlycurrent === true && SoDo.ratingListBox.is(":visible") === true) {
                 ShowCurrentRating("show");
@@ -133,17 +139,23 @@ function SonosCurrentTrack() {
         } else {
             //Stream
             //Elemente ausblenden
-            if (!this.StreamContent === "Apple") {
+            if (this.StreamContent !== "Apple") {
                 if (SoDo.bewertungWidth.is(":visible")) {
                     SoDo.bewertungWidth.hide();
+                }
+                if (SoDo.bewertungStars.is(":visible")) {
+                    SoDo.bewertungStars.hide();
                 }
             } else {
                 if (SoDo.bewertungWidth.is(":hidden")) {
                     SoDo.bewertungWidth.show();
                 }
+                if (SoDo.bewertungStars.is(":hidden")) {
+                    SoDo.bewertungStars.show();
+                }
 
             }
-            if (!this.StreamContent === "Dienst" && !this.StreamContent === "Apple") {
+            if (this.StreamContent !== "Dienst" && this.StreamContent !== "Apple") {
                 if (SoDo.runtimeSlider.is(":visible")) {
                     SoDo.runtimeSlider.hide();
                 }
@@ -152,14 +164,6 @@ function SonosCurrentTrack() {
                     SoDo.runtimeSlider.show();
                 }
             }
-            if (typeof this.StreamContent !== "undefined" && !this.StreamContent === "Dienst" && !this.StreamContent === "Apple") {
-                if (SoDo.aktTitle.text() !== this.StreamContent) {
-                    SoDo.aktTitle.text(this.StreamContent);
-                }
-                if (SoDo.aktArtist.text() !== "") {
-                    SoDo.aktArtist.text("");
-                }
-            } else {
                 if (this.Title !== "leer") {
                     if (SoDo.aktTitle.text() !== this.Title) {
                         SoDo.aktTitle.text(this.Title);
@@ -181,7 +185,7 @@ function SonosCurrentTrack() {
                 if (this.StreamContent === "Apple") {
                     this.MP3.RenderMP3(true);
                 }
-            }
+            
 
         }
         //Unabhängig vom Stream
@@ -197,7 +201,6 @@ function SonosCurrentTrack() {
             }
         }
     };
-
 }
 function MP3() {
     this.Album = "leer";

@@ -14,8 +14,8 @@
         public const int GästezimmerVolume = 1;
         public const string SchlafzimmerName = "Schlafzimmer";
         public const int SchlafzimmerVolume = 9;
-        public const string KinderzimmerName = "Kinderzimmer";
-        public const int KinderzimmerVolume = 7;
+        public const string AnkleidezimmerName = "Ankleidezimmer";
+        public const int AnkleidezimmerVolume = 7;
         public const string ArbeitszimmerName = "Arbeitszimmer";
         public const int ArbeitzimmerVolume = 10;
         /// <summary>

@@ -202,12 +202,38 @@ function Eventing() {
                     GetZones();
             } else {
                 var PlayerEventData = JSON.parse(event.data);
-                if (typeof SonosZones[PlayerEventData.Coordinator.UUID] === "undefined") {
+                if (typeof SonosZones[PlayerEventData.UUID] === "undefined") {
                     GetZones(); //Dann müssen die Zonen neu sein.
                 } else {
                     //prüfen, ob LastChange neu ist.
-                    if (SonosZones[PlayerEventData.Coordinator.UUID].LastChange !== PlayerEventData.Coordinator.CurrentState.LastStateChange) {
-                        SonosZones[PlayerEventData.Coordinator.UUID].SetBySonosItem(PlayerEventData);
+                    if (SonosZones[PlayerEventData.UUID].LastChange !== PlayerEventData.LastChange) {
+                        var request = SonosAjax("GetZonebyRincon", "", PlayerEventData.UUID);
+                        request.success(function (data2) {
+                            if (data2 !== null && typeof data2 !== "undefined") {
+                                SonosLog("Eventing:Geänderte Playerinfos geladen");
+                                try {
+                                    SonosZones[data2.CoordinatorUUID].SetBySonosItem(data2);
+                                } catch (Ex) {
+                                    alert("Es ist ein Fehler beim SetbySonosItem aufgetreten:" + Ex.Message);
+                                }
+                                SonosZones[data2.CoordinatorUUID].GetPlayerChangeEventIsRunning = false;
+                            } else {
+                                SonosLog("Eventing:Geänderte Player geladen Daten aber null:" + data2);
+                            }
+                        });
+                        request.fail(function () {
+                            SonosLog("Eventing:Konnte die Zone nicht direkt laden");
+                        });
+
+
+
+
+
+
+
+
+
+
                     }
                 }
             }

@@ -82,7 +82,7 @@ function SonosPlaylist() {
         }
     }
     this.CheckIsEmpty = function() {
-        if (this.Playlist.length === 0 || this.Playlist.length === 1 && this.Playlist[0].Artist === "Leer" && this.Playlist[0].Album === "Leer" && this.Playlist[0].Title === "Leer") {
+        if (this.Playlist.length === 0 || (this.Playlist.length === 1 && this.Playlist[0].Artist === "Leer" && this.Playlist[0].Album === "Leer" && this.Playlist[0].Title === "Leer")) {
             return true;
         }
         return false;

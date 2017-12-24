@@ -47,6 +47,7 @@ function SonosDOMObjects() {
     this.audioInButton = $("#AudioIn"); //Button um zu Zeigen, ob AudioIn verfügbar und ggf. aktiv bzw. aktivieren.
     this.aufweckenSwitch = $(".aufweckenonoffswitch-checkbox"); //AufweckenPlaylist Schalter
     this.bewertungWidth = $("#BewertungL"); // beim Currenttrack am Cover die Bewertungsbreite (goldene Sterne)
+    this.bewertungStars = $("#BewertungN"); // beim Currenttrack am Cover die Bewertung (graue Sterne)
     this.bodydiv = $("#Bodydiv"); //Primärer Container in dem alles hinterlegt ist.
     this.BewertungsFilterButton = $("#Bewertungsfilter"); //Button im Settings für die Filter der Bewertungen.
     this.browseBackButton = $("#Browseback"); //beim Browsing der Back Button

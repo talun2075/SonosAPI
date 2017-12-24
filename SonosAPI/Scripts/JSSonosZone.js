@@ -89,26 +89,7 @@ function SonosZone(uuid, name) {
                         SetCurrentPlaylistSong(t.CurrentTrackNumber, "SetPlaySTate"); //Diese Methode greift auf den PlayState zu daher erst jetzt ausführen.
                     }
                 }
-                if (value === "PLAYING") {
-                    if (_PlayState !== "INITIAL" && t.GetPlayerChangeEventIsRunning === false) {
-                        //Ajax Request
-                        var request = SonosAjax("Play", "", t.ZoneUUID);
-                        request.fail(function () {
-                            ReloadSite("SonosZone:SetPlayState:Play");
-                        });
-                    }
-                } else {
-                    if (_PlayState !== "INITIAL" && t.GetPlayerChangeEventIsRunning === false) {
-                        //Ajax Request
-                        var request2 = SonosAjax("Pause", "", t.ZoneUUID);
-                        request2.fail(function () {
-                            ReloadSite("SonosZone:SetPlayState:Pause");
-                        });
-                    }
-                }
             }
-
-            
         }
     });
     Object.defineProperty(this, "PlayMode", {
@@ -116,14 +97,19 @@ function SonosZone(uuid, name) {
             return _PlayMode;
         },
         set: function (value) {
-
-            
-            if (value.indexOf("SHUFFLE") !== -1 || _PlayMode.indexOf("SHUFFLE") !== -1) {
+            try {
+                if (value !==null && typeof value !== "undefined" && value.indexOf("SHUFFLE") !== -1 || _PlayMode !==null && _PlayMode.indexOf("SHUFFLE") !== -1) {
                     //hier nun die Playlist neu laden, weil Shuffle geändert wurde.
                     window.setTimeout("SonosZones[SonosZones.ActiveZoneUUID].SetPlaylist(true,'SetPlaystate')", 220);
                     //SetCurrentPlaylistSong(SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber);
+                }
             }
-                _PlayMode = value;
+            catch (Ex) {
+                console.log("value:"+value);
+                console.log("Playmode:"+_PlayMode);
+                console.log(Ex);
+            }
+            _PlayMode = value;
                 SetPlaymodeDivs(value);
             }
     });
@@ -379,7 +365,27 @@ function SonosZone(uuid, name) {
         }
     });
     //Methoden
-    this.SendPlayMode = function(value) {
+    this.SendPlayState = function(value) {
+        if (value === "PLAYING") {
+            if (_PlayState !== "INITIAL" && this.GetPlayerChangeEventIsRunning === false) {
+                //Ajax Request
+                var request = SonosAjax("Play", "", this.ZoneUUID);
+                request.fail(function () {
+                    ReloadSite("SonosZone:SetPlayState:Play");
+                });
+            }
+        } else {
+            if (_PlayState !== "INITIAL" && this.GetPlayerChangeEventIsRunning === false) {
+                //Ajax Request
+                var request2 = SonosAjax("Pause", "", this.ZoneUUID);
+                request2.fail(function () {
+                    ReloadSite("SonosZone:SetPlayState:Pause");
+                });
+            }
+        }
+        this.PlayState = value;
+    }
+    this.SendPlayMode = function (value) {
         if (value === null) {
             return;
         }

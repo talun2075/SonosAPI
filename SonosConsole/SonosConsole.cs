@@ -128,7 +128,7 @@ namespace SonosConsole
                     if (proc.MainWindowTitle.IndexOf("Service Unavailable", StringComparison.Ordinal) > -1)
                     {
                         //AppPoll nicht gestartet
-                        System.Diagnostics.Process.Start(@"C:\Windows\System32\inetsrv\appcmd", "start apppool /apppool.name:musik");
+                        System.Diagnostics.Process.Start(@"C:\Windows\System32\inetsrv\appcmd", "start apppool /apppool.name:DefaultAppPool");
                     }
 
                 }
@@ -294,18 +294,17 @@ namespace SonosConsole
         /// <param name="webGoodReturn">Parameter der erwartet wird, wenn der Aufruf ok ist, ansonsten wird es 5 Mal versucht</param>
         /// <param name="writeReturn">Schreibt den Return in die Console</param>
         /// <returns>Erfolgreich ausgeführt?</returns>
-        private static void CallWebInterface2(string Url, string webGoodReturn, bool writeReturn = true)
+        private async static void CallWebInterface2(string Url, string webGoodReturn, bool writeReturn = true)
         {
             try
             {
-
                 Boolean okrequest = false;
                 Int32 count = 0;
                 while (!okrequest)
                 {
 
                     WebClient wc = new WebClient();
-                    String webReturnValue = wc.DownloadString(Url);
+                    String webReturnValue =await wc.DownloadStringTaskAsync(Url);
                     if (writeReturn)
                     {
                         Console.WriteLine("Return vom Server: " + webReturnValue);

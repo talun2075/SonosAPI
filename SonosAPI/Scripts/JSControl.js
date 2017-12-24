@@ -476,9 +476,9 @@ function PlayPress() {
     if (SonosZones.CheckActiveZone()) {
         SonosLog("PlayPress State:" + SonosZones[SonosZones.ActiveZoneUUID].PlayState);
         if (SonosZones[SonosZones.ActiveZoneUUID].PlayState === "PLAYING") {
-            SonosZones[SonosZones.ActiveZoneUUID].PlayState ="PAUSED_PLAYBACK";
+            SonosZones[SonosZones.ActiveZoneUUID].SendPlayState("PAUSED_PLAYBACK");
         } else {
-            SonosZones[SonosZones.ActiveZoneUUID].PlayState="PLAYING";
+            SonosZones[SonosZones.ActiveZoneUUID].SendPlayState("PLAYING");
         }
     }
     SonosLog("PlayPress Done");
@@ -497,7 +497,7 @@ function PlayPressSmall(k) {
         SonosLog("PlayPressSmall läd doitValue");
         SonosZones[SonosZones.ActiveZoneUUID].SetCurrentTrack(SonosZones[SonosZones.ActiveZoneUUID].Playlist.Playlist[PressKey - 1], "PlaypressSmall");
         SonosZones[SonosZones.ActiveZoneUUID].CurrentTrackNumber =PressKey;
-        SonosZones[SonosZones.ActiveZoneUUID].PlayState ="PLAYING";
+        SonosZones[SonosZones.ActiveZoneUUID].SendPlayState("PLAYING");
         doitValue("SetSongInPlaylist", PressKey);
     }
 
@@ -506,7 +506,7 @@ function SetPlayState(uuid, value) {
     if (typeof SonosZones[uuid] === "undefined") {
         alert("Player nicht gefunden:" + uuid);
     }
-    SonosZones[uuid].PlayState = value;
+    SonosZones[uuid].SendPlayState(value);
 }
 //Setzen des Wiedergabemodus
 function SetPlaymode(v) {
@@ -583,7 +583,15 @@ function SetPlaymodeDivs(v) {
             }
             break;
         default:
-            alert("SetPlaymodeDivs:" + v);
+            if (SoDo.repeatButton.hasClass("aktiv")) {
+                SoDo.repeatButton.removeClass("aktiv");
+            }
+            if (SoDo.repeatButton.hasClass("aktiv_one")) {
+                SoDo.repeatButton.removeClass("aktiv_one");
+            }
+            if (SoDo.shuffleButton.hasClass("aktiv")) {
+                SoDo.shuffleButton.removeClass("aktiv");
+            }
     }
 }
 //Übergangbutton geklickt.

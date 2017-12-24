@@ -7,6 +7,7 @@ using System.Web.Http;
 using ExternalDevices;
 using NanoleafAurora;
 using SonosAPI.Classes;
+using SonosUPnP;
 using SonosUPNP;
 
 namespace SonosAPI.Controllers
@@ -17,7 +18,7 @@ namespace SonosAPI.Controllers
         private const string retValReload = "Reload";
         private const string retValok = "ok";
         private const string defaultPlaylist = "3 Sterne Beide.m3u";
-
+        private static IList<SonosItem> allplaylist = new List<SonosItem>();
         public void Get()
         {
 
@@ -41,9 +42,9 @@ namespace SonosAPI.Controllers
                 try
                 {
                     //todo: Checkplaylist so umbauen, das die Playlist als String Übergeben werden kann. Danach MErge mit Loadplaylist und in eigene Methode
-                    var sonosplaylists = gzmPlayer.GetallPlaylist();
+                    var sonosplaylists = GetAllPlaylist();
                     pl0 = sonosplaylists.FirstOrDefault(x => x.Title.ToLower() == "zzz regen neu");
-                    if(pl0 == null) throw new Exception("Kein Item für Playliste Regen gefunden");
+                    if (pl0 == null) throw new Exception("Kein Item für Playliste Regen gefunden");
                     pl1 = sonosplaylists.FirstOrDefault(x => x.Title.ToLower() == "zzz tempsleep");
                     if (pl1 == null) throw new Exception("Kein Item für Playliste tempsleep");
 
@@ -83,23 +84,23 @@ namespace SonosAPI.Controllers
                 {
                     gzmPlayer.SetVolume(SonosConstants.GästezimmerVolume);
                 }
-                    
+
                 switch (id)
                 {
-                        
+
                     case "0":
-                            
+
                         Boolean checkplaylist = CheckPlaylist(pl0.ContainerID, gzmPlayer);
                         if (checkplaylist)
                         {
-                            if (!LoadPlaylist("zzz regen neu", gzmPlayer)) return retValReload + " weil Playlist nicht geladen werden konnte";
+                            if (!LoadPlaylist(pl0, gzmPlayer)) return retValReload + " weil Playlist nicht geladen werden konnte";
                         }
                         break;
                     case "1":
                         Boolean checkplaylist2 = CheckPlaylist(pl1.ContainerID, gzmPlayer);
                         if (checkplaylist2)
                         {
-                            if (!LoadPlaylist("zzz tempsleep", gzmPlayer)) return retValReload+" weil Playlist nicht geladen werden konnte";
+                            if (!LoadPlaylist(pl1, gzmPlayer)) return retValReload + " weil Playlist nicht geladen werden konnte";
                         }
                         break;
                 }
@@ -247,10 +248,9 @@ namespace SonosAPI.Controllers
             //Alle Player alleine machen und neu zuordnen
             try
             {
-                SonosHelper.CheckIsZoneCord(wohnzimmer);
                 oldcurrenttrack = esszimmer.GetAktSongInfo().TrackIndex;
                 esszimmer.BecomeCoordinatorofStandaloneGroup();
-                Thread.Sleep(400);
+                Thread.Sleep(200);
                 wohnzimmer.SetAVTransportURI(SonosConstants.xrincon + esszimmer.UUID);
                 Thread.Sleep(200);
             }
@@ -298,16 +298,23 @@ namespace SonosAPI.Controllers
             try
             {
                 //Playlist verarveiten
-                Boolean loadPlaylist = CheckPlaylist(defaultPlaylist, esszimmer);
+                var playlists = GetAllPlaylist();
+                var playlist = playlists.FirstOrDefault(x => x.Title.ToLower() == defaultPlaylist.ToLower());
+                Boolean loadPlaylist = false;
+                if (playlist != null)
+                {
+                    loadPlaylist = CheckPlaylist(playlist.ContainerID, esszimmer);
+                }
                 if (loadPlaylist)
                 {
-                    if (!LoadPlaylist(defaultPlaylist, esszimmer))
+                    if (!LoadPlaylist(playlist, esszimmer))
                         return "reload, weil Playlist nicht geladen werden konnte";
                 }
                 else
                 {
                     //alten Song aus der Playlist laden, da immer wieder auf 1 reset passiert.
                     esszimmer.SetTrackInPlaylist(oldcurrenttrack.ToString());
+                    Thread.Sleep(100);
                 }
 
                 esszimmer.SetPlay();
@@ -327,18 +334,11 @@ namespace SonosAPI.Controllers
         public string Dash3(int id)
         {
             /*
-             * KinderZimmer mit eigener Gruppe und nicht im Esszimmer.
+             * Ankleidezimmer mit eigener Gruppe und nicht im Esszimmer.
              */
             try
             {
-                if (DateTime.Now.Hour > 17 || DateTime.Now.Hour < 6)
-                {
-                    return MakePlayerFine(SonosConstants.KinderzimmerName, SonosConstants.KinderzimmerVolume, false, "zzz Ian Einschlafen");
-                }
-                else
-                {
-                    return MakePlayerFine(SonosConstants.KinderzimmerName, SonosConstants.KinderzimmerVolume);
-                }
+                return MakePlayerFine(SonosConstants.AnkleidezimmerName, SonosConstants.AnkleidezimmerVolume);
             }
             catch (Exception exceptio)
             {
@@ -376,63 +376,152 @@ namespace SonosAPI.Controllers
         [HttpGet]
         public string Dash5(string id)
         {
-            const string rsh = "x-sonosapi-stream:s18353?sid=254&amp;flags=8224&amp;sn=0";
+            const string rsh = "x-sonosapi-stream:s18353?sid=254&flags=8224&sn=0";
             try
             {
+
                 SonosPlayer essPlayer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
                 SonosPlayer kuPlayer = SonosHelper.GetPlayer(SonosConstants.KücheName);
                 SonosPlayer wzPlayer = SonosHelper.GetPlayer(SonosConstants.WohnzimmerName);
-                var oldTransportstate = essPlayer.CurrentState.TransportState;
-                essPlayer.BecomeCoordinatorofStandaloneGroup();
-                Thread.Sleep(300);
-                //SonosHelper.MessageQueue(new SonosCheckChangesObject{Changed = SonosCheckChangesConstants.SinglePlayer,PlayerName = essPlayer.Name,Value = ""});
-                SonosHelper.CheckIsZoneCord(kuPlayer);
-                SonosHelper.WaitForTransitioning(wzPlayer);
-                if (wzPlayer.CurrentState.TransportState == PlayerStatus.PLAYING)
+                var aktUri = essPlayer.GetMediaInfoURIMeta()[0];
+                //scheint schon dash5 gedrückt worden zu sein.
+                if (aktUri == rsh)
                 {
-                    SonosHelper.CheckIsZoneCord(wzPlayer);
-                    wzPlayer.SetPause();
-                    //Daten vom Marantz ermitteln
-                    Marantz.Initialisieren(SonosConstants.MarantzUrl);
-                    if (Marantz.SelectedInput == MarantzInputs.Sonos && Marantz.PowerOn)
+                    if (essPlayer.CurrentState.TransportState == PlayerStatus.PLAYING)
                     {
-                        Marantz.PowerOn = false;
-                        //SonosHelper.MessageQueue(new SonosCheckChangesObject { Changed = SonosCheckChangesConstants.MarantzPower, PlayerName = SonosConstants.EsszimmerName, Value = "off" });
+                        //ausschalten
+                        essPlayer.SetPause();
+                        //Daten vom Marantz ermitteln
+                        if (Marantz.Initialisieren(SonosConstants.MarantzUrl))
+                        {
+                            if (Marantz.SelectedInput == MarantzInputs.Sonos && Marantz.PowerOn)
+                            {
+                                Marantz.PowerOn = false;
+                            }
+                        }
+                        return retValok + " RSH ausgeschaltet.";
                     }
-                }
-                SonosHelper.WaitForTransitioning(essPlayer);
-                if (essPlayer.CurrentState.TransportState == PlayerStatus.PLAYING || oldTransportstate == PlayerStatus.PLAYING)
-                {
-                    essPlayer.SetPause();
-                    kuPlayer.SetPause();
-                    return retValok+" ausgeschaltet.";
+
+                    //Daten vom Marantz ermitteln
+                    if (Marantz.Initialisieren(SonosConstants.MarantzUrl))
+                    {
+                        if (Marantz.SelectedInput != MarantzInputs.Sonos || !Marantz.PowerOn)
+                        {
+                            if (Marantz.PowerOn)
+                            {
+                                Marantz.SelectedInput = MarantzInputs.Sonos;
+                            }
+                            else
+                            {
+                                Marantz.PowerOn = true;
+                            }
+                            if (Marantz.SelectedInput != MarantzInputs.Sonos)
+                                Marantz.SelectedInput = MarantzInputs.Sonos;
+                        }
+                    }
+                    essPlayer.SetPlay();
+                    return retValok + " RSH eingeschaltet.";
 
                 }
+                try
+                {
+                    //ab hier alles neu
+                    var essZone = SonosHelper.GetZone(SonosConstants.EsszimmerName);
+                    if (essZone != null && essZone.Players.Count == 2 && essZone.Players.Contains(wzPlayer) && essZone.Players.Contains(kuPlayer))
+                    {
+                        
+                    }
+                    else
+                    {
+                        if (essZone == null)
+                        {
+                            essPlayer.BecomeCoordinatorofStandaloneGroup();
+                            Thread.Sleep(200);
+                            kuPlayer.SetAVTransportURI(SonosConstants.xrincon + essPlayer.UUID);
+                            Thread.Sleep(300);
+                            wzPlayer.SetAVTransportURI(SonosConstants.xrincon + essPlayer.UUID);
+                            Thread.Sleep(300);
+                            if (kuPlayer.GetVolume() != SonosConstants.KücheVolume)
+                            {
+                                kuPlayer.SetVolume(SonosConstants.KücheVolume);
+                            }
+                            if (wzPlayer.GetVolume() != SonosConstants.WohnzimmerVolume)
+                            {
+                                wzPlayer.SetVolume(SonosConstants.WohnzimmerVolume);
+                            }
+
+                        }
+                        else
+                        {
+                            if (!essZone.Players.Contains(kuPlayer))
+                            {
+                                kuPlayer.SetAVTransportURI(SonosConstants.xrincon + essPlayer.UUID);
+                                Thread.Sleep(300);
+                                if (kuPlayer.GetVolume() != SonosConstants.KücheVolume)
+                                {
+                                    kuPlayer.SetVolume(SonosConstants.KücheVolume);
+                                }
+                            }
+                            if (!essZone.Players.Contains(wzPlayer))
+                            {
+                                wzPlayer.SetAVTransportURI(SonosConstants.xrincon + essPlayer.UUID);
+                                Thread.Sleep(300);
+                                if (wzPlayer.GetVolume() != SonosConstants.WohnzimmerVolume)
+                                {
+                                    wzPlayer.SetVolume(SonosConstants.WohnzimmerVolume);
+                                }
+                            }
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return "Dash5:Block1:" + ex.Message;
+                }
+                try
+                {
+                    //Daten vom Marantz ermitteln
+                    if (Marantz.Initialisieren(SonosConstants.MarantzUrl))
+                    {
+                        if (Marantz.SelectedInput != MarantzInputs.Sonos || !Marantz.PowerOn)
+                        {
+                            if (Marantz.PowerOn)
+                            {
+                                Marantz.SelectedInput = MarantzInputs.Sonos;
+                            }
+                            else
+                            {
+                                Marantz.PowerOn = true;
+                            }
+                            if (Marantz.SelectedInput != MarantzInputs.Sonos)
+                                Marantz.SelectedInput = MarantzInputs.Sonos;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return "Dash5:Block2:" + ex.Message;
+                }
+
                 if (essPlayer.GetVolume() != SonosConstants.EsszimmerVolume)
                 {
                     essPlayer.SetVolume(SonosConstants.EsszimmerVolume);
-                    }
-                if (kuPlayer.GetVolume() != SonosConstants.KücheVolume)
-                {
-                    kuPlayer.SetVolume(SonosConstants.KücheVolume);
-                    }
-                kuPlayer.SetAVTransportURI(SonosConstants.xrincon + essPlayer.UUID);
-                Thread.Sleep(300);
-                var aktUri = essPlayer.GetMediaInfoURIMeta()[0];
+                }
                 if (aktUri != rsh)
                 {
                     essPlayer.SetAVTransportURI(rsh, "<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns:r=\"urn:schemas-rinconnetworks-com:metadata-1-0/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\"><item id=\"F00092020s18353\" parentID=\"F00082064y1%3apopular\" restricted=\"true\"><dc:title>R.SH</dc:title><upnp:class>object.item.audioItem.audioBroadcast</upnp:class><desc id=\"cdudn\" nameSpace=\"urn:schemas-rinconnetworks-com:metadata-1-0/\">SA_RINCON65031_</desc></item></DIDL-Lite>");
                     Thread.Sleep(300);
                 }
                 essPlayer.SetPlay();
-                return retValok+" eingeschaltet und RSH gestartet";
+                return retValok + " eingeschaltet und RSH gestartet";
             }
             catch (Exception ex)
             {
                 return ex.Message;
             }
         }
-        
+
         /// <summary>
         /// Prüft die übergebene Playlist mit dem Übergeben Player ob neu geladen werden muss.
         /// </summary>
@@ -441,25 +530,16 @@ namespace SonosAPI.Controllers
         /// <returns>True muss neu geladen werden</returns>
         private Boolean CheckPlaylist(string pl, SonosPlayer sp)
         {
-            StringBuilder sb = new StringBuilder();
             try
             {
-                
-                sb.AppendLine("Logging für Checkplaylist");
                 Boolean retval = false;
                 var evtlStream = sp.GetAktSongInfo();
-                sb.AppendLine("Aktueller Song ansehen");
-                if (evtlStream.TrackURI.StartsWith("aac") || evtlStream.TrackURI.Contains("mp3radio") || evtlStream.TrackURI.Contains(SonosConstants.xsonosapistream))
+                if (SonosItemHelper.CheckItemForStreamingUriCheck(evtlStream.TrackURI))
                     return true;
-                sb.AppendLine("Aktueller Song ist kein Stream");
                 var actpl = sp.GetPlaylist(0, 10);
-                sb.AppendLine("Aktuelle Playlist laden");
                 if (actpl.Count == 0) return true;
-                sb.AppendLine("Aktuelle Playlist größer als 0 Einträge"+actpl.Count);
                 var toLoadpl = sp.BrowsingWithLimitResults(pl, 10);
-                sb.AppendLine("Neue Playlist laden erfolgreich");
                 if (toLoadpl.Count == 0) return true;//eigentlich ein Fehler
-                sb.AppendLine("Neue Playlist mehr als 0 und wiurd nun durchlaufen");
                 for (int i = 0; i < actpl.Count; i++)
                 {
                     if (actpl[i].Title == toLoadpl[i].Title) continue;
@@ -470,7 +550,6 @@ namespace SonosAPI.Controllers
             }
             catch (Exception ex)
             {
-                SonosHelper.TraceLog("Checkplaylist.log",sb.ToString());
                 SonosHelper.ServerErrorsAdd("Dash2:CheckPlaylist", ex);
                 return true;
             }
@@ -481,24 +560,24 @@ namespace SonosAPI.Controllers
         /// <param name="pl"></param>
         /// <param name="sp"></param>
         /// <returns></returns>
-        private Boolean LoadPlaylist(string pl, SonosPlayer sp)
+        private Boolean LoadPlaylist(SonosItem pl, SonosPlayer sp)
         {
             //laden der übergebenen Playlist
             StringBuilder stringb = new StringBuilder();
             try
             {
                 stringb.AppendLine(sp.Name);
-            stringb.AppendLine("Suchen nach Playlist" + pl);
-            var playlists = sp.GetallPlaylist();
-            var playlist = playlists.FirstOrDefault(x => x.Title.ToLower() == pl.ToLower());
-            if(playlist == null) throw new NullReferenceException("Playlist nicht gefunden");
-            stringb.AppendLine("Playlist gefunden" + playlist.Title);
+                //stringb.AppendLine("Suchen nach Playlist" + pl);
+                //    var playlists = GetAllPlaylist();
+                //var playlist = playlists.FirstOrDefault(x => x.Title.ToLower() == pl.ToLower());
+                //if(playlist == null) throw new NullReferenceException("Playlist nicht gefunden");
+                //stringb.AppendLine("Playlist gefunden" + playlist.Title);
 
 
                 stringb.AppendLine("Löschen aller Tracks von " + sp.Name);
                 sp.RemoveAllTracksFromQueue();
                 Thread.Sleep(300);
-                sp.Enqueue(playlist, true);
+                sp.Enqueue(pl, true);
                 Thread.Sleep(200);
                 stringb.AppendLine("Playlist wurde ersetzt.");
                 sp.SetAVTransportURI(SonosConstants.xrinconqueue + sp.UUID + "#0");
@@ -511,6 +590,23 @@ namespace SonosAPI.Controllers
                 SonosHelper.TraceLog("Loadplaylist.log", stringb.ToString());
                 return false;
             }
+        }
+        /// <summary>
+        /// Füllt eine Liste mit allen Playlisten
+        /// </summary>
+        /// <returns></returns>
+        private IList<SonosItem> GetAllPlaylist()
+        {
+            if (allplaylist.Count == 0)
+            {
+                if (SonosHelper.Sonos != null && SonosHelper.Sonos.Players != null &&
+                    SonosHelper.Sonos.Players.Count != 0)
+                {
+                    allplaylist = SonosHelper.Sonos.Players[0].GetallPlaylist();
+                }
+            }
+
+            return allplaylist;
         }
         /// <summary>
         /// Starte und Stoppt übergebenen Player. 
@@ -559,7 +655,7 @@ namespace SonosAPI.Controllers
                 if (player.CurrentState.TransportState == PlayerStatus.PLAYING)
                 {
                     player.SetPause();
-                    return retValok+" ist ausgeschaltet";
+                    return retValok + " ist ausgeschaltet";
                 }
             }
             catch (Exception exceptio)
@@ -577,16 +673,18 @@ namespace SonosAPI.Controllers
                 if (esszimmer.CurrentState.TransportState == PlayerStatus.PLAYING && addToEsszimmer)
                 {
                     player.SetAVTransportURI(SonosConstants.xrincon + esszimmer.UUID);
-                    return retValok+" Player zum Esszimmer zugefügt.";
+                    return retValok + " Player zum Esszimmer zugefügt.";
                 }
+                var playlist = GetAllPlaylist().FirstOrDefault(x => x.Title.ToLower() == _Playlist.ToLower());
                 //Soll selber etwas abspielen.
-                Boolean loadpl = CheckPlaylist(_Playlist, player);
+                if (playlist == null) return "Playlist konnte nicht geladen werden:" + _Playlist;
+                Boolean loadpl = CheckPlaylist(playlist.ContainerID, player);
                 if (loadpl)
                 {
-                    LoadPlaylist(_Playlist, player);
+                    LoadPlaylist(playlist, player);
                 }
                 player.SetPlay();
-                return retValok+" Player spielt alleine";
+                return retValok + " Player spielt alleine";
             }
             catch (Exception exceptio)
             {

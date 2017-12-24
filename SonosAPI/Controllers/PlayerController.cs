@@ -1194,14 +1194,15 @@ namespace SonosAPI.Controllers
                     }
                     try
                     {
-                        if ((v2 != pl.TrackURI && current.CurrentTrack.Stream == false) || v ||
-                            current.CurrentTrack.MP3 == null)
+                        if (current.CurrentTrack.Stream == false)
                         {
-                            //Bei Songwechsel Zugriff aufs Dateisystem außer es wird als Parameter übergeben.
-                            string u = SonosHelper.URItoPath(song.Uri);
-                            current.CurrentTrack.MP3 = MP3ReadWrite.ReadMetaData(u);
+                            if (v2 != pl.TrackURI || v || current.CurrentTrack.MP3 == null)
+                            {
+                                //Bei Songwechsel Zugriff aufs Dateisystem außer es wird als Parameter übergeben.
+                                string u = SonosHelper.URItoPath(song.Uri);
+                                current.CurrentTrack.MP3 = MP3ReadWrite.ReadMetaData(u);
+                            }
                         }
-
                     }
                     catch (Exception ex)
                     {
