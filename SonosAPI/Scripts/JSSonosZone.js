@@ -551,20 +551,20 @@ function SonosZone(uuid, name) {
                 SoDo.nextSongWrapper.show();
             }
             var seap = " - ";
-            if (this.Playlist.Playlist[nexttracknumber].Artist === 'leer' || this.Playlist.Playlist[nexttracknumber].Title === 'leer' || this.Playlist.Playlist[nexttracknumber].Artist === '' || this.Playlist.Playlist[nexttracknumber].Title === '') {
+            if (SonosZones.CheckStringIsNullOrEmpty(this.Playlist.Playlist[nexttracknumber].Artist) || SonosZones.CheckStringIsNullOrEmpty(this.Playlist.Playlist[nexttracknumber].Title)) {
                 seap = '';
             }
             var text = "";
-            if (this.Playlist.Playlist[nexttracknumber].Artist !== "leer") {
+            if (!SonosZones.CheckStringIsNullOrEmpty(this.Playlist.Playlist[nexttracknumber].Artist)) {
                 text = this.Playlist.Playlist[nexttracknumber].Artist + seap;
             }
-            if (this.Playlist.Playlist[nexttracknumber].Title !== "leer") {
+            if (!SonosZones.CheckStringIsNullOrEmpty(this.Playlist.Playlist[nexttracknumber].Title)) {
                 text = text + this.Playlist.Playlist[nexttracknumber].Title;
             }
             if (SoDo.nextTitle.text() !== text) {
                 SoDo.nextTitle.text(text);
             }
-            if (this.Playlist.Playlist[nexttracknumber].AlbumArtURI === "leer") {
+            if (SonosZones.CheckStringIsNullOrEmpty(this.Playlist.Playlist[nexttracknumber].AlbumArtURI)) {
                 if (SoDo.nextcover.is(":visible")) {
                     SoDo.nextcover.hide();
                 }
@@ -576,6 +576,7 @@ function SonosZone(uuid, name) {
                     SoDo.nextcover.attr("src", 'http://' + this.BaseURL + this.Playlist.Playlist[nexttracknumber].AlbumArtURI);
                 }
             }
+            UpdateImageOnErrors();
         } else {
             //Ist nur Ein track vorhanden
             if (SoDo.nextSongWrapper.is(":visible")) {
@@ -693,7 +694,7 @@ function SonosZone(uuid, name) {
         }
     };
     this.CheckCurrenTrackRefesh = function () {
-        if (this.Playlist.CheckIsEmpty() === false && (this.CurrentTrack.Artist === "leer" || this.CurrentTrack.MP3.Artist === "leer" || this.CurrentTrack.MP3.Genre === "leer" && this.CurrentTrack.MP3.Jahr === 0 && this.CurrentTrack.MP3.Typ === "leer")) {
+        if (this.Playlist.CheckIsEmpty() === false && (SonosZones.CheckStringIsNullOrEmpty(this.CurrentTrack.Artist) || SonosZones.CheckStringIsNullOrEmpty(this.CurrentTrack.MP3.Artist) || SonosZones.CheckStringIsNullOrEmpty(this.CurrentTrack.MP3.Genre) && this.CurrentTrack.MP3.Jahr === 0 && SonosZones.CheckStringIsNullOrEmpty(this.CurrentTrack.MP3.Typ))) {
             return true;
         }
         return false;
@@ -754,7 +755,7 @@ function SonosZone(uuid, name) {
         if (this.BaseURL === "INITIAL" || typeof this.BaseURL === "undefined") {
            ReloadSite(this.ZoneName + ":SetCurrentTrack");
         }
-        if (this.CurrentTrack.BaseURL === "leer" || this.CurrentTrack.BaseURL === null) {
+        if (SonosZones.CheckStringIsNullOrEmpty(this.CurrentTrack.BaseURL)) {
             this.CurrentTrack.BaseURL = this.BaseURL;
         }
         var oldstream = this.CurrentTrack.Stream;
@@ -819,7 +820,11 @@ function SonosZone(uuid, name) {
         }
         if (s.Coordinator.CurrentState.LastStateChange !== this.LastChange) {
             this.LastChange = s.Coordinator.CurrentState.LastStateChange;
+        } else {
+            //keine Änderung???
+            return;
         }
+
         if (this.HasAudioIn !== s.Coordinator.HasAudioIn) {
             this.HasAudioIn =s.Coordinator.HasAudioIn;
         }

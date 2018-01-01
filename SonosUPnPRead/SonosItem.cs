@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 
@@ -10,9 +11,9 @@ namespace SonosUPNP
 	{
         public string Uri { get; set; }
         public string MetaData { get; set; }
-        public string AlbumArtURI { get; set; }
+        public string AlbumArtURI { get; set; } = String.Empty;
         public string Artist { get; set; }
-        public string Album { get; set; }
+        public string Album { get; set; } = String.Empty;
         public string Title { get; set; }
         public string Description { get; set; }
         public string ContainerID { get; set; }
@@ -139,25 +140,18 @@ namespace SonosUPNP
                     var track = new SonosItem();
                     track.Uri = (string)item.Element(ns + "res");
                     track.MetaData = (string)item.Element(r + "resMD");
-                    track.AlbumArtURI = (string)item.Element(upnp + "albumArtURI");
+                    var taau = (string) item.Element(upnp + "albumArtURI");
+                    track.AlbumArtURI = String.IsNullOrEmpty(taau) ?String.Empty : taau;
                     track.ClassType = (string)item.Element(upnp + "class");
-                    track.Album = (string)item.Element(upnp + "album");
-                    //Artist
-                    string a = (string)item.Element(dc + "creator");
-                    if(string.IsNullOrEmpty(a)){
-                        a = "";
-                    }
-                    track.Artist = a;
+                    var tal = (string) item.Element(upnp + "album");
+                    track.Album = String.IsNullOrEmpty(tal) ? String.Empty : tal;
+                    var tar = (string)item.Element(dc + "creator");
+                    track.Artist = String.IsNullOrEmpty(tar) ? String.Empty : tar; 
                     //Title | Wenn Streamcontent vorhanden, dann wird radio abgespielt und der Titel ist falsch. 
                     track.StreamContent = (string)item.Element(r + "streamContent");
-                    string t = (string)item.Element(dc + "title");
-                    if (string.IsNullOrEmpty(t))
-                    {
-                        t = "leer";
-                    }
-                    track.Title = t;
+                    string tti = (string)item.Element(dc + "title");
+                    track.Title = String.IsNullOrEmpty(tti) ? String.Empty : tti;
                     track.Description = (string)item.Element(r + "description");
-
                     if (track.ItemID == null || track.ParentID == null)
                     {
                         foreach (XAttribute itemAttri in item.Attributes())

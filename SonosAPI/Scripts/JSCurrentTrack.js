@@ -21,7 +21,7 @@ function SonosCurrentTrack() {
             this.Album = ct.Album;
             haschanged = true;
         }
-        if (this.AlbumArtURI !== ct.AlbumArtURI && ct.AlbumArtURI !== null) {
+        if (this.AlbumArtURI !== ct.AlbumArtURI && !SonosZones.CheckStringIsNullOrEmpty(ct.AlbumArtURI)) {
             SonosLog("CurrenTRack: AlbumArtURI vs Neues AlbumArtURI: " + this.AlbumArtURI + " vs " + ct.AlbumArtURI);
             this.AlbumArtURI = ct.AlbumArtURI;
             haschanged = true;
@@ -67,25 +67,25 @@ function SonosCurrentTrack() {
             haschanged = true;
         }
         //MP3 Verarbeitung
-        if (typeof ct.MP3 !== "undefined" && ct.MP3 !== null) {
+        if (!SonosZones.CheckStringIsNullOrEmpty(ct.MP3)) {
             //Daten MP3 Anpassen
-            if ((this.MP3.Album === "leer" || this.MP3.Album === null) && this.Album !== "leer") {
+            if (SonosZones.CheckStringIsNullOrEmpty(this.MP3.Album) && !SonosZones.CheckStringIsNullOrEmpty(this.Album)) {
                 this.MP3.Album = this.Album;
             }
-            if ((this.MP3.Title === "leer" || this.MP3.Title === null) && this.Title !== "leer") {
+            if (SonosZones.CheckStringIsNullOrEmpty(this.MP3.Title) && !SonosZones.CheckStringIsNullOrEmpty(this.Title)) {
                 this.MP3.Title = this.Title;
             }
-            if ((this.MP3.Artist === "leer" || this.MP3.Artist === null) && this.Artist !== "leer") {
+            if (SonosZones.CheckStringIsNullOrEmpty(this.MP3.Artist) && !SonosZones.CheckStringIsNullOrEmpty(this.Artist)) {
                 this.MP3.Artist = this.Artist;
             }
             //CurrentTrack durch MP3 Anpassen
-            if (this.Artist === "leer" && ct.MP3.Artist !== null && ct.MP3.Artist !== "leer") {
+            if (SonosZones.CheckStringIsNullOrEmpty(this.Artist) && !SonosZones.CheckStringIsNullOrEmpty(ct.MP3.Artist)) {
                 this.Artist = ct.MP3.Artist;
             }
-            if (this.Album === "leer" && ct.MP3.Album !== null && ct.MP3.Album !== "leer") {
+            if (SonosZones.CheckStringIsNullOrEmpty(this.Album) && !SonosZones.CheckStringIsNullOrEmpty(ct.MP3.Album)) {
                 this.Album = ct.MP3.Album;
             }
-            if (this.Title === "leer" && ct.MP3.Titel !== null && ct.MP3.Titel !== "leer") {
+            if (SonosZones.CheckStringIsNullOrEmpty(this.Title) && !SonosZones.CheckStringIsNullOrEmpty(ct.MP3.Titel)) {
                 this.Title = ct.MP3.Titel;
             }
             //Daten an MP3 Uebergeben
@@ -93,9 +93,9 @@ function SonosCurrentTrack() {
 
         } else {
             //Daten für MP3 Sind null und nun wenn ein anderer Song diese Resetten.
-            if (this.MP3.Title !== this.Title || this.MP3.Album !== this.Album) {
+            if (this.MP3.Title !== this.Title || this.MP3.Album !== this.Album && !SonosZones.CheckStringIsNullOrEmpty(this.Album)) {
                 this.MP3 = new MP3();
-                SoDo.bewertungWidth.width(this.MP3.Bewertung + "%");
+                mp3change = true;
             }
         }
         if (mp3change === false && haschanged === false) {
@@ -164,7 +164,7 @@ function SonosCurrentTrack() {
                     SoDo.runtimeSlider.show();
                 }
             }
-                if (this.Title !== "leer") {
+            if (!SonosZones.CheckStringIsNullOrEmpty(this.Title)) {
                     if (SoDo.aktTitle.text() !== this.Title) {
                         SoDo.aktTitle.text(this.Title);
                     }
@@ -173,7 +173,7 @@ function SonosCurrentTrack() {
                         SoDo.aktTitle.text("");
                     }
                 }
-                if (this.Artist !== "leer") {
+            if (!SonosZones.CheckStringIsNullOrEmpty(this.Artist)) {
                     if (SoDo.aktArtist.text() !== this.Artist) {
                         SoDo.aktArtist.text(this.Artist);
                     }
@@ -190,7 +190,7 @@ function SonosCurrentTrack() {
         }
         //Unabhängig vom Stream
         //AlbumCover
-        if (this.AlbumArtURI !== "leer") {
+        if (!SonosZones.CheckStringIsNullOrEmpty(this.AlbumArtURI)) {
             if (SoDo.cover.attr("src") !== "http://" + this.BaseURL + this.AlbumArtURI) {
                 SoDo.cover.attr("src", "http://" + this.BaseURL + this.AlbumArtURI);
                 UpdateImageOnErrors();
@@ -344,7 +344,7 @@ function MP3() {
                 SoDo.currentBomb.hide();
             }
         }
-        if (this.Title !== "leer") {
+        if (!SonosZones.CheckStringIsNullOrEmpty(this.Title)) {
             if (SoDo.aktTitle.text() !== this.Title) {
                 SoDo.aktTitle.text(this.Title);
             }
@@ -353,7 +353,7 @@ function MP3() {
                 SoDo.aktTitle.text("");
             }
         }
-        if (this.Artist !== "leer") {
+        if (!SonosZones.CheckStringIsNullOrEmpty(this.Artist)) {
             if (SoDo.aktArtist.text() !== this.Artist) {
                 SoDo.aktArtist.text(this.Artist);
             }
@@ -365,7 +365,7 @@ function MP3() {
     };
     this.RenderLyric = function() {
         SoDo.lyricWrapper.children().remove();
-        if (this.Lyric !== "leer") {
+        if (!SonosZones.CheckStringIsNullOrEmpty(this.Lyric)) {
             $('<div>' + this.Lyric + '</div>').appendTo(SoDo.lyricWrapper);
         } else {
             $('<div>No Lyrics in Song</div>').appendTo(SoDo.lyricWrapper);

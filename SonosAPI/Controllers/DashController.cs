@@ -19,6 +19,8 @@ namespace SonosAPI.Controllers
         private const string retValok = "ok";
         private const string defaultPlaylist = "3 Sterne Beide.m3u";
         private static IList<SonosItem> allplaylist = new List<SonosItem>();
+        private static ushort primaryplayerVolume = SonosConstants.WohnzimmerVolume;
+        private const string primaryPlayerName = SonosConstants.WohnzimmerName;
         public void Get()
         {
 
@@ -240,18 +242,19 @@ namespace SonosAPI.Controllers
                 }
 
             }
-
-            SonosPlayer esszimmer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
-            SonosPlayer wohnzimmer = SonosHelper.GetPlayer(SonosConstants.WohnzimmerName);
+            //Alles ins Wohnzimmer legen.
+            SonosPlayer primaryplayer = SonosHelper.GetPlayer(primaryPlayerName);
+            SonosPlayer secondaryplayer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
+            ushort secondaryplayerVolume = SonosConstants.EsszimmerVolume;
             int oldcurrenttrack;
 
             //Alle Player alleine machen und neu zuordnen
             try
             {
-                oldcurrenttrack = esszimmer.GetAktSongInfo().TrackIndex;
-                esszimmer.BecomeCoordinatorofStandaloneGroup();
+                oldcurrenttrack = primaryplayer.GetAktSongInfo().TrackIndex;
+                primaryplayer.BecomeCoordinatorofStandaloneGroup();
                 Thread.Sleep(200);
-                wohnzimmer.SetAVTransportURI(SonosConstants.xrincon + esszimmer.UUID);
+                secondaryplayer.SetAVTransportURI(SonosConstants.xrincon + primaryplayer.UUID);
                 Thread.Sleep(200);
             }
             catch (Exception ex)
@@ -260,13 +263,13 @@ namespace SonosAPI.Controllers
             }
             try
             {
-                if (wohnzimmer.GetVolume() != SonosConstants.WohnzimmerVolume)
+                if (secondaryplayer.GetVolume() != secondaryplayerVolume)
                 {
-                    wohnzimmer.SetVolume(SonosConstants.WohnzimmerVolume);
+                    secondaryplayer.SetVolume(secondaryplayerVolume);
                 }
-                if (esszimmer.GetVolume() != SonosConstants.EsszimmerVolume)
+                if (primaryplayer.GetVolume() != primaryplayerVolume)
                 {
-                    esszimmer.SetVolume(SonosConstants.EsszimmerVolume);
+                    primaryplayer.SetVolume(primaryplayerVolume);
                 }
             }
             catch (Exception ex)
@@ -303,21 +306,21 @@ namespace SonosAPI.Controllers
                 Boolean loadPlaylist = false;
                 if (playlist != null)
                 {
-                    loadPlaylist = CheckPlaylist(playlist.ContainerID, esszimmer);
+                    loadPlaylist = CheckPlaylist(playlist.ContainerID, primaryplayer);
                 }
                 if (loadPlaylist)
                 {
-                    if (!LoadPlaylist(playlist, esszimmer))
+                    if (!LoadPlaylist(playlist, primaryplayer))
                         return "reload, weil Playlist nicht geladen werden konnte";
                 }
                 else
                 {
                     //alten Song aus der Playlist laden, da immer wieder auf 1 reset passiert.
-                    esszimmer.SetTrackInPlaylist(oldcurrenttrack.ToString());
+                    primaryplayer.SetTrackInPlaylist(oldcurrenttrack.ToString());
                     Thread.Sleep(100);
                 }
 
-                esszimmer.SetPlay();
+                primaryplayer.SetPlay();
             }
             catch (Exception ex)
             {
@@ -380,17 +383,19 @@ namespace SonosAPI.Controllers
             try
             {
 
-                SonosPlayer essPlayer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
-                SonosPlayer kuPlayer = SonosHelper.GetPlayer(SonosConstants.KücheName);
-                SonosPlayer wzPlayer = SonosHelper.GetPlayer(SonosConstants.WohnzimmerName);
-                var aktUri = essPlayer.GetMediaInfoURIMeta()[0];
+                SonosPlayer primaryplayer = SonosHelper.GetPlayer(primaryPlayerName);
+                SonosPlayer secondaryplayer = SonosHelper.GetPlayer(SonosConstants.KücheName);
+                ushort secondaryPlayerVolume = SonosConstants.KücheVolume;
+                SonosPlayer thirdplayer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
+                ushort thirdPlayerVolume = SonosConstants.EsszimmerVolume;
+                var aktUri = primaryplayer.GetMediaInfoURIMeta()[0];
                 //scheint schon dash5 gedrückt worden zu sein.
                 if (aktUri == rsh)
                 {
-                    if (essPlayer.CurrentState.TransportState == PlayerStatus.PLAYING)
+                    if (primaryplayer.CurrentState.TransportState == PlayerStatus.PLAYING)
                     {
                         //ausschalten
-                        essPlayer.SetPause();
+                        primaryplayer.SetPause();
                         //Daten vom Marantz ermitteln
                         if (Marantz.Initialisieren(SonosConstants.MarantzUrl))
                         {
@@ -419,56 +424,56 @@ namespace SonosAPI.Controllers
                                 Marantz.SelectedInput = MarantzInputs.Sonos;
                         }
                     }
-                    essPlayer.SetPlay();
+                    primaryplayer.SetPlay();
                     return retValok + " RSH eingeschaltet.";
 
                 }
                 try
                 {
                     //ab hier alles neu
-                    var essZone = SonosHelper.GetZone(SonosConstants.EsszimmerName);
-                    if (essZone != null && essZone.Players.Count == 2 && essZone.Players.Contains(wzPlayer) && essZone.Players.Contains(kuPlayer))
+                    var primaryZone = SonosHelper.GetZone(primaryPlayerName);
+                    if (primaryZone != null && primaryZone.Players.Count == 2 && primaryZone.Players.Contains(thirdplayer) && primaryZone.Players.Contains(secondaryplayer))
                     {
                         
                     }
                     else
                     {
-                        if (essZone == null)
+                        if (primaryZone == null)
                         {
-                            essPlayer.BecomeCoordinatorofStandaloneGroup();
+                            primaryplayer.BecomeCoordinatorofStandaloneGroup();
                             Thread.Sleep(200);
-                            kuPlayer.SetAVTransportURI(SonosConstants.xrincon + essPlayer.UUID);
+                            secondaryplayer.SetAVTransportURI(SonosConstants.xrincon + primaryplayer.UUID);
                             Thread.Sleep(300);
-                            wzPlayer.SetAVTransportURI(SonosConstants.xrincon + essPlayer.UUID);
+                            thirdplayer.SetAVTransportURI(SonosConstants.xrincon + primaryplayer.UUID);
                             Thread.Sleep(300);
-                            if (kuPlayer.GetVolume() != SonosConstants.KücheVolume)
+                            if (secondaryplayer.GetVolume() != secondaryPlayerVolume)
                             {
-                                kuPlayer.SetVolume(SonosConstants.KücheVolume);
+                                secondaryplayer.SetVolume(secondaryPlayerVolume);
                             }
-                            if (wzPlayer.GetVolume() != SonosConstants.WohnzimmerVolume)
+                            if (thirdplayer.GetVolume() != thirdPlayerVolume)
                             {
-                                wzPlayer.SetVolume(SonosConstants.WohnzimmerVolume);
+                                thirdplayer.SetVolume(thirdPlayerVolume);
                             }
 
                         }
                         else
                         {
-                            if (!essZone.Players.Contains(kuPlayer))
+                            if (!primaryZone.Players.Contains(secondaryplayer))
                             {
-                                kuPlayer.SetAVTransportURI(SonosConstants.xrincon + essPlayer.UUID);
+                                secondaryplayer.SetAVTransportURI(SonosConstants.xrincon + primaryplayer.UUID);
                                 Thread.Sleep(300);
-                                if (kuPlayer.GetVolume() != SonosConstants.KücheVolume)
+                                if (secondaryplayer.GetVolume() != secondaryPlayerVolume)
                                 {
-                                    kuPlayer.SetVolume(SonosConstants.KücheVolume);
+                                    secondaryplayer.SetVolume(secondaryPlayerVolume);
                                 }
                             }
-                            if (!essZone.Players.Contains(wzPlayer))
+                            if (!primaryZone.Players.Contains(thirdplayer))
                             {
-                                wzPlayer.SetAVTransportURI(SonosConstants.xrincon + essPlayer.UUID);
+                                thirdplayer.SetAVTransportURI(SonosConstants.xrincon + primaryplayer.UUID);
                                 Thread.Sleep(300);
-                                if (wzPlayer.GetVolume() != SonosConstants.WohnzimmerVolume)
+                                if (thirdplayer.GetVolume() != thirdPlayerVolume)
                                 {
-                                    wzPlayer.SetVolume(SonosConstants.WohnzimmerVolume);
+                                    thirdplayer.SetVolume(thirdPlayerVolume);
                                 }
                             }
 
@@ -504,16 +509,16 @@ namespace SonosAPI.Controllers
                     return "Dash5:Block2:" + ex.Message;
                 }
 
-                if (essPlayer.GetVolume() != SonosConstants.EsszimmerVolume)
+                if (primaryplayer.GetVolume() != primaryplayerVolume)
                 {
-                    essPlayer.SetVolume(SonosConstants.EsszimmerVolume);
+                    primaryplayer.SetVolume(primaryplayerVolume);
                 }
                 if (aktUri != rsh)
                 {
-                    essPlayer.SetAVTransportURI(rsh, "<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns:r=\"urn:schemas-rinconnetworks-com:metadata-1-0/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\"><item id=\"F00092020s18353\" parentID=\"F00082064y1%3apopular\" restricted=\"true\"><dc:title>R.SH</dc:title><upnp:class>object.item.audioItem.audioBroadcast</upnp:class><desc id=\"cdudn\" nameSpace=\"urn:schemas-rinconnetworks-com:metadata-1-0/\">SA_RINCON65031_</desc></item></DIDL-Lite>");
+                    primaryplayer.SetAVTransportURI(rsh, "<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns:r=\"urn:schemas-rinconnetworks-com:metadata-1-0/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\"><item id=\"F00092020s18353\" parentID=\"F00082064y1%3apopular\" restricted=\"true\"><dc:title>R.SH</dc:title><upnp:class>object.item.audioItem.audioBroadcast</upnp:class><desc id=\"cdudn\" nameSpace=\"urn:schemas-rinconnetworks-com:metadata-1-0/\">SA_RINCON65031_</desc></item></DIDL-Lite>");
                     Thread.Sleep(300);
                 }
-                essPlayer.SetPlay();
+                primaryplayer.SetPlay();
                 return retValok + " eingeschaltet und RSH gestartet";
             }
             catch (Exception ex)
@@ -614,10 +619,10 @@ namespace SonosAPI.Controllers
         /// </summary>
         /// <param name="_player">Name des Players</param>
         /// <param name="_volume">Läutstärke des Players</param>
-        /// <param name="addToEsszimmer">Soll der Player zum Esszimmer zugefügt werden, falls dieser Abspielt.</param>
+        /// <param name="addToPrimary">Soll der Player zum Primären (Aktuell Wohnzimmer) zugefügt werden, falls dieser Abspielt.</param>
         /// <param name="_Playlist">Wiedergabeliste. Wenn keine Angegeben wird, dann wird die default genommen.</param>
         /// <returns>Ok oder ein Fehler</returns>
-        private String MakePlayerFine(string _player, ushort _volume, Boolean addToEsszimmer = true, string _Playlist = defaultPlaylist)
+        private String MakePlayerFine(string _player, ushort _volume, Boolean addToPrimary = true, string _Playlist = defaultPlaylist)
         {
             /*
              * Übergebener Player soll der Primären (esszimmer und Wohnzimmer) zugefügt werden, wenn diese Spielen.
@@ -625,13 +630,13 @@ namespace SonosAPI.Controllers
              * Wenn der Player schon Musik macht, dann aus Gruppe nehmen oder Pausieren
              */
             SonosPlayer player;
-            SonosPlayer esszimmer;
+            SonosPlayer primaryPlayer;
             try
             {
                 player = SonosHelper.GetPlayer(_player);
                 if (player == null) return retValReload + _player + " konnte nicht gefunden werden.";
-                esszimmer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
-                if (esszimmer == null) return retValReload + " Esszimmer konnte nicht gefunden werden.";
+                primaryPlayer = SonosHelper.GetPlayer(SonosConstants.WohnzimmerName);
+                if (primaryPlayer == null) return retValReload + " Esszimmer konnte nicht gefunden werden.";
             }
             catch (Exception exceptio)
             {
@@ -669,13 +674,13 @@ namespace SonosAPI.Controllers
                     player.SetVolume(_volume);
                 }
                 //Prüfen, ob Esszimmer spielt
-                SonosHelper.WaitForTransitioning(esszimmer);
-                if (esszimmer.CurrentState.TransportState == PlayerStatus.PLAYING && addToEsszimmer)
+                SonosHelper.WaitForTransitioning(primaryPlayer);
+                if (primaryPlayer.CurrentState.TransportState == PlayerStatus.PLAYING && addToPrimary)
                 {
-                    player.SetAVTransportURI(SonosConstants.xrincon + esszimmer.UUID);
+                    player.SetAVTransportURI(SonosConstants.xrincon + primaryPlayer.UUID);
                     return retValok + " Player zum Esszimmer zugefügt.";
                 }
-                var playlist = GetAllPlaylist().FirstOrDefault(x => x.Title.ToLower() == _Playlist.ToLower());
+                var playlist = GetAllPlaylist().FirstOrDefault(x => String.Equals(x.Title, _Playlist, StringComparison.CurrentCultureIgnoreCase));
                 //Soll selber etwas abspielen.
                 if (playlist == null) return "Playlist konnte nicht geladen werden:" + _Playlist;
                 Boolean loadpl = CheckPlaylist(playlist.ContainerID, player);

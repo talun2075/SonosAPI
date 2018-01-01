@@ -68,7 +68,7 @@ function SonosZonesObject() {
         }
     };
     this.CheckActiveZone = function() {
-        if (this.ActiveZoneUUID === "" || this.ActiveZoneUUID === "leer" || typeof SonosZones[this.ActiveZoneUUID] === "undefined") {
+        if (SonosZones.CheckStringIsNullOrEmpty(this.ActiveZoneUUID) ||  typeof SonosZones[this.ActiveZoneUUID] === "undefined") {
             return false;
         }
         return true;
@@ -220,7 +220,7 @@ function SonosZonesObject() {
 
     };
     this.SetZonetoActiveByName = function(s) {
-        //Alle Player durchlaufen undnach Namen Prüfen
+        //Alle Player durchlaufen und nach Namen Prüfen
         var prop = Object.getOwnPropertyNames(this);
         //var zcounter=0; //Anzahl der Zonen;
         var found = false;
@@ -228,14 +228,17 @@ function SonosZonesObject() {
             if (prop[i].substring(0, Checker.length) === Checker) {
                 //Es handelt sich um einen Sonosplayer
                 var p = prop[i];
-                if (SonosZones[p].ZoneName === s) {
-                    SonosZones[p].ActiveZone =true;
+                var tname = SonosZones[p].ZoneName.toLowerCase();
+                if (tname === s) {
+                    SonosZones[p].ActiveZone = true;
+                    found = true;
                     break;
                 } else {
                     var corplayer = SonosZones[p].GetCordinatedPlayer();
                     if (corplayer.length > 0) {
                         for (var cp = 0; cp < corplayer.length; cp++) {
-                            if (corplayer[cp].Name === s) {
+                            var tname2 = corplayer[cp].Name.toLowerCase();
+                            if (tname2 === s) {
                                 SonosZones[p].ActiveZone=true;
                                 found = true;
                                 break;
@@ -248,6 +251,14 @@ function SonosZonesObject() {
                 }
             }
         }
-
+        if (!found) {
+            SonosLog("Es wurde Device übergeben aber kein Player gefunden! Daher wird die erste Zone als Aktiv markiert.");
+            this.SetFirstZonetoActive();
+        }
     };
+    this.CheckStringIsNullOrEmpty = function(s) {
+        if (typeof s === "undefined" || s === null || s === "leer" || s === "Leer" || s === "") return true;
+
+        return false;
+    }
 }

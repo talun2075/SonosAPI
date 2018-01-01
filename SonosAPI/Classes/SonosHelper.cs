@@ -249,14 +249,8 @@ namespace SonosAPI.Classes
 
                 }
             }
-            var tzone = GetPlayer(obj.Name);
-            if (tzone != null)
-            {
-                //Wenn Null ist der Player in einer Zone vorhanden und muss nicht ausgeliefert werden.
-                EventController.EventPlayerChange(tzone);
-            }
-            
-        }
+                EventController.EventPlayerChange(obj);
+       }
 
         /// <summary>
         /// Prüft die auzuliefernden Zonen nach DefaultValues und Ändert diese.

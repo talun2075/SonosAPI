@@ -202,12 +202,13 @@ namespace SonosUPNP
 
                 Test nicht alle Zonen zu löschen sondern entsprechend zu ersetzen.*/
 
-                zones.Clear();
+                //zones.Clear();
+                var zlist = new List<SonosZone>();
                 foreach (var zoneXML in doc.Descendants("ZoneGroup"))
                 {
-                    CreateZone(zoneXML);
+                    CreateZone(zoneXML,zlist);
                 }
-                
+                Zones = zlist;
             }
 
             lock (players)
@@ -227,16 +228,18 @@ namespace SonosUPNP
             if (TopologyChanged != null)
                 TopologyChanged.Invoke();
         }
+
         /// <summary>
         /// Generiert die Zonen sowie die Player in diesen.
         /// </summary>
         /// <param name="zoneXml"></param>
-        private void CreateZone(XElement zoneXml)
+        /// <param name="sz">List of SonosZones</param>
+        private void CreateZone(XElement zoneXml, List<SonosZone> sz)
         {
             var list = zoneXml.Descendants("ZoneGroupMember").Where(x => x.Attribute("Invisible") == null).ToList();
             if (list.Count > 0)
             {
-                var zone = new SonosZone((string)zoneXml.Attribute("Coordinator"));
+                var internalzone = new SonosZone((string)zoneXml.Attribute("Coordinator"));
 
                 foreach (var playerXml in list)
                 {
@@ -248,13 +251,13 @@ namespace SonosUPNP
                                          ControlPoint = ControlPoint,
                                          CurrentState = new PlayerState()
                                      };
-                    if (player.UUID == zone.CoordinatorUUID)
+                    if (player.UUID == internalzone.CoordinatorUUID)
                     {
-                        zone.Coordinator = player;
+                        internalzone.Coordinator = player;
                     }
                     else
                     {
-                        zone.AddPlayer(player);
+                        internalzone.AddPlayer(player);
                         Players.Add(player);
                     }
 
@@ -268,8 +271,9 @@ namespace SonosUPNP
                         ControlPoint.ForceDeviceAddition(player.DeviceLocation);
                     }
                 }
-
-                Zones.Add(zone);
+                if(!sz.Contains(internalzone))
+                sz.Add(internalzone);
+                //Zones.Add(zone);
             }
         }
     }

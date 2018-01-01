@@ -25,7 +25,7 @@ function GetTopologieChange() {
                         ReloadSite("GetTopologieChange:RinconProp");//Reload initialisiert einen neunen SetTimeout
                         return;
                     }
-                    SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", 3000);
+                    SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", SoVa.TopologieChangeTime);
                     return;
                 }
                 if (rinconpropcounter >= 3) {
@@ -88,7 +88,7 @@ function GetTopologieChange() {
                         }
                     }
                 }
-                SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", 3000);
+                SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", SoVa.TopologieChangeTime);
             });
             request.fail(function(jqXHR) {
                 EventErrorsCheck(jqXHR.status, "GetTopologieChange:RequestFail");
@@ -96,11 +96,11 @@ function GetTopologieChange() {
         } else {
             //Keine Daten vom Serverladen bei Refreshstop
             if (debug === false) {
-                SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", 2000);
+                SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", SoVa.TopologieChangeTime);
             }
         }
     } catch (ex) {
-        SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", 3000);
+        SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", SoVa.TopologieChangeTime);
         alert("GetTopologieChange: "+ ex.message);
     }
 }
@@ -128,7 +128,6 @@ function GetAktSongInfo() {
                         SonosZones[SonosZones.ActiveZoneUUID].SetAktSongInfo(data, getmp3);
                     } else {
                         SonosLog("GetAktSongInfo: Aktive Zone nicht vorhanden.");
-                        alert("GetAktsongInfo:Keine Aktive Zone");
                     }
 
                 } //Ende currenttrack null
@@ -173,6 +172,8 @@ function Eventing() {
         SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", 100);
         return;
     }
+    SoVa.TopologieChangeTime = 600000;
+    SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", 2000);
 
     var source = new window.EventSource("/sonos/Event");
     source.onopen = function (event) {

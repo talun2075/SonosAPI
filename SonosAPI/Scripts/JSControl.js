@@ -328,12 +328,12 @@ function GetZones() {
         }
         if (!SonosZones.CheckActiveZone()) {
             SonosLog("Zones SetActiveZone Start");
-            if (SoVa.urldevice === "" || SoVa.urldevice === "leer") {
+            if (SonosZones.CheckStringIsNullOrEmpty(SoVa.urldevice)) {
                 SonosLog("Zones SetActiveZone First Start");
                 SonosZones.SetFirstZonetoActive();
             } else {
                 SonosLog("Zones SetActiveZone by Name Start");
-                SonosZones.SetZonetoActiveByName(SoVa.urldevice);
+                SonosZones.SetZonetoActiveByName(SoVa.urldevice.toLowerCase());
             }
             SonosLog("Zones SetActiveZone Ende");
             SonosLog("Zones SetDevice");
@@ -463,7 +463,8 @@ function GetURLParameter(sParam) {
     var sURLVariables = sPageURL.split('&');
     for (var i = 0; i < sURLVariables.length; i++) {
         var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] === sParam) {
+        var devicesParameterName = sParameterName[0].toLowerCase();
+        if (devicesParameterName === sParam) {
             SonosLog("Found Device URLParameter:" + sParameterName[1]);
             return decodeURIComponent(sParameterName[1]);
         }
@@ -939,6 +940,7 @@ function ShowSongInfos(t) {
         request.fail(function() {
             ReloadSite("JsControl:ShowSongInfos");
         });
+        UpdateImageOnErrors();
     }
     catch (Ex) {
         alert("Es ist ein Fehler beim ShowSongInfos aufgetreten:<br>" + Ex.Message);
@@ -1144,7 +1146,7 @@ function SetHeight() {
 function UpdateImageOnErrors() {
     SonosLog("UpdateImageOnErrors");
     $("img").error(function () {
-        $(this).attr('src', SoVa.nocoverpfad);
+        //$(this).attr('src', SoVa.nocoverpfad);
     });
 }
 //Wird bei einem Fehler aufgerufen um die Darstellung zurückzusetzen
