@@ -326,7 +326,7 @@ namespace PlaylistGenerator
                             }
                             if (sortorder == PlaylistSortOrder.Rating)
                             {
-                                plnames[i] = plnames[i].OrderBy(x => x.Bewertung).ToList();
+                                plnames[i] = plnames[i].OrderBy(x => x.Bewertung).ToList();//todo: Prüfen warum nicht in reihenfolge....
                             }
                             if (sortorder == PlaylistSortOrder.RatingMine)
                             {

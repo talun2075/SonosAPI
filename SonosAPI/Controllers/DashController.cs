@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http;
 using ExternalDevices;
-using NanoleafAurora;
 using SonosAPI.Classes;
-using SonosUPnP;
 using SonosUPNP;
 
 namespace SonosAPI.Controllers
@@ -66,7 +64,7 @@ namespace SonosAPI.Controllers
                     if (id == "0")
                     {
                         //Prüfen, ob Regen abgespielt wird
-                        var israinloaded = !CheckPlaylist(pl0.ContainerID, gzmPlayer);
+                        var israinloaded = !DashHelper.CheckPlaylist(pl0.ContainerID, gzmPlayer);
                         if (israinloaded)
                         {
                             id = "1";
@@ -74,7 +72,7 @@ namespace SonosAPI.Controllers
                     }
                     else
                     {
-                        var isTempSleepLoad = !CheckPlaylist(pl1.ContainerID, gzmPlayer);
+                        var isTempSleepLoad = !DashHelper.CheckPlaylist(pl1.ContainerID, gzmPlayer);
                         if (isTempSleepLoad)
                         {
                             id = "0";
@@ -92,17 +90,17 @@ namespace SonosAPI.Controllers
 
                     case "0":
 
-                        Boolean checkplaylist = CheckPlaylist(pl0.ContainerID, gzmPlayer);
+                        Boolean checkplaylist = DashHelper.CheckPlaylist(pl0.ContainerID, gzmPlayer);
                         if (checkplaylist)
                         {
-                            if (!LoadPlaylist(pl0, gzmPlayer)) return retValReload + " weil Playlist nicht geladen werden konnte";
+                            if (!DashHelper.LoadPlaylist(pl0, gzmPlayer)) return retValReload + " weil Playlist nicht geladen werden konnte";
                         }
                         break;
                     case "1":
-                        Boolean checkplaylist2 = CheckPlaylist(pl1.ContainerID, gzmPlayer);
+                        Boolean checkplaylist2 = DashHelper.CheckPlaylist(pl1.ContainerID, gzmPlayer);
                         if (checkplaylist2)
                         {
-                            if (!LoadPlaylist(pl1, gzmPlayer)) return retValReload + " weil Playlist nicht geladen werden konnte";
+                            if (!DashHelper.LoadPlaylist(pl1, gzmPlayer)) return retValReload + " weil Playlist nicht geladen werden konnte";
                         }
                         break;
                 }
@@ -128,7 +126,7 @@ namespace SonosAPI.Controllers
             #region STOPP
 
             Boolean foundplayed = false;
-            List<string> foundedPlayer = new List<string>();
+            //List<string> foundedPlayer = new List<string>();
             try
             {
                 try
@@ -141,15 +139,16 @@ namespace SonosAPI.Controllers
                     {
                         return retValReload + " Sonos ist null und konnte nicht initialisiert werden!";
                     }
-                    lock (SonosHelper.Sonos.Players)
+                    lock (SonosHelper.Sonos.Zones)
                     {
-                        foreach (SonosPlayer sp in SonosHelper.Sonos.Players)
+                        foreach (SonosZone sp in SonosHelper.Sonos.Zones)
                         {
                             try
                             {
-                                if (sp.CurrentState.TransportState == PlayerStatus.PLAYING)
+                                if (sp.Coordinator.CurrentState.TransportState == PlayerStatus.PLAYING)
                                 {
-                                    foundedPlayer.Add(sp.Name);
+                                    foundplayed = true;
+                                    sp.Coordinator.SetPause();
                                 }
                             }
                             catch (Exception ex)
@@ -164,27 +163,7 @@ namespace SonosAPI.Controllers
                 {
                     return retValReload + "Block1 Exception: Beim prüfen ob ausgeschaltet werden muss:" + ex.Message;
                 }
-                if (foundedPlayer.Any())
-                {
-
-                    foreach (string playername in foundedPlayer)
-                    {
-                        var pl = SonosHelper.GetPlayer(playername);
-                        if (pl == null)
-                            return retValReload + " Es konnte der Player " + playername +
-                                   " nicht als Objekt ermittelt werden.";
-
-                        var wasZoneCord = SonosHelper.CheckIsZoneCord(pl);
-                        SonosHelper.WaitForTransitioning(pl);
-                        if (wasZoneCord)
-                        {
-                            foundplayed = true;
-                            pl.SetPause();
-                        }
-
-                    }
-                }
-            }
+ }
             catch (Exception ex)
             {
                 return retValReload + " Exception: Beim prüfen ob ausgeschaltet werden muss:" + ex.Message;
@@ -194,14 +173,7 @@ namespace SonosAPI.Controllers
             {
                 try
                 {
-                    //Daten vom Marantz ermitteln
-                    Marantz.Initialisieren(SonosConstants.MarantzUrl);
-                    //Ist auf Sonos?
-                    if (Marantz.SelectedInput == MarantzInputs.Sonos && Marantz.PowerOn)
-                    {
-                        //Marantz ausschalten.
-                        Marantz.PowerOn = false;
-                    }
+                    Task.Factory.StartNew(DashHelper.PowerOffMarantz);
                 }
                 catch
                 {
@@ -209,123 +181,126 @@ namespace SonosAPI.Controllers
                 }
                 try
                 {
-                    if (AuroraWrapper.AurorasList.Count > 0)
-                    {
-                        foreach (Aurora aurora in AuroraWrapper.AurorasList)
-                        {
-                            if (aurora.PowerOn)
-                                aurora.PowerOn = false;
-                        }
-                    }
+                   Task.Factory.StartNew(DashHelper.PowerOffAruroras);
                 }
                 catch (Exception ex)
                 {
-                    return retValReload + "exception: Aurora konnten nicht geschaltet werden. " + ex.Message;
+                    return retValReload + "exception: Aurora konnten nicht ausgeschaltet werden. " + ex.Message;
                 }
                 return "ok, Musik wurde ausgeschaltet.";
             }
 
             #endregion STOPP
-            //Aurora einschalten zwischen 18 Uhr und 5 Uhr oder immer Oktober bsi März
-            if (DateTime.Now.Hour > 17 || DateTime.Now.Hour < 6 || DateTime.Now.Month > 9 || DateTime.Now.Month < 4)
-            {
-                if (AuroraWrapper.AurorasList.Count > 0)
-                {
-                    foreach (Aurora aurora in AuroraWrapper.AurorasList)
-                    {
-                        if (!aurora.PowerOn)
-                        {
-                            aurora.SetRandomScenario();
-                            aurora.Brightness = 50;
-                        }
-                    }
-                }
-
-            }
-            //Alles ins Wohnzimmer legen.
-            SonosPlayer primaryplayer = SonosHelper.GetPlayer(primaryPlayerName);
-            SonosPlayer secondaryplayer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
-            ushort secondaryplayerVolume = SonosConstants.EsszimmerVolume;
-            int oldcurrenttrack;
-
-            //Alle Player alleine machen und neu zuordnen
+            #region Start Devices
             try
             {
-                oldcurrenttrack = primaryplayer.GetAktSongInfo().TrackIndex;
-                primaryplayer.BecomeCoordinatorofStandaloneGroup();
-                Thread.Sleep(200);
-                secondaryplayer.SetAVTransportURI(SonosConstants.xrincon + primaryplayer.UUID);
-                Thread.Sleep(200);
-            }
-            catch (Exception ex)
-            {
-                return retValReload + " Exception beim Gruppenauflösen: " + ex.Message;
-            }
-            try
-            {
-                if (secondaryplayer.GetVolume() != secondaryplayerVolume)
+                //Aurora einschalten zwischen 18 Uhr und 5 Uhr oder immer Oktober bsi März
+                if (DateTime.Now.Hour > 17 || DateTime.Now.Hour < 6 || DateTime.Now.Month > 9 || DateTime.Now.Month < 4)
                 {
-                    secondaryplayer.SetVolume(secondaryplayerVolume);
-                }
-                if (primaryplayer.GetVolume() != primaryplayerVolume)
-                {
-                    primaryplayer.SetVolume(primaryplayerVolume);
+                    Task.Factory.StartNew(DashHelper.PowerOnAruroras);
                 }
             }
             catch (Exception ex)
             {
-                return retValReload + " Exception beim Lautstärke setzen: " + ex.Message;
+                return retValReload + "exception: Aurora konnten nicht eingeschaltet werden. " + ex.Message;
             }
             try
             {
                 //Marantz Verarbeiten.
-                Marantz.Initialisieren(SonosConstants.MarantzUrl);
-                if (Marantz.SelectedInput != MarantzInputs.Sonos)
-                {
-                    Marantz.SelectedInput = MarantzInputs.Sonos;
-                }
-                if (!Marantz.PowerOn)
-                {
-                    Marantz.PowerOn = true;
-                }
-                if (Marantz.Volume != "-30.0")
-                {
-                    Marantz.Volume = "-30.0";
-                }
+                Task.Factory.StartNew(DashHelper.PowerOnMarantz);
             }
             catch (Exception ex)
             {
                 return retValReload + " Exception beim Marantz: " + ex.Message;
             }
-            Thread.Sleep(300);
+            #endregion Start Devices
             try
             {
-                //Playlist verarveiten
-                var playlists = GetAllPlaylist();
-                var playlist = playlists.FirstOrDefault(x => x.Title.ToLower() == defaultPlaylist.ToLower());
-                Boolean loadPlaylist = false;
-                if (playlist != null)
+                
+                //Alles ins Wohnzimmer legen.
+                SonosPlayer primaryplayer = SonosHelper.GetPlayer(primaryPlayerName);
+                SonosPlayer secondaryplayer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
+
+                if (DashHelper.IsSonosTargetGroupExist(primaryplayer, new List<SonosPlayer> {secondaryplayer}))
                 {
-                    loadPlaylist = CheckPlaylist(playlist.ContainerID, primaryplayer);
-                }
-                if (loadPlaylist)
-                {
-                    if (!LoadPlaylist(playlist, primaryplayer))
-                        return "reload, weil Playlist nicht geladen werden konnte";
+                    //Die Zielarchitektur existiert, daher keine Lautstärkesondern nur Playlist
+                    int oldcurrenttrack = primaryplayer.GetAktSongInfo().TrackIndex;
+                    var playlists = GetAllPlaylist();
+                    var playlist = playlists.FirstOrDefault(x => x.Title.ToLower() == defaultPlaylist.ToLower());
+                    Boolean loadPlaylist = false;
+                    if (playlist != null)
+                    {
+                        loadPlaylist = DashHelper.CheckPlaylist(playlist.ContainerID, primaryplayer);
+                    }
+                    if (loadPlaylist)
+                    {
+                        if (!DashHelper.LoadPlaylist(playlist, primaryplayer))
+                            return "reload, weil Playlist nicht geladen werden konnte";
+                    }
+                    else
+                    {
+                        //alten Song aus der Playlist laden, da immer wieder auf 1 reset passiert.
+                        primaryplayer.SetTrackInPlaylist(oldcurrenttrack.ToString());
+                        Thread.Sleep(100);
+                    }
                 }
                 else
                 {
-                    //alten Song aus der Playlist laden, da immer wieder auf 1 reset passiert.
-                    primaryplayer.SetTrackInPlaylist(oldcurrenttrack.ToString());
-                    Thread.Sleep(100);
+                    //alles neu
+                    try
+                    {
+                        primaryplayer.BecomeCoordinatorofStandaloneGroup();
+                        Thread.Sleep(200);
+                        secondaryplayer.SetAVTransportURI(SonosConstants.xrincon + primaryplayer.UUID);
+                        Thread.Sleep(200);
+                    }
+                    catch (Exception ex)
+                    {
+                        return retValReload + " Exception beim Gruppenauflösen: " + ex.Message;
+                    }
+                    try
+                    {
+                        ushort secondaryplayerVolume = SonosConstants.EsszimmerVolume;
+                        if (secondaryplayer.GetVolume() != secondaryplayerVolume)
+                        {
+                            secondaryplayer.SetVolume(secondaryplayerVolume);
+                        }
+                        if (primaryplayer.GetVolume() != primaryplayerVolume)
+                        {
+                            primaryplayer.SetVolume(primaryplayerVolume);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        return retValReload + " Exception beim Lautstärke setzen: " + ex.Message;
+                    }
+                    try
+                    {
+                        //Playlist verarveiten
+                        var playlists = GetAllPlaylist();
+                        var playlist = playlists.FirstOrDefault(x => x.Title.ToLower() == defaultPlaylist.ToLower());
+                        if (!DashHelper.LoadPlaylist(playlist, primaryplayer))
+                            return "reload, weil Playlist nicht geladen werden konnte";
+                    }
+                    catch (Exception ex)
+                    {
+                        return retValReload + " Exception beim Playlist setzen: " + ex.Message;
+                    }
                 }
-
-                primaryplayer.SetPlay();
+                try
+                {
+                    primaryplayer.SetPlay();
+                }
+                catch (Exception ex)
+                {
+                    return retValReload + " Exception beim Starten der Wiedergabe: " + ex.Message;
+                }
             }
             catch (Exception ex)
             {
-                return retValReload + " Exception beim Laden der Playlist und Starten der Wiedergabe: " + ex.Message;
+                return retValReload + "exception: Großer Block nicht abgefangen: " + ex.Message;
             }
+
             return retValok;
         }
         /// <summary>
@@ -434,7 +409,7 @@ namespace SonosAPI.Controllers
                     var primaryZone = SonosHelper.GetZone(primaryPlayerName);
                     if (primaryZone != null && primaryZone.Players.Count == 2 && primaryZone.Players.Contains(thirdplayer) && primaryZone.Players.Contains(secondaryplayer))
                     {
-                        
+
                     }
                     else
                     {
@@ -527,75 +502,8 @@ namespace SonosAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Prüft die übergebene Playlist mit dem Übergeben Player ob neu geladen werden muss.
-        /// </summary>
-        /// <param name="pl">Playliste, die geladen werden soll.</param>
-        /// <param name="sp">Coordinator aus der Führenden Zone</param>
-        /// <returns>True muss neu geladen werden</returns>
-        private Boolean CheckPlaylist(string pl, SonosPlayer sp)
-        {
-            try
-            {
-                Boolean retval = false;
-                var evtlStream = sp.GetAktSongInfo();
-                if (SonosItemHelper.CheckItemForStreamingUriCheck(evtlStream.TrackURI))
-                    return true;
-                var actpl = sp.GetPlaylist(0, 10);
-                if (actpl.Count == 0) return true;
-                var toLoadpl = sp.BrowsingWithLimitResults(pl, 10);
-                if (toLoadpl.Count == 0) return true;//eigentlich ein Fehler
-                for (int i = 0; i < actpl.Count; i++)
-                {
-                    if (actpl[i].Title == toLoadpl[i].Title) continue;
-                    retval = true;
-                    break;
-                }
-                return retval;
-            }
-            catch (Exception ex)
-            {
-                SonosHelper.ServerErrorsAdd("Dash2:CheckPlaylist", ex);
-                return true;
-            }
-        }
-        /// <summary>
-        /// Läd die übergebene Playlist
-        /// </summary>
-        /// <param name="pl"></param>
-        /// <param name="sp"></param>
-        /// <returns></returns>
-        private Boolean LoadPlaylist(SonosItem pl, SonosPlayer sp)
-        {
-            //laden der übergebenen Playlist
-            StringBuilder stringb = new StringBuilder();
-            try
-            {
-                stringb.AppendLine(sp.Name);
-                //stringb.AppendLine("Suchen nach Playlist" + pl);
-                //    var playlists = GetAllPlaylist();
-                //var playlist = playlists.FirstOrDefault(x => x.Title.ToLower() == pl.ToLower());
-                //if(playlist == null) throw new NullReferenceException("Playlist nicht gefunden");
-                //stringb.AppendLine("Playlist gefunden" + playlist.Title);
+       
 
-
-                stringb.AppendLine("Löschen aller Tracks von " + sp.Name);
-                sp.RemoveAllTracksFromQueue();
-                Thread.Sleep(300);
-                sp.Enqueue(pl, true);
-                Thread.Sleep(200);
-                stringb.AppendLine("Playlist wurde ersetzt.");
-                sp.SetAVTransportURI(SonosConstants.xrinconqueue + sp.UUID + "#0");
-                stringb.AppendLine("SetAVTransportURI wurde ersetzt.");
-                Thread.Sleep(500);
-                return true;
-            }
-            catch
-            {
-                SonosHelper.TraceLog("Loadplaylist.log", stringb.ToString());
-                return false;
-            }
-        }
         /// <summary>
         /// Füllt eine Liste mit allen Playlisten
         /// </summary>
@@ -683,10 +591,10 @@ namespace SonosAPI.Controllers
                 var playlist = GetAllPlaylist().FirstOrDefault(x => String.Equals(x.Title, _Playlist, StringComparison.CurrentCultureIgnoreCase));
                 //Soll selber etwas abspielen.
                 if (playlist == null) return "Playlist konnte nicht geladen werden:" + _Playlist;
-                Boolean loadpl = CheckPlaylist(playlist.ContainerID, player);
+                Boolean loadpl = DashHelper.CheckPlaylist(playlist.ContainerID, player);
                 if (loadpl)
                 {
-                    LoadPlaylist(playlist, player);
+                    DashHelper.LoadPlaylist(playlist, player);
                 }
                 player.SetPlay();
                 return retValok + " Player spielt alleine";
@@ -697,4 +605,5 @@ namespace SonosAPI.Controllers
             }
         }
     }
+
 }

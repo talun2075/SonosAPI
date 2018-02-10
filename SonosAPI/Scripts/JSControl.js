@@ -835,6 +835,7 @@ function ReplacePlaylist(item) {
     //Damit beim gleichem Lied kein Problem entsteht Artist leeren.
     if (SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack !== null && SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Artist !== null) {
         SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Artist = "leer";
+        SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.AlbumArtURI = "leer";
     }
     SonosAjax("ReplacePlaylist", { '': uri }).success(function () {
         SonosZones[SonosZones.ActiveZoneUUID].ClearPlaylist();
@@ -1145,8 +1146,8 @@ function SetHeight() {
 //Prüft auf Fehler bei Covern und setzt das NoCoverBild
 function UpdateImageOnErrors() {
     SonosLog("UpdateImageOnErrors");
-    $("img").error(function () {
-        //$(this).attr('src', SoVa.nocoverpfad);
+    $("img").on("error",function () {
+        $(this).attr('src', SoVa.nocoverpfad);
     });
 }
 //Wird bei einem Fehler aufgerufen um die Darstellung zurückzusetzen

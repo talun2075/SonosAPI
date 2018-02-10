@@ -460,7 +460,7 @@ function SonosZone(uuid, name) {
     this.RenderPlaylist = function (source) {
         SonosLog("RenderPlaylist Callby:" + source);
         this.RenderNextTrack("RenderPlaylist");
-        if (this.Playlist.CheckToRender()) {
+        if (this.Playlist.CheckToRender() && this.CurrentTrack.ClassType !== "object.item.audioItem.audioBroadcast") {
             if (this.CurrentTrack.StreamContent === "Dienst" || this.CurrentTrack.StreamContent === "Apple") {
                 this.Playlist.RenderPlaylist(false);
             } else {
@@ -468,9 +468,12 @@ function SonosZone(uuid, name) {
             }
         } else {
             //Hier nun Stream Prüfen
-            if (this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple") {
+            if (this.CurrentTrack.Stream === true && (this.CurrentTrack.StreamContent !== "Dienst" || (this.CurrentTrack.StreamContent === "Dienst" && this.CurrentTrack.ClassType === "object.item.audioItem.audioBroadcast")) && this.CurrentTrack.StreamContent !== "Apple") {
                 if ($(".currentplaylist").length > 0) {
                     $(".currentplaylist").remove();
+                }
+                if (SoDo.playListLoader.is(":visible")) {
+                    SoDo.playListLoader.slideUp();
                 }
             }
         }
@@ -479,7 +482,7 @@ function SonosZone(uuid, name) {
     };
     this.RenderPlaylistCounter = function (source) {
         SonosLog("RenderPlaylistCounter Callby:" + source);
-        if (this.Playlist.CheckIsEmpty() === true || this.CurrentTrack !== null && this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple") {
+        if (this.Playlist.CheckIsEmpty() === true || this.CurrentTrack !== null && this.CurrentTrack.Stream === true && (this.CurrentTrack.StreamContent !== "Dienst" || (this.CurrentTrack.StreamContent === "Dienst" && this.CurrentTrack.ClassType === "object.item.audioItem.audioBroadcast")) && this.CurrentTrack.StreamContent !== "Apple") {
             if (SoDo.playlistCount.is(":visible")) {
                 SoDo.playlistCount.hide();
             }
@@ -536,7 +539,7 @@ function SonosZone(uuid, name) {
     this.RenderNextTrack = function (source) {
         SonosLog("RenderNextTrack CalledBy:" + source);
         //Stream
-        if (this.CurrentTrack.Stream === true && this.CurrentTrack.StreamContent !== "Dienst" && this.CurrentTrack.StreamContent !== "Apple" || this.Playlist.CheckIsEmpty()) {
+        if (this.CurrentTrack.Stream === true && (this.CurrentTrack.StreamContent !== "Dienst" || (this.CurrentTrack.StreamContent === "Dienst" && this.CurrentTrack.ClassType === "object.item.audioItem.audioBroadcast")) && this.CurrentTrack.StreamContent !== "Apple" || this.Playlist.CheckIsEmpty()) {
             if (SoDo.nextSongWrapper.is(":visible")) {
                 SoDo.nextSongWrapper.hide();
             }
@@ -700,9 +703,15 @@ function SonosZone(uuid, name) {
         return false;
     };
     this.SetPlaylist = function (v, source) {
+
         SonosLog("SetPlaylist Callby:" + source);
         if (this.PlaylistLoader === true) {
             return; //keine Zwei Aufrufe hintereinander.
+        }
+        if (this.CurrentTrack.ClassType === "object.item.audioItem.audioBroadcast") {
+            if (SoDo.playListLoader.is(":visible")) {
+                SoDo.playListLoader.slideUp();
+            }
         }
         this.PlaylistLoader = true;
         //v = gibt an ob auch gleich gerendert werden soll.
@@ -760,17 +769,23 @@ function SonosZone(uuid, name) {
         }
         var oldstream = this.CurrentTrack.Stream;
         var oldstreamContent = this.CurrentTrack.StreamContent;
+        var oldClassType = this.CurrentTrack.ClassType;
         var therearechanges = this.CurrentTrack.SetCurrentTrack(s);
         if (this.ActiveZone === true && therearechanges === true) {
-            this.CurrentTrack.RenderCurrentTrack(this.CurrentTrackNumber);
-            //Wenn Stream anders neu Rendern
-            if (oldstream !== this.CurrentTrack.Stream || oldstreamContent !== this.CurrentTrack.StreamContent) {
-                this.RenderNextTrack();
+            if (oldClassType !== "object.item.audioItem.audioBroadcast") {
+                this.CurrentTrack.RenderCurrentTrack(this.CurrentTrackNumber);
+                //Wenn Stream anders neu Rendern
+                if (oldstream !== this.CurrentTrack.Stream || oldstreamContent !== this.CurrentTrack.StreamContent) {
+                    this.RenderNextTrack();
+                    
+                    this.RenderAudioIn();
+                    this.RenderPlaylist("SetCurrentTrack");
+
+                }
+                this.RenderPlaylistCounter("SetCurrentTrack");
+            } else {
                 this.RenderTrackTime();
-                this.RenderAudioIn();
-                this.RenderPlaylist("SetCurrentTrack");
             }
-            this.RenderPlaylistCounter("SetCurrentTrack");
         }
     };
     this.SetTrackTime = function (rel, dur) {

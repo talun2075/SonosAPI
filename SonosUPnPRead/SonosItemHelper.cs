@@ -52,14 +52,13 @@ namespace SonosUPnP
                     {
                         //HTTP Dienst wie Amazon
                         si.StreamContent = service;
+                        //test
+                        var minfo = pl.GetMediaInfoURIMeta();
+                        if (minfo[0].StartsWith(xsonosapiradio))
+                        {
+                            si.ClassType = "object.item.audioItem.audioBroadcast";
+                        }
                     }
-                    //Amazon
-                    if (si.Uri.StartsWith(xsonosapihlsstatic))
-                    {
-                        //HTTP Dienst Amazon
-                        si.StreamContent = service;
-                    }
-
                     if (si.Uri.StartsWith("x-sonosprog-http:song") || si.Uri.StartsWith("x-sonos-http:song"))
                     {
                         //HTTP Dienst Apple

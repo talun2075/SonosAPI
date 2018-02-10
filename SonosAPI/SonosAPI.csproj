@@ -124,6 +124,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Classes\DashHelper.cs" />
     <Compile Include="Classes\Playlist.cs" />
     <Compile Include="Classes\SonosCheckChangesObject.cs" />
     <Compile Include="Classes\SonosConstants.cs" />

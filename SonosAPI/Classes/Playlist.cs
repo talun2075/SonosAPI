@@ -69,7 +69,7 @@ namespace SonosAPI.Classes
             XNamespace ns = "urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/";
             XNamespace dc = "http://purl.org/dc/elements/1.1/";
             XNamespace upnp = "urn:schemas-upnp-org:metadata-1-0/upnp/";
-            //XNamespace r = "urn:schemas-rinconnetworks-com:metadata-1-0/";
+            XNamespace r = "urn:schemas-rinconnetworks-com:metadata-1-0/";
 
             var items = xml.Elements(ns + "item");
             var list = new List<PlaylistItem>();
@@ -82,7 +82,9 @@ namespace SonosAPI.Classes
                     AlbumArtURI = (string) item.Element(upnp + "albumArtURI"),
                     Album = (string) item.Element(upnp + "album"),
                     Artist = (string) item.Element(dc + "creator"),
-                    Title = (string) item.Element(dc + "title")
+                    Title = (string) item.Element(dc + "title"),
+                    ID = (string)item.Attribute("id"),
+                    Class = (string)item.Attribute(upnp +"class")
                 };
                 list.Add(track);
 
@@ -99,6 +101,8 @@ namespace SonosAPI.Classes
         public string Album { get; set; }
         public string Artist { get; set; }
         public string AlbumArtURI { get; set; }
+        public String ID { get; set; }
+        public String Class { get; set; }
 
     }
 }

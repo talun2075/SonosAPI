@@ -10,6 +10,7 @@ function SonosCurrentTrack() {
     this.Uri = "leer";
     this.BaseURL = "leer";
     this.StreamContent = "leer";
+    this.ClassType = "";
     this.SetCurrentTrack = function(ct) {
         var haschanged = false;
         var mp3change = false;
@@ -19,6 +20,11 @@ function SonosCurrentTrack() {
         if (this.Album !== ct.Album && ct.Album !== null) {
             SonosLog("CurrenTRack: Album vs Neues Album: " + this.Album + " vs " + ct.Album);
             this.Album = ct.Album;
+            haschanged = true;
+        }
+        if (this.ClassType !== ct.ClassType && ct.ClassType !== null) {
+            SonosLog("CurrenTRack: Class vs Neue Class: " + this.ClassType + " vs " + ct.ClassType);
+            this.ClassType = ct.ClassType;
             haschanged = true;
         }
         if (this.AlbumArtURI !== ct.AlbumArtURI && !SonosZones.CheckStringIsNullOrEmpty(ct.AlbumArtURI)) {

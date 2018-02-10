@@ -187,7 +187,9 @@ function SonosZonesObject() {
                 SonosZones[rincon].SetPlaylist(true,"SetActiveZone");
             }
         } else {
-            SonosZones[rincon].RenderPlaylist("SonosZones:SetActiveZone");
+            if (SonosZones[rincon].CurrentTrack.ClassType !== "object.item.audioItem.audioBroadcast") {
+                SonosZones[rincon].RenderPlaylist("SonosZones:SetActiveZone");
+            }
         }
         SonosZones[rincon].RenderTrackTime();
         //CurrentTRack

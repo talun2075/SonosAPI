@@ -43,6 +43,13 @@ namespace SonosAPI.Controllers
             return d;
         }
 
+        [HttpGet]
+        public SonosItem test(string id)
+        {
+            var k = SonosHelper.Sonos.Players.First(x => x.Name == SonosConstants.WohnzimmerName).BrowsingMeta("Q:0/10");
+            
+            return k[0];
+        }
         #region Frontend GET Fertig
         /// <summary>
         /// Liefert einen ZoneCordinator zurück.
