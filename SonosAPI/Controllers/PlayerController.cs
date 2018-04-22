@@ -1184,7 +1184,7 @@ namespace SonosAPI.Controllers
                         current.RelTime = pl.RelTime;
                         current.CurrentTrack = SonosItemHelper.CheckItemForStreaming(current.CurrentTrack, pla);
                         if (current.CurrentTrack.Uri.Contains(".mp4") &&
-                            current.CurrentTrack.Uri.StartsWith("x-sonos-http:"))
+                            current.CurrentTrack.Uri.StartsWith(SonosConstants.xsonoshttp))
                         {
                             //Hier MP3 Prüfen und überschreiben
                             MP3File.MP3File tmp3 =
@@ -1255,7 +1255,7 @@ namespace SonosAPI.Controllers
             try
             {
                 //Streaming Rating.
-                if (v.StartsWith("x-sonos-http:") && v.Contains(".mp4"))
+                if (v.StartsWith(SonosConstants.xsonoshttp) && v.Contains(".mp4"))
                 {
                     var ret = SonosStreamRating.RatedListItems.Find(x => x.Pfad == v);
                     if (ret == null)
@@ -1422,7 +1422,7 @@ namespace SonosAPI.Controllers
 
                 //Stream Rating
                 Boolean streaming = false;
-                if (lied.Pfad.StartsWith("x-sonos-http:") && lied.Pfad.Contains(".mp4"))
+                if (lied.Pfad.StartsWith(SonosConstants.xsonoshttp) && lied.Pfad.Contains(".mp4"))
                 {
                     lied.Pfad = pfad;
                     SonosStreamRating.AddItem(lied);

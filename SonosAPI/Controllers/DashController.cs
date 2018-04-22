@@ -21,7 +21,7 @@ namespace SonosAPI.Controllers
         private const string primaryPlayerName = SonosConstants.WohnzimmerName;
         public void Get()
         {
-
+            DashHelper.PowerOnAruroras();
         }
         /// <summary>
         /// Dash 1 Lädt je nach übergebener ID eine Playlist im Gästezimmer
@@ -195,10 +195,10 @@ namespace SonosAPI.Controllers
             try
             {
                 //Aurora einschalten zwischen 18 Uhr und 5 Uhr oder immer Oktober bsi März
-                if (DateTime.Now.Hour > 17 || DateTime.Now.Hour < 6 || DateTime.Now.Month > 9 || DateTime.Now.Month < 4)
-                {
+                //if (DateTime.Now.Hour > 17 || DateTime.Now.Hour < 6 || DateTime.Now.Month > 9 || DateTime.Now.Month < 4)
+                //{
                     Task.Factory.StartNew(DashHelper.PowerOnAruroras);
-                }
+                //}
             }
             catch (Exception ex)
             {
@@ -220,8 +220,8 @@ namespace SonosAPI.Controllers
                 //Alles ins Wohnzimmer legen.
                 SonosPlayer primaryplayer = SonosHelper.GetPlayer(primaryPlayerName);
                 SonosPlayer secondaryplayer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
-
-                if (DashHelper.IsSonosTargetGroupExist(primaryplayer, new List<SonosPlayer> {secondaryplayer}))
+                SonosPlayer thirdplayer = SonosHelper.GetPlayer(SonosConstants.KücheName);
+                if (DashHelper.IsSonosTargetGroupExist(primaryplayer, new List<SonosPlayer> {secondaryplayer,thirdplayer}))
                 {
                     //Die Zielarchitektur existiert, daher keine Lautstärkesondern nur Playlist
                     int oldcurrenttrack = primaryplayer.GetAktSongInfo().TrackIndex;
@@ -250,9 +250,11 @@ namespace SonosAPI.Controllers
                     try
                     {
                         primaryplayer.BecomeCoordinatorofStandaloneGroup();
-                        Thread.Sleep(200);
+                        Thread.Sleep(500);
                         secondaryplayer.SetAVTransportURI(SonosConstants.xrincon + primaryplayer.UUID);
-                        Thread.Sleep(200);
+                        Thread.Sleep(300);
+                        thirdplayer.SetAVTransportURI(SonosConstants.xrincon + primaryplayer.UUID);
+                        Thread.Sleep(300);
                     }
                     catch (Exception ex)
                     {
@@ -261,6 +263,7 @@ namespace SonosAPI.Controllers
                     try
                     {
                         ushort secondaryplayerVolume = SonosConstants.EsszimmerVolume;
+                        ushort thirdplayerVolume = SonosConstants.KücheVolume;
                         if (secondaryplayer.GetVolume() != secondaryplayerVolume)
                         {
                             secondaryplayer.SetVolume(secondaryplayerVolume);
@@ -268,6 +271,10 @@ namespace SonosAPI.Controllers
                         if (primaryplayer.GetVolume() != primaryplayerVolume)
                         {
                             primaryplayer.SetVolume(primaryplayerVolume);
+                        }
+                        if (thirdplayer.GetVolume() != thirdplayerVolume)
+                        {
+                            thirdplayer.SetVolume(thirdplayerVolume);
                         }
                     }
                     catch (Exception ex)
@@ -538,13 +545,13 @@ namespace SonosAPI.Controllers
              * Wenn der Player schon Musik macht, dann aus Gruppe nehmen oder Pausieren
              */
             SonosPlayer player;
-            SonosPlayer primaryPlayer;
+            SonosZone primaryPlayer;
             try
             {
                 player = SonosHelper.GetPlayer(_player);
                 if (player == null) return retValReload + _player + " konnte nicht gefunden werden.";
-                primaryPlayer = SonosHelper.GetPlayer(SonosConstants.WohnzimmerName);
-                if (primaryPlayer == null) return retValReload + " Esszimmer konnte nicht gefunden werden.";
+                primaryPlayer = SonosHelper.GetZone(SonosConstants.WohnzimmerName);
+                if (primaryPlayer == null) return retValReload + " Primärzone konnte nicht gefunden werden.";
             }
             catch (Exception exceptio)
             {
@@ -582,10 +589,10 @@ namespace SonosAPI.Controllers
                     player.SetVolume(_volume);
                 }
                 //Prüfen, ob Esszimmer spielt
-                SonosHelper.WaitForTransitioning(primaryPlayer);
-                if (primaryPlayer.CurrentState.TransportState == PlayerStatus.PLAYING && addToPrimary)
+                SonosHelper.WaitForTransitioning(primaryPlayer.Coordinator);
+                if (primaryPlayer.Coordinator.CurrentState.TransportState == PlayerStatus.PLAYING && addToPrimary)
                 {
-                    player.SetAVTransportURI(SonosConstants.xrincon + primaryPlayer.UUID);
+                    player.SetAVTransportURI(SonosConstants.xrincon + primaryPlayer.CoordinatorUUID);
                     return retValok + " Player zum Esszimmer zugefügt.";
                 }
                 var playlist = GetAllPlaylist().FirstOrDefault(x => String.Equals(x.Title, _Playlist, StringComparison.CurrentCultureIgnoreCase));

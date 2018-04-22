@@ -2,8 +2,7 @@
 {
     public static class SonosConstants
     {
-        //todo: mp4 und sonos-http aufnehmen?
-        private const int relativerVolWert = 15;
+        private const int relativerVolWert = 10;
         public const string KücheName = "Küche";
         public const int KücheVolume = relativerVolWert + 4;
         public const string EsszimmerName = "Esszimmer";
@@ -38,6 +37,8 @@
         /// Ist ein Stream von externer Quelle wie z.B. Radio
         /// </summary>
         public const string xsonosapistream = "x-sonosapi-stream";
+
+        public const string xsonoshttp = "x-sonos-http";
         public const string AudioEingang = "Audio Eingang";
         /// <summary>
         /// Fürs Browsen der Favoriten

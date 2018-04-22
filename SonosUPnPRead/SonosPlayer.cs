@@ -2264,8 +2264,6 @@ namespace SonosUPNP
                 return audioIn;
             }
         }
-
-        //todo: Wenn Null muss ein fallback gebaut werden,damit dies nicht mehr null ist. Gilt für alle UPNPDevices
         /// <summary>
         /// Liefert den MediaRenderer zurück (Benutzt von RenderingControl und AVTransport) (UPNP)
         /// </summary>

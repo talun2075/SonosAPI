@@ -48,7 +48,14 @@ namespace ExternalDevices
                 }
                 catch
                 {
-                    _selectedMarantzInputs = MarantzInputs.Sonos;
+                    if (inputFuncSelectNode.InnerText.ToLower().Contains("tv"))
+                    {
+                        _selectedMarantzInputs = MarantzInputs.TV;
+                    }
+                    else
+                    {
+                        _selectedMarantzInputs = MarantzInputs.Sonos;
+                    }
                 }
             }
             catch

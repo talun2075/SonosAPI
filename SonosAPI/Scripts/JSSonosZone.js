@@ -468,7 +468,7 @@ function SonosZone(uuid, name) {
             }
         } else {
             //Hier nun Stream Prüfen
-            if (this.CurrentTrack.Stream === true && (this.CurrentTrack.StreamContent !== "Dienst" || (this.CurrentTrack.StreamContent === "Dienst" && this.CurrentTrack.ClassType === "object.item.audioItem.audioBroadcast")) && this.CurrentTrack.StreamContent !== "Apple") {
+            if (SonosZones.CheckStreamShowElements(this.CurrentTrack)) {
                 if ($(".currentplaylist").length > 0) {
                     $(".currentplaylist").remove();
                 }
@@ -482,7 +482,7 @@ function SonosZone(uuid, name) {
     };
     this.RenderPlaylistCounter = function (source) {
         SonosLog("RenderPlaylistCounter Callby:" + source);
-        if (this.Playlist.CheckIsEmpty() === true || this.CurrentTrack !== null && this.CurrentTrack.Stream === true && (this.CurrentTrack.StreamContent !== "Dienst" || (this.CurrentTrack.StreamContent === "Dienst" && this.CurrentTrack.ClassType === "object.item.audioItem.audioBroadcast")) && this.CurrentTrack.StreamContent !== "Apple") {
+        if (this.Playlist.CheckIsEmpty() === true || SonosZones.CheckStreamShowElements(this.CurrentTrack)) {
             if (SoDo.playlistCount.is(":visible")) {
                 SoDo.playlistCount.hide();
             }
@@ -539,7 +539,7 @@ function SonosZone(uuid, name) {
     this.RenderNextTrack = function (source) {
         SonosLog("RenderNextTrack CalledBy:" + source);
         //Stream
-        if (this.CurrentTrack.Stream === true && (this.CurrentTrack.StreamContent !== "Dienst" || (this.CurrentTrack.StreamContent === "Dienst" && this.CurrentTrack.ClassType === "object.item.audioItem.audioBroadcast")) && this.CurrentTrack.StreamContent !== "Apple" || this.Playlist.CheckIsEmpty()) {
+        if (SonosZones.CheckStreamShowElements(this.CurrentTrack) || this.Playlist.CheckIsEmpty()) {
             if (SoDo.nextSongWrapper.is(":visible")) {
                 SoDo.nextSongWrapper.hide();
             }
@@ -712,10 +712,11 @@ function SonosZone(uuid, name) {
             if (SoDo.playListLoader.is(":visible")) {
                 SoDo.playListLoader.slideUp();
             }
+            return;//Return, da wir die Playlist bei Broadcast nicht brauchen.
         }
         this.PlaylistLoader = true;
         //v = gibt an ob auch gleich gerendert werden soll.
-        if (v === true) {
+        if (v === true && this.CurrentTrack.ClassType !== "object.item.audioItem.audioBroadcast") {
             SoDo.playListLoader.slideDown();
         }
         var cuuid = this.ZoneUUID;
@@ -772,15 +773,14 @@ function SonosZone(uuid, name) {
         var oldClassType = this.CurrentTrack.ClassType;
         var therearechanges = this.CurrentTrack.SetCurrentTrack(s);
         if (this.ActiveZone === true && therearechanges === true) {
+            //Wenn Stream anders neu Rendern
+            this.CurrentTrack.RenderCurrentTrack(this.CurrentTrackNumber);
             if (oldClassType !== "object.item.audioItem.audioBroadcast") {
-                this.CurrentTrack.RenderCurrentTrack(this.CurrentTrackNumber);
-                //Wenn Stream anders neu Rendern
+                //Bei Radio bestimmte Elemente nicht Rendern alles ander enur bei Änderungen.
                 if (oldstream !== this.CurrentTrack.Stream || oldstreamContent !== this.CurrentTrack.StreamContent) {
                     this.RenderNextTrack();
-                    
                     this.RenderAudioIn();
                     this.RenderPlaylist("SetCurrentTrack");
-
                 }
                 this.RenderPlaylistCounter("SetCurrentTrack");
             } else {

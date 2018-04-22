@@ -101,7 +101,6 @@ namespace SonosAPI.Classes
         /// <returns>True muss neu geladen werden</returns>
         public static Boolean CheckPlaylist(string pl, SonosPlayer sp)
         {
-            //todo: nochmals prüfen wegen Radio, da scheint es probleme zu geben.
             try
             {
                 Boolean retval = false;

@@ -168,7 +168,6 @@ function EventErrorsCheck(sourcejqXHR, Source) {
 function Eventing() {
     //todo: Eventing deaktivert
     if (typeof (window.EventSource) === "undefined") {
-        console.log("SSE not Supported");
         SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", 100);
         return;
     }
@@ -177,13 +176,13 @@ function Eventing() {
 
     var source = new window.EventSource("/sonos/Event");
     source.onopen = function (event) {
-        console.log("Event:Connection Opened " + event.data);
+        //console.log("Event:Connection Opened " + event.data);
     };
     source.onerror = function (event) {
         if (event.eventPhase === window.EventSource.CLOSED) {
-            console.log("Event:Connection Closed " + event.data);
+            //console.log("Event:Connection Closed " + event.data);
         } else {
-            console.log("Event:Connection Closed Spezial " + event.data);
+            //console.log("Event:Connection Closed Spezial " + event.data);
             if (confirm("Die SSE Verbindung war Fehlerhaft und es wird versucht auf den Fallback zu gehen!") === true) {
                 SoVa.TopologieChangeID = window.setTimeout("GetTopologieChange()", 100);
                 this.close();

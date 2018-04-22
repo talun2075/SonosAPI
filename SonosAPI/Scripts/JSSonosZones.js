@@ -262,5 +262,10 @@ function SonosZonesObject() {
         if (typeof s === "undefined" || s === null || s === "leer" || s === "Leer" || s === "") return true;
 
         return false;
-    }
+    };
+    this.CheckStreamShowElements = function(s) {
+        //Soll prüfen, ob die Elemente der Oberfläche gezeichnet werden sollen.
+        return s !==null && typeof s !== "undefined" && s.Stream === true && (s.StreamContent !== "Dienst" || (s.StreamContent === "Dienst" && s.ClassType === "object.item.audioItem.audioBroadcast")) && s.StreamContent !== "Apple";
+
+    };
 }

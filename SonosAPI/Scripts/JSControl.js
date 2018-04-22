@@ -249,6 +249,15 @@ $(document).ready(function () {
     if (wroteDebugInfos === true) {
         SoDo.debug.show();
     }
+    $(SoDo.currentplaylistwrapper).scroll(function () {
+        console.log("St:"+$(SoDo.currentplaylistwrapper).scrollTop());
+        console.log("WraperHeight" + $(SoDo.currentplaylistwrapper).height());
+        if ($(SoDo.currentplaylistwrapper).scrollTop() === $(document).height() - $(SoDo.currentplaylistwrapper).height()) {
+            
+            // ajax call get data from server and append to the div
+            console.log("scrolling");
+        }
+    });
     SonosLog("Document Ready Ende");
 
 });     //ENDE DOK READY
@@ -352,10 +361,8 @@ function GetZones() {
         SonosLog("Zones geladen");
 
         return;
-    }).fail(function (jqXHR) {
-        if (jqXHR.statusText === "Internal Server Error") {
-            ReloadSite("GetZones");
-        } else { alert("Beim laden der Zonen ist ein Fehler aufgetreten."); ReloadSite("GetZones"); }
+    }).fail(function () {
+        ReloadSite("GetZones");
     });
 }
 //Erweitert das Device Fenster um die Gruppen Buttons
@@ -1104,13 +1111,14 @@ function SetAudioIn() {
 //{ PrüfMethoden, Hintergrundaktualisierungen
 //Seite neu laden
 function ReloadSite(source) {
-    $("#Aktartist").text("ReloadSite by: " + source);
-    //var k = confirm("Die Seite wird durch '" + source + "' neu geladen");
-    //if (k === false) return;
-    SoVa.eventErrorsSource = "";
-    SonosZones.Refreshstop = true;
-    LoadDevices();
-    return;
+    location.reload();
+    //$("#Aktartist").text("ReloadSite by: " + source);
+    ////var k = confirm("Die Seite wird durch '" + source + "' neu geladen");
+    ////if (k === false) return;
+    //SoVa.eventErrorsSource = "";
+    //SonosZones.Refreshstop = true;
+    //LoadDevices();
+    //return;
 }
 //Aufgrund der Fenstergröße Elemente verschieben und von der GRöße her anpassen
 function SetHeight() {
