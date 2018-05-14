@@ -1,4 +1,6 @@
-﻿using System.Web.Http;
+﻿using System.Web;
+using System.Web.Http;
+using SonosAPI.Classes;
 
 namespace SonosAPI
 {
@@ -27,6 +29,8 @@ namespace SonosAPI
             routeTemplate: "sonos/{controller}/{action}/{id}/{v}/{v2}",
             defaults: new { v = RouteParameter.Optional }
             );
+
+            SonosHelper.LoggingPfad = HttpRuntime.AppDomainAppPath;
         }
     }
 }

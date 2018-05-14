@@ -15,8 +15,8 @@ namespace SonosAPI.Classes
         /// XML Serialisierer für die Serialisierung
         /// </summary>
         static private readonly XmlSerializer _xmls = new XmlSerializer(typeof(List<MP3File.MP3File>));
-        private const string _savepath = @"C:\talun\Sonos\";
-        private const string _savepathfile = _savepath+"SavedStream.xml";
+        private static readonly string _savepath = SonosHelper.LoggingPfad+ @"\StreamRating\";
+        private static readonly string _savepathfile = _savepath+"SavedStream.xml";
 
         #endregion Klassenvariablen
 
@@ -75,15 +75,22 @@ namespace SonosAPI.Classes
         /// </summary>
         private static void WriteData()
         {
-            if (File.Exists(_savepath))
+            try
             {
-                File.Delete(_savepath);
+                if (File.Exists(_savepath))
+                {
+                    File.Delete(_savepath);
+                }
+                Directory.CreateDirectory(_savepath);
+                StreamWriter textWriter = new StreamWriter(_savepathfile);
+                _xmls.Serialize(textWriter, RatedListItems);
+                textWriter.Close();
+                textWriter.Dispose();
             }
-            Directory.CreateDirectory(_savepath);
-            StreamWriter textWriter = new StreamWriter(_savepathfile);
-            _xmls.Serialize(textWriter, RatedListItems);
-            textWriter.Close();
-            textWriter.Dispose();
+            catch (Exception ex)
+            {
+                SonosHelper.TraceLog("SonosStreamRating","Writedata:Exception:"+ex.Message);
+            }
         }
         #region Eigenschaften
         /// <summary>

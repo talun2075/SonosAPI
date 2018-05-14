@@ -104,6 +104,28 @@ namespace SonosAPI.Controllers
             }
             return a.Brightness;
         }
+        [HttpGet]
+        public int SetSaturation(string id, int v)
+        {
+            Aurora a = AuroraWrapper.GetAurorabySerial(id);
+            if (v > a.NLJ.State.Saturation.Max || v < a.NLJ.State.Saturation.Min) return 0;
+            if (a.NLJ.State.Saturation.Value != v)
+            {
+                a.Saturation = v;
+            }
+            return a.Saturation;
+        }
+        [HttpGet]
+        public int SetColorTemperature(string id, int v)
+        {
+            Aurora a = AuroraWrapper.GetAurorabySerial(id);
+            if (v > a.NLJ.State.ColorTemperature.Max || v < a.NLJ.State.ColorTemperature.Min) return 0;
+            if (a.NLJ.State.ColorTemperature.Value != v)
+            {
+                a.ColorTemperature = v;
+            }
+            return a.ColorTemperature;
+        }
         /// <summary>
         /// Setzen eins zufälligen Scenarios
         /// </summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Threading;
 using NanoleafAurora;
@@ -25,7 +26,6 @@ namespace SonosAPI.Classes
         /// Liste mir allen Server Errors.
         /// </summary>
         internal static Dictionary<String, String> serverErrors = new Dictionary<String, String>();
-
         /// <summary>
         /// Zeitpunkt, wann sich das letzt mal etwas an Zonen oder Anzahl Player geändert hat.
         /// </summary>
@@ -34,6 +34,8 @@ namespace SonosAPI.Classes
 
         internal static List<SonosCheckChangesObject> sccoList = new List<SonosCheckChangesObject>();
 
+        public static String LoggingPfad { get; set; }
+        private static Boolean DebugMode => Convert.ToBoolean(ConfigurationManager.AppSettings["debug"]);
         /// <summary>
         /// Initialisierung des Sonos Systems
         /// </summary>
@@ -161,8 +163,7 @@ namespace SonosAPI.Classes
         internal static void ServerErrorsAdd(string Method, Exception ExceptionMes)
         {
             if (ExceptionMes.Message.StartsWith("Could not connect to device")) return;
-            string error = DateTime.Now.ToString("yyyy-M-d_-_HH-mm-ss") + "_" + DateTime.Now.Ticks + " " + Method + " " +
-                           ExceptionMes.Message;
+            string error = DateTime.Now.ToString("yyyy-M-d_-_HH-mm-ss")+" " + Method + " " + ExceptionMes.Message;
 
             if (!serverErrors.ContainsKey(Method))
             {
@@ -171,9 +172,9 @@ namespace SonosAPI.Classes
 
             //todo: prüfen wie man das doppelte schreiben verhindern kann. 
 
-            var dir = Directory.CreateDirectory(@"C:\NasWeb\Error");
+            var dir = Directory.CreateDirectory(LoggingPfad + @"\Errors");
             //string errorfile = error + ".txt";
-            string file = dir.FullName + "\\Log.txt";
+            string file = dir.FullName + "\\Log_"+ DateTime.Now.ToString("yyyy_M_d") + ".txt";
             //File.Create(file).Dispose();
             if (!File.Exists(file))
             {
@@ -197,10 +198,11 @@ namespace SonosAPI.Classes
         /// <param name="message"></param>
         internal static void TraceLog(string filename, string message)
         {
+            if (!DebugMode) return;
             try
             {
-                var dir = Directory.CreateDirectory(@"C:\NasWeb\Logging");
-                string file = dir.FullName + "\\" + filename + "_Log.txt";
+                var dir = Directory.CreateDirectory(LoggingPfad+ @"\Logging");
+                string file = dir.FullName + "\\" + filename + "_Log_"+ DateTime.Now.ToString("yyyy_M_d")+".txt";
                 if (!File.Exists(file))
                 {
                     // Create a file to write to.

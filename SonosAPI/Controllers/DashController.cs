@@ -21,7 +21,8 @@ namespace SonosAPI.Controllers
         private const string primaryPlayerName = SonosConstants.WohnzimmerName;
         public void Get()
         {
-            DashHelper.PowerOnAruroras();
+            SonosHelper.TraceLog("DashTest","GetStart");
+            //DashHelper.PowerOnAruroras();
         }
         /// <summary>
         /// Dash 1 Lädt je nach übergebener ID eine Playlist im Gästezimmer
@@ -187,6 +188,30 @@ namespace SonosAPI.Controllers
                 {
                     return retValReload + "exception: Aurora konnten nicht ausgeschaltet werden. " + ex.Message;
                 }
+                try
+                {
+                    SonosPlayer primaryplayer = SonosHelper.GetPlayer(primaryPlayerName);
+                    SonosPlayer secondaryplayer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
+                    SonosPlayer thirdplayer = SonosHelper.GetPlayer(SonosConstants.KücheName);
+                    ushort secondaryplayerVolume = SonosConstants.EsszimmerVolume;
+                    ushort thirdplayerVolume = SonosConstants.KücheVolume;
+                    if (secondaryplayer.GetVolume() != secondaryplayerVolume)
+                    {
+                        secondaryplayer.SetVolume(secondaryplayerVolume);
+                    }
+                    if (primaryplayer.GetVolume() != primaryplayerVolume)
+                    {
+                        primaryplayer.SetVolume(primaryplayerVolume);
+                    }
+                    if (thirdplayer.GetVolume() != thirdplayerVolume)
+                    {
+                        thirdplayer.SetVolume(thirdplayerVolume);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return retValReload + "Lautstärke resetet mit Fehler: " + ex.Message;
+                }
                 return "ok, Musik wurde ausgeschaltet.";
             }
 
@@ -242,6 +267,20 @@ namespace SonosAPI.Controllers
                         //alten Song aus der Playlist laden, da immer wieder auf 1 reset passiert.
                         primaryplayer.SetTrackInPlaylist(oldcurrenttrack.ToString());
                         Thread.Sleep(100);
+                    }
+                    ushort secondaryplayerVolume = SonosConstants.EsszimmerVolume;
+                    ushort thirdplayerVolume = SonosConstants.KücheVolume;
+                    if (secondaryplayer.GetVolume() != secondaryplayerVolume)
+                    {
+                        secondaryplayer.SetVolume(secondaryplayerVolume);
+                    }
+                    if (primaryplayer.GetVolume() != primaryplayerVolume)
+                    {
+                        primaryplayer.SetVolume(primaryplayerVolume);
+                    }
+                    if (thirdplayer.GetVolume() != thirdplayerVolume)
+                    {
+                        thirdplayer.SetVolume(thirdplayerVolume);
                     }
                 }
                 else

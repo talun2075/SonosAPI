@@ -43,9 +43,9 @@ namespace SonosUPNP
         public void ServerErrorsAdd(string Method, Exception ExceptionMes)
         {
             if (ExceptionMes.Message.StartsWith("Could not connect to device")) return;
-            string error = DateTime.Now.ToString("yyyy-M-d_-_hh-mm-ss") + "_" + DateTime.Now.Ticks + " " + Method + " " + ExceptionMes.Message;
-            var dir = Directory.CreateDirectory(@"C:\NasWeb\Error");
-            string file = dir.FullName + "\\Log_" + Name + ".txt";
+            string error = DateTime.Now.ToString("yyyy-M-d") + "_" + DateTime.Now.Ticks + " " + Method + " " + ExceptionMes.Message;
+            var dir = Directory.CreateDirectory(HttpRuntime.AppDomainAppPath+@"\Errors");
+            string file = dir.FullName + "\\Log_" + Name + "_"+ DateTime.Now.ToString("yyyy_M_d") + ".txt";
             if (!File.Exists(file))
             {
                 // Create a file to write to.
