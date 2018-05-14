@@ -26,7 +26,7 @@ namespace NanoleafAurora
             try
             {
                 List<AuroraSearchResults> lasr = new List<AuroraSearchResults>();
-                IReadOnlyList<IZeroconfHost> results =await ZeroconfResolver.ResolveAsync("_nanoleafapi._tcp.local.").ConfigureAwait(true);
+                IReadOnlyList<IZeroconfHost> results =await ZeroconfResolver.ResolveAsync("_nanoleafapi._tcp.local.",new TimeSpan(0,0,0,5)).ConfigureAwait(true);
 
                 if (results.Count == 0) return lasr;
                 foreach (IZeroconfHost host in results)
@@ -60,7 +60,8 @@ namespace NanoleafAurora
         {
             try
             {
-                List<Aurora> listAurora = new List<Aurora>();
+                if(AurorasList == null || AurorasList.Count == 0)
+                    AurorasList = new List<Aurora>();
                 //Start to Search
                 List<AuroraSearchResults> lasr = await FindAuroras();
                 if (lasr.Count > 0)
@@ -74,25 +75,57 @@ namespace NanoleafAurora
                             Aurora a = new Aurora(akd.AuthToken, asrResults.IP,akd.DeviceName, asrResults.Port);
                             if (string.IsNullOrEmpty(a.ErrorMessage))
                             {
-                                listAurora.Add(a);
+                                var t = AurorasList.FirstOrDefault(x => x.SerialNo == a.SerialNo);
+                                if (t != null)
+                                {
+                                    t.GetNanoLeafInformations();
+                                }
+                                else
+                                {
+                                    AurorasList.Add(a);
+                                }
+                                
                             }
                         }
                         else
                         {
                             Aurora a = new Aurora("new", asrResults.IP, "New", asrResults.Port);
-                            listAurora.Add(a);
+                            var t = AurorasList.FirstOrDefault(x => x.Ip == asrResults.IP);
+                            if (t == null)
+                            {
+                                AurorasList.Add(a);
+                            }
                         }
                     }
-
+            
 
 
                 }
-                AurorasList = listAurora;
+                //Check for Knowing Devices
+                if (_knowingAuroras.Count > 0)
+                {
+                    foreach (AuroraKnowingDevices auroraKnowingDevice in _knowingAuroras)
+                    {
+                        if (!string.IsNullOrEmpty(auroraKnowingDevice.KnowingIP))
+                        {
+                            var t = AurorasList.FirstOrDefault(x => x.Name == auroraKnowingDevice.DeviceName);
+                            if (t == null)
+                            {
+                                //FindAurora havent Found this Aurora so add this to list
+                                Aurora a = new Aurora(auroraKnowingDevice.AuthToken, auroraKnowingDevice.KnowingIP, auroraKnowingDevice.DeviceName);
+                                AurorasList.Add(a);
+                            }
+
+                        } 
+                    }
+
+                }
+
                 // Avoid multiple state changes and consolidate them
                 if (keepAliveTimer != null)
                     keepAliveTimer.Dispose();
-                keepAliveTimer = new Timer(KeepAlive, null, TimeSpan.FromSeconds(60), TimeSpan.FromMilliseconds(-1));
-                return listAurora;
+                keepAliveTimer = new Timer(KeepAlive, null, TimeSpan.FromSeconds(3600), TimeSpan.FromMilliseconds(-1));
+                return AurorasList;
             }
             catch (Exception ex)
             {
@@ -237,15 +270,15 @@ namespace NanoleafAurora
 #if DEBUG
         private static List<AuroraKnowingDevices> ListAuroraKnowingDeviceses { get; } = new List<AuroraKnowingDevices>()
         {
-            new AuroraKnowingDevices("C8:EF:29:5C:91:24", "oUsABosEpyi5phDPQItyINzRK545sAae", "Wohnzimmer"),
-            new AuroraKnowingDevices("94:9F:5B:E9:5F:A8", "OVVRrA5NoPUFjbH4a7dDgW4KmJp5njRB", "Esszimmer")
+            new AuroraKnowingDevices("C8:EF:29:5C:91:24", "oUsABosEpyi5phDPQItyINzRK545sAae", "Wohnzimmer","192.168.0.166"),
+            new AuroraKnowingDevices("94:9F:5B:E9:5F:A8", "OVVRrA5NoPUFjbH4a7dDgW4KmJp5njRB", "Esszimmer","192.168.0.102")
 
         };
 #else
         private static List<AuroraKnowingDevices> ListAuroraKnowingDeviceses { get; } = new List<AuroraKnowingDevices>()
         {
-            new AuroraKnowingDevices("C8:EF:29:5C:91:24", "JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3", "Wohnzimmer"),
-            new AuroraKnowingDevices("94:9F:5B:E9:5F:A8", "68AeTERgauJl02Fhbnel3Eh64UNY2pX9", "Esszimmer")
+            new AuroraKnowingDevices("C8:EF:29:5C:91:24", "JH9eV0l9Zxkqe8ZSDB0FBMfLb2xamZG3", "Wohnzimmer","192.168.0.166"),
+            new AuroraKnowingDevices("94:9F:5B:E9:5F:A8", "68AeTERgauJl02Fhbnel3Eh64UNY2pX9", "Esszimmer","192.168.0.102")
 
         };
 #endif

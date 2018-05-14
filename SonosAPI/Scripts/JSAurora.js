@@ -8,6 +8,11 @@ function NanoleafAurora(option) {
     var _SelectedScenarioClass = "ssc";
     var _BrightnessDOM = [];
     var _BrightnessSliderValue = [];
+    var _HueDOM = [];
+    this.d2 = [];
+    var _HueSliderValue = [];
+    var _SaturationDOM = [];
+    var _SaturationSliderValue = [];
     var _opjectname = option.Name || "aurora";
     var Timer = 0;
     var _newData = true;
@@ -31,7 +36,7 @@ function NanoleafAurora(option) {
     function GetGroupScenarios() {
         var ggs = CallServer("GetGroupScenario/0");
         ggs.success(function(data) {
-            var newdiv = $('<div class="groupcontainer scenarios" id="GroupPowerScenarios"></div>');
+            var newdiv = $('<div class="groupcontainer" id="GroupPowerScenarios"></div>');
             newdiv.appendTo($("#Aurora_Group"));
             var gs = $("#GroupPowerScenarios");
             for (var i = 0; i < data.length; i++) {
@@ -62,6 +67,24 @@ function NanoleafAurora(option) {
             this.RenderAurora();
         }
     };
+    this.SetHue = function (v, serial) {
+        var au = this.GetAurora(serial);
+        if (au === false) return;
+        if (v !== au.state.hue.value && v >= au.sate.hue.min && v <= au.sate.hue.max) {
+            CallServer("SetHue/" + serial + "/" + v);
+            au.state.hue.value = v;
+            this.RenderAurora();
+        }
+    };
+    this.SetSaturation = function (v, serial) {
+        var au = this.GetAurora(serial);
+        if (au === false) return;
+        if (v !== au.state.sat.value && v >= au.sate.sat.min && v <= au.sate.sat.max) {
+            CallServer("SetHue/" + serial + "/" + v);
+            au.state.hue.value = v;
+            this.RenderAurora();
+        }
+    };
     this.SetPower = function(serial) {
         var t = _PowerDom[serial].prop("checked");
         internalaurora.SetPowerState(!t, serial);
@@ -88,10 +111,10 @@ function NanoleafAurora(option) {
                 if (_data[x].NewAurora === false) {
                     faid = _data[x].NLJ.serialNo;
                 }
-                var newAurora = $('<div id="Aurora_' + faid + '" class="auroraContainer"><div class="auroraName">' + _data[x].Name + '</div><div class="container"><input type="checkbox" onClick="' + _opjectname + '.SetPower(\'' + faid + '\')" id="power_' + faid + '" class="powerCheck" name="power_' + faid + '" checked="checked"/><label for="power_' + faid + '" class="power"><span class="icon-off"></span><span class="light"></span></label></div><div class="brightnessSlider" id="BrightnessSlider_' + faid + '" data="' + faid + '"><div id="BrightnessSliderLabel_' + faid + '" class="brightnessSliderLabel">Helligkeit</div><div id="BrightnessSliderValue_' + faid + '" class="brightnessSliderValue">50</div></div><div id="Scenarios_' + faid + '" data="' + faid + '" class="scenarios"></div></div>');
+                var newAurora = $('<div id="Aurora_' + faid + '" class="auroraContainer"><div class="auroraName">' + _data[x].Name + '</div><div class="container"><input type="checkbox" onClick="' + _opjectname + '.SetPower(\'' + faid + '\')" id="power_' + faid + '" class="powerCheck" name="power_' + faid + '" checked="checked"/><label for="power_' + faid + '" class="power"><span class="icon-off"></span><span class="light"></span></label></div><div class="brightnessSlider" id="BrightnessSlider_' + faid + '" data="' + faid + '"><div id="BrightnessSliderLabel_' + faid + '" class="brightnessSliderLabel">Helligkeit</div><div id="BrightnessSliderValue_' + faid + '" class="brightnessSliderValue">50</div></div><div class="hueSlider" id="HueSlider_' + faid + '" data="' + faid + '"><div id="HueSliderLabel_' + faid + '" class="hueSliderLabel">Hue</div><div id="HueSliderValue_' + faid + '" class="hueSliderValue">0</div></div><div class="saturationSlider" id="SaturationSlider_' + faid + '" data="' + faid + '"><div id="SaturationSliderLabel_' + faid + '" class="saturationSliderLabel">Saturation</div><div id="SaturationSliderValue_' + faid + '" class="saturationSliderValue">0</div></div><div id="Scenarios_' + faid + '" data="' + faid + '" class="scenarios"></div></div>');
                 newAurora.appendTo(_Wrapper);
             }
-            if (_data.length > 0) {
+            if (_data.length > 1) {
                 var newAuroraG = $('<div id="Aurora_Group" class="auroraContainer"><div class="auroraName">Alle Aurora</div><div class="groupcontainer" id="GroupPowerOn">Power On</div><div class="groupcontainer" id="GroupPowerOff">Power Off</div></div>');
                 newAuroraG.appendTo(_Wrapper);
                 GetGroupScenarios();
@@ -146,7 +169,8 @@ function NanoleafAurora(option) {
             if (typeof _BrightnessDOM[aid] === "undefined") {
                 _BrightnessSliderValue[aid] = $("#BrightnessSliderValue_" + aid);
                 _BrightnessSliderValue[aid].html(_data[i].NLJ.state.brightness.value);
-                _BrightnessDOM[aid] = $("#BrightnessSlider_" + aid).slider({
+                _BrightnessDOM[aid] = $("#BrightnessSlider_" + aid);
+                _BrightnessDOM[aid].slider({
                     orientation: "vertical",
                     range: "min",
                     min: _data[i].NLJ.state.brightness.min,
@@ -173,6 +197,89 @@ function NanoleafAurora(option) {
                 if (_BrightnessDOM[aid].slider("option", "value") !== _data[i].NLJ.state.brightness.value) {
                     _BrightnessDOM[aid].slider({ value: _data[i].NLJ.state.brightness.value });
                     _BrightnessSliderValue[aid].html(_data[i].NLJ.state.brightness.value);
+                }
+            }
+            //todo: Colormode abfragen und für hue und sat entsprechend andere werte einstellen als eigentlich übergeben.
+            //Hier nun die besonderheiten abarbeiten für hue und sat
+            var currenthue = _data[i].NLJ.state.hue.value;
+            var currentsat = _data[i].NLJ.state.sat.value;
+            if (_data[i].NLJ.effects.select !== "*Solid*") {
+                currenthue = 0;
+                currentsat = 0;
+            }
+            //hue
+            if (typeof _HueDOM[aid] === "undefined") {
+                _HueSliderValue[aid] = $("#HueSliderValue_" + aid);
+                _HueSliderValue[aid].html(currenthue);
+                _HueDOM[aid] = $("#HueSlider_" + aid);
+                this.d2[aid] = _HueDOM[aid];
+                _HueDOM[aid].slider({
+                    orientation: "vertical",
+                    range: "min",
+                    min: _data[i].NLJ.state.hue.min,
+                    max: _data[i].NLJ.state.hue.max,
+                    value: currenthue,
+                    stop: function (event, ui) {
+                        var serial = $(this).attr("data");
+                        var au = internalaurora.GetAurora(serial);
+                        if (au === false) return false;
+                        au.state.hue.value = ui.value;
+                        CallServer("SetHue/" + serial + "/" + ui.value);
+                        if (au.state.on.value !== true) {
+                            au.state.on.value = true;
+                        }
+                        if (au.effects.select !== "*Solid*") {
+                            au.effects.select = "*Solid*";
+                        }
+                        internalaurora.RenderAurora();
+                        return true;
+                    },
+                    slide: function (event, ui) {
+                        var serial = $(this).attr("data");
+                        _HueSliderValue[serial].html(ui.value);
+                    }
+                });
+                
+            } else {
+                if (_HueDOM[aid].slider("option", "value") !== currenthue) {
+                    _HueDOM[aid].slider({ value: currenthue });
+                    _HueSliderValue[aid].html(currenthue);
+                }
+            }
+            //Saturation
+            if (typeof _SaturationDOM[aid] === "undefined") {
+                _SaturationSliderValue[aid] = $("#SaturationSliderValue_" + aid);
+                _SaturationSliderValue[aid].html(currentsat);
+                _SaturationDOM[aid] = $("#SaturationSlider_" + aid).slider({
+                    orientation: "vertical",
+                    range: "min",
+                    min: _data[i].NLJ.state.sat.min,
+                    max: _data[i].NLJ.state.sat.max,
+                    value: currentsat,
+                    stop: function (event, ui) {
+                        var serial = $(this).attr("data");
+                        var au = internalaurora.GetAurora(serial);
+                        if (au === false) return false;
+                        au.state.sat.value = ui.value;
+                        CallServer("SetSaturation/" + serial + "/" + ui.value);
+                        if (au.state.on.value !== true) {
+                            au.state.on.value = true;
+                        }
+                        if (au.effects.select !== "*Solid*") {
+                            au.effects.select = "*Solid*";
+                        }
+                        internalaurora.RenderAurora();
+                        return true;
+                    },
+                    slide: function (event, ui) {
+                        var serial = $(this).attr("data");
+                        _SaturationSliderValue[serial].html(ui.value);
+                    }
+                });
+            } else {
+                if (_SaturationDOM[aid].slider("option", "value") !== currentsat) {
+                    _SaturationDOM[aid].slider({ value: currentsat });
+                    _SaturationSliderValue[aid].html(currentsat);
                 }
             }
         }
@@ -209,10 +316,13 @@ function NanoleafAurora(option) {
                     _Wrapper.empty();
                     _PowerDom = [];
                     _BrightnessDOM = [];
+                    _HueDOM = [];
+                    _SaturationDOM = [];
                 } else {
                     _newData = false;
                 }
                 _data = data;
+                internalaurora.d = data;
                 internalaurora.RenderAurora();
             }
             return true;

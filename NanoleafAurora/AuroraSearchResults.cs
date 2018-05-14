@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace NanoleafAurora
 {
+    /// <summary>
+    /// Class for discovered Devices
+    /// </summary>
     public class AuroraSearchResults
     {
         public AuroraSearchResults(string ip, string MacAdress, int port)

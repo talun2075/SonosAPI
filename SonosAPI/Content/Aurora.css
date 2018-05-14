@@ -7,6 +7,7 @@
     text-align: center;
     font-weight: bold;
 }
+
 #AuroraWrapper > DIV {
     margin: 55px 25px 15px 55px;
     /*margin-top: 55px;
@@ -14,6 +15,9 @@
     margin-left: 55px;
     margin-right: 25px;*/
     float: left;
+}
+#GroupPowerScenarios {
+    margin-top: 20px;
 }
 .groupcontainer{
     padding: 5px;
@@ -26,29 +30,41 @@
     padding-top: 10px;
 }
 .scenarios {
-    margin-top: 30px;
+    margin-top: 280px;
 }
 .brightnessSlider {
     height: 220px !important;
-    left: 60px;
+    float: left;
+}
+.hueSlider {
+    height: 220px !important;
+    left: 40px;
+    float: left;
+}
+.saturationSlider {
+    height: 220px !important;
+    left: 80px;
+    float: left;
 }
 .ssc {
     font-style: italic;
     font-weight: bold;
 }
-.brightnessSliderLabel {
+.brightnessSliderLabel, .saturationSliderLabel,.hueSliderLabel {
     word-wrap: break-word;
     width: 5px;
     position: relative;
     right: -25px;
     color: black;
+    height: 230px;
 }
-.brightnessSliderValue {
+.brightnessSliderValue,.saturationSliderValue, .hueSliderValue {
     color: black;
     position: relative;
-    left: -40px;
-    top: -130px;
+    left: -5px;
+    bottom: -10px;
 }
+
 
 
 /*CSS PowerButton*/

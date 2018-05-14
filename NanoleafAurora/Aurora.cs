@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace NanoleafAurora
 {
@@ -19,7 +20,8 @@ namespace NanoleafAurora
         private readonly int _port;
         private const string _Statepath = "/state";
         private const string _Apipath = "/api/v1/";
-
+        private const string _solid = "*Solid*";
+        private const string _colormode = "hs";
         #region PublicMethods
 
         /// <summary>
@@ -111,7 +113,44 @@ namespace NanoleafAurora
             }
             return true;
         }
-
+        /// <summary>
+        /// Set one Color to Aurora
+        /// </summary>
+        /// <param name="hue">Hue</param>
+        /// <param name="saturation">Saturation</param>
+        /// <param name="brightness">Brightness</param>
+        /// <returns></returns>
+        public Boolean SetHSV(int hue, int saturation, int brightness)
+        {
+            try
+            {
+                if (hue > NLJ.State.Hue.Max || hue < NLJ.State.Hue.Min)
+                {
+                    errorEventHandler?.Invoke("Hue value out of Range", EventArgs.Empty);
+                    return false;
+                }
+                Hue = hue;
+                if (saturation > NLJ.State.Saturation.Max || saturation < NLJ.State.Saturation.Min)
+                {
+                    errorEventHandler?.Invoke("Saturation value out of Range", EventArgs.Empty);
+                    return false;
+                }
+                Saturation = saturation;
+                if (brightness > NLJ.State.Brightness.Max || brightness < NLJ.State.Brightness.Min)
+                {
+                    errorEventHandler?.Invoke("Brightness value out of Range", EventArgs.Empty);
+                    return false;
+                }
+                Brightness = brightness;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                errorEventHandler?.Invoke(ex.Message, EventArgs.Empty);
+                return false;
+            }
+        }
         #endregion PublicMethods
 
         #region PublicProperties
@@ -222,6 +261,8 @@ namespace NanoleafAurora
                     }
 
                     NLJ.State.Hue.Value = value;
+                    NLJ.Effects.Selected = _solid;
+                    NLJ.State.ColorMode = _colormode;
                     ConnectToNanoleaf(NanoleafRequest.PUT, _Statepath, "{\"hue\":" + NLJ.State.Hue.Value + "}");
                 }
                 catch (Exception ex)
@@ -248,6 +289,8 @@ namespace NanoleafAurora
                         return;
                     }
                     NLJ.State.Saturation.Value = value;
+                    NLJ.Effects.Selected = _solid;
+                    NLJ.State.ColorMode = _colormode;
                     ConnectToNanoleaf(NanoleafRequest.PUT, _Statepath, "{\"sat\":" + NLJ.State.Saturation.Value + "}");
                 }
                 catch (Exception ex)
@@ -407,11 +450,11 @@ namespace NanoleafAurora
         }
 
         /// <summary>
-        /// Inernal Class to get Changes from Nanoleaf
+        /// Class to get Changes from Nanoleaf
         /// On Each Change its to call, that the Changes Knowing
         /// </summary>
         /// <returns></returns>
-        private void GetNanoLeafInformations()
+        public void GetNanoLeafInformations()
         {
 
             var json = ConnectToNanoleaf(NanoleafRequest.GET, "INIT");
