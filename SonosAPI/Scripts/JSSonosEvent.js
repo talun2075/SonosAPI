@@ -109,8 +109,9 @@ function GetAktSongInfo() {
     try {
         //Bei Refreshstop sich selber aufrufen bis das wieder normal ist
         if (SonosZones.Refreshstop === false && SonosZones.CheckActiveZone() && (typeof SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Stream === "undefined" || SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Stream === false || SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.StreamContent === "Dienst" || SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.StreamContent === "Apple") && (SonosZones[SonosZones.ActiveZoneUUID].PlayState === "PLAYING" || SonosZones[SonosZones.ActiveZoneUUID].CheckCurrenTrackRefesh())) {
-            //Wenn MP3 im CurrentTrack leer ist wird dieses auf jedenfall geladen.
+            //Wenn MP3 im CurrentTrack leer ist wird dieses auf jedenfall geladen. Außer beim Stream???//todo: 
             var getmp3 = SonosZones[SonosZones.ActiveZoneUUID].CheckCurrenTrackRefesh();
+
             var cturi = SonosZones[SonosZones.ActiveZoneUUID].CurrentTrack.Uri;
             var request_cur = SonosAjax("GetAktSongInfo", { '': cturi }, getmp3);
             request_cur.success(function(data) {

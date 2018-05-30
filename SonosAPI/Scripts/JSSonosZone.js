@@ -697,6 +697,7 @@ function SonosZone(uuid, name) {
         }
     };
     this.CheckCurrenTrackRefesh = function () {
+        //todo: Fehlerbei Streams. MP3.Artist ist immer leer genau wie genre und typ.
         if (this.Playlist.CheckIsEmpty() === false && (SonosZones.CheckStringIsNullOrEmpty(this.CurrentTrack.Artist) || SonosZones.CheckStringIsNullOrEmpty(this.CurrentTrack.MP3.Artist) || SonosZones.CheckStringIsNullOrEmpty(this.CurrentTrack.MP3.Genre) && this.CurrentTrack.MP3.Jahr === 0 && SonosZones.CheckStringIsNullOrEmpty(this.CurrentTrack.MP3.Typ))) {
             return true;
         }

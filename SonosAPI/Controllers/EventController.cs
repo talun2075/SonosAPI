@@ -19,72 +19,92 @@ namespace SonosAPI.Controllers
         
         public HttpResponseMessage Get(HttpRequestMessage request)
         {
-            HttpResponseMessage response = request.CreateResponse();
-            response.Content = new PushStreamContent(OnStreamAvailable, "text/event-stream");
-            response.Headers.CacheControl = new CacheControlHeaderValue
+            try
             {
-                Public = true,
-                MaxAge = new TimeSpan(0, 0, 0, 1)
-            };
-            return response;
+                HttpResponseMessage response = request.CreateResponse();
+                response.Content = new PushStreamContent(OnStreamAvailable, "text/event-stream");
+                response.Headers.CacheControl = new CacheControlHeaderValue
+                {
+                    Public = true,
+                    MaxAge = new TimeSpan(0, 0, 0, 1)
+                };
+                return response;
+            }
+            catch (Exception ex)
+            {
+                //ignore
+                return null;
+            }
         }
 
         public static void EventTopologieChange(object state)
         {
-            foreach (var data in _streammessage)
+            try
             {
+                foreach (var data in _streammessage)
+                {
 
-                try
-                {
-                    data.WriteLine("data:ZoneChange\n");
-                    data.Flush();
-                }
-                catch
-                {
-                    lock (DisconnectedClients)
+                    try
                     {
-                        DisconnectedClients.Add(data);
+                        data.WriteLine("data:ZoneChange\n");
+                        data.Flush();
+                    }
+                    catch
+                    {
+                        lock (DisconnectedClients)
+                        {
+                            DisconnectedClients.Add(data);
+                        }
                     }
                 }
-            }
-            if (DisconnectedClients.Count == 0) return;
-            lock (DisconnectedClients) { 
-                foreach (StreamWriter disconnectedClient in DisconnectedClients)
+                if (DisconnectedClients.Count == 0) return;
+                lock (DisconnectedClients)
                 {
-                    _streammessage.Remove(disconnectedClient);
-                    disconnectedClient.Close();
-                    disconnectedClient.Dispose();
+                    foreach (StreamWriter disconnectedClient in DisconnectedClients)
+                    {
+                        _streammessage.Remove(disconnectedClient);
+                        disconnectedClient.Close();
+                        disconnectedClient.Dispose();
+                    }
+                    DisconnectedClients.Clear();
+
                 }
-            DisconnectedClients.Clear();
+            }
+            catch (Exception ex)
+            {
+                //ignore
+            }
         }
-    }
         
         public static void EventPlayerChange(SonosPlayer pl)
         {
-            if (pl == null || pl.CurrentState.TransportState == PlayerStatus.TRANSITIONING || _streammessage == null) return;
-            foreach (var data in _streammessage.ToArray())
+            try
             {
-                try
+                if (pl == null || pl.CurrentState.TransportState == PlayerStatus.TRANSITIONING || _streammessage == null)
+                    return;
+                foreach (var data in _streammessage.ToArray())
                 {
-                    var t = new RinconLastChangeItem
+                    try
                     {
-                        UUID = pl.UUID,
-                        LastChange = pl.CurrentState.LastStateChange
-                    };
-                    data.WriteLine("data:" + JsonConvert.SerializeObject(t)+"\n\n");
-                    data.Flush();
-                    //data.WriteLine("data:" + JsonConvert.SerializeObject(t) + "\n\n");
-                    //data.Flush();
-                }
-                catch
-                {
-                    lock (DisconnectedClients)
+                        var t = new RinconLastChangeItem
+                        {
+                            UUID = pl.UUID,
+                            LastChange = pl.CurrentState.LastStateChange
+                        };
+                        data.WriteLine("data:" + JsonConvert.SerializeObject(t) + "\n\n");
+                        data.Flush();
+                        //data.WriteLine("data:" + JsonConvert.SerializeObject(t) + "\n\n");
+                        //data.Flush();
+                    }
+                    catch
                     {
-                        DisconnectedClients.Add(data);
+                        lock (DisconnectedClients)
+                        {
+                            DisconnectedClients.Add(data);
+                        }
                     }
                 }
-            }
-            if (DisconnectedClients.Count == 0) return;
+                if (DisconnectedClients.Count == 0) return;
                 lock (DisconnectedClients)
                 {
                     foreach (StreamWriter disconnectedClient in DisconnectedClients)
@@ -95,16 +115,26 @@ namespace SonosAPI.Controllers
                     }
                     DisconnectedClients.Clear();
                 }
-            
+            }
+            catch (Exception ex)
+            {
+                //ignore
+            }
         }
         public static void OnStreamAvailable(Stream stream, HttpContent headers, TransportContext context)
         {
-            StreamWriter streamwriter = new StreamWriter(stream);
-            if (!_streammessage.Contains(streamwriter))
+            try
             {
-                _streammessage.Add(streamwriter);
+                StreamWriter streamwriter = new StreamWriter(stream);
+                if (!_streammessage.Contains(streamwriter))
+                {
+                    _streammessage.Add(streamwriter);
+                }
             }
-            //_streammessage.Enqueue(streamwriter);
+            catch (Exception ex)
+            {
+                //ignore
+            }
         }
     }
 

@@ -261,7 +261,6 @@
     <Content Include="Images\wildrot.png" />
     <Content Include="Images\wildschwarz.png" />
     <Content Include="Images\zur_red.png" />
-    <Content Include="ScheduleTask\default.htm" />
     <Content Include="Scripts\AlarmClock.js" />
     <Content Include="Scripts\JSAurora.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />

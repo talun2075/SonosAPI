@@ -50,6 +50,7 @@ namespace SonosAPI.Classes
                     serverErrors.Clear();
                     sccoList.Clear();
                     //Auroras
+                    AuroraWrapper.errorEventHandler += TraceLogAuroraEvent;
                     if (AuroraWrapper.AurorasList == null || AuroraWrapper.AurorasList.Count == 0)
                     {
                         AuroraWrapper.KeepAliveWithoutAsync();
@@ -190,6 +191,11 @@ namespace SonosAPI.Classes
                 sw.WriteLine("TargetSite: " + ExceptionMes.TargetSite);
                 sw.WriteLine("Base:Message: " + ExceptionMes.GetBaseException().Message);
             }
+        }
+
+        internal static void TraceLogAuroraEvent(object sender, EventArgs evt)
+        {
+            TraceLog("AuroraErrors:",sender.ToString());
         }
         /// <summary>
         /// Internal Logging to Debug on Server.

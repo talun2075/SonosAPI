@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 using System.Web.Http;
 using SonosAPI.Classes;
 
@@ -30,7 +31,15 @@ namespace SonosAPI
             defaults: new { v = RouteParameter.Optional }
             );
 
-            SonosHelper.LoggingPfad = HttpRuntime.AppDomainAppPath;
+            try
+            {
+
+                SonosHelper.LoggingPfad = HttpRuntime.AppDomainAppPath;
+            }
+            catch(Exception ex)
+            {
+                //ignore
+            }
         }
     }
 }

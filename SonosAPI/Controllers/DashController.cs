@@ -21,7 +21,7 @@ namespace SonosAPI.Controllers
         private const string primaryPlayerName = SonosConstants.WohnzimmerName;
         public void Get()
         {
-            SonosHelper.TraceLog("DashTest","GetStart");
+            SonosHelper.TraceLog("DashTest", "GetStart");
             //DashHelper.PowerOnAruroras();
         }
         /// <summary>
@@ -164,7 +164,7 @@ namespace SonosAPI.Controllers
                 {
                     return retValReload + "Block1 Exception: Beim prüfen ob ausgeschaltet werden muss:" + ex.Message;
                 }
- }
+            }
             catch (Exception ex)
             {
                 return retValReload + " Exception: Beim prüfen ob ausgeschaltet werden muss:" + ex.Message;
@@ -182,7 +182,7 @@ namespace SonosAPI.Controllers
                 }
                 try
                 {
-                   Task.Factory.StartNew(DashHelper.PowerOffAruroras);
+                    Task.Factory.StartNew(DashHelper.PowerOffAruroras);
                 }
                 catch (Exception ex)
                 {
@@ -222,7 +222,7 @@ namespace SonosAPI.Controllers
                 //Aurora einschalten zwischen 18 Uhr und 5 Uhr oder immer Oktober bsi März
                 //if (DateTime.Now.Hour > 17 || DateTime.Now.Hour < 6 || DateTime.Now.Month > 9 || DateTime.Now.Month < 4)
                 //{
-                    Task.Factory.StartNew(DashHelper.PowerOnAruroras);
+                Task.Factory.StartNew(DashHelper.PowerOnAruroras);
                 //}
             }
             catch (Exception ex)
@@ -241,12 +241,12 @@ namespace SonosAPI.Controllers
             #endregion Start Devices
             try
             {
-                
+
                 //Alles ins Wohnzimmer legen.
                 SonosPlayer primaryplayer = SonosHelper.GetPlayer(primaryPlayerName);
                 SonosPlayer secondaryplayer = SonosHelper.GetPlayer(SonosConstants.EsszimmerName);
                 SonosPlayer thirdplayer = SonosHelper.GetPlayer(SonosConstants.KücheName);
-                if (DashHelper.IsSonosTargetGroupExist(primaryplayer, new List<SonosPlayer> {secondaryplayer,thirdplayer}))
+                if (DashHelper.IsSonosTargetGroupExist(primaryplayer, new List<SonosPlayer> { secondaryplayer, thirdplayer }))
                 {
                     //Die Zielarchitektur existiert, daher keine Lautstärkesondern nur Playlist
                     int oldcurrenttrack = primaryplayer.GetAktSongInfo().TrackIndex;
@@ -548,7 +548,7 @@ namespace SonosAPI.Controllers
             }
         }
 
-       
+
 
         /// <summary>
         /// Füllt eine Liste mit allen Playlisten
@@ -584,6 +584,7 @@ namespace SonosAPI.Controllers
              * Wenn der Player schon Musik macht, dann aus Gruppe nehmen oder Pausieren
              */
             SonosPlayer player;
+            SonosZone currZone;
             SonosZone primaryPlayer;
             try
             {
@@ -591,6 +592,7 @@ namespace SonosAPI.Controllers
                 if (player == null) return retValReload + _player + " konnte nicht gefunden werden.";
                 primaryPlayer = SonosHelper.GetZone(SonosConstants.WohnzimmerName);
                 if (primaryPlayer == null) return retValReload + " Primärzone konnte nicht gefunden werden.";
+                currZone = SonosHelper.GetZone(_player);
             }
             catch (Exception exceptio)
             {
@@ -598,57 +600,108 @@ namespace SonosAPI.Controllers
             }
             try
             {
-                if (!SonosHelper.CheckIsZoneCord(player))
+                if (player.GetVolume() != _volume)
+                {
+                    player.SetVolume(_volume);
+                }
+
+
+                var playlist = GetAllPlaylist().FirstOrDefault(x =>String.Equals(x.Title, _Playlist, StringComparison.CurrentCultureIgnoreCase));
+                if (currZone != null)
+                {
+                    //Player alleine und Spielt Musik soll beendet werden.
+                    if (currZone.Coordinator.CurrentState.TransportState == PlayerStatus.PLAYING)
+                    {
+                        currZone.Coordinator.SetPause();
+                        return retValok + " Player ausgeschaltet";
+                    }
+                    SonosHelper.WaitForTransitioning(primaryPlayer.Coordinator);
+                    //Player alleine und soll dem primären zugefügt werden, wenn dieser abspielt.
+                    if (primaryPlayer.Coordinator.CurrentState.TransportState == PlayerStatus.PLAYING && addToPrimary)
+                    {
+                        player.SetAVTransportURI(SonosConstants.xrincon + primaryPlayer.CoordinatorUUID);
+                        return retValok + " Player zum " + primaryPlayer.Coordinator.Name + " zugefügt.";
+                    }
+                    //Player ist alleine und soll nicht dem Primary zugefügt werden oder dieser spielt nicht ab.
+                    if (playlist == null) return "Playlist konnte nicht geladen werden:" + _Playlist;
+                    Boolean loadpl = DashHelper.CheckPlaylist(playlist.ContainerID, player);
+                    if (loadpl)
+                    {
+                        DashHelper.LoadPlaylist(playlist, player);
+                    }
+                    player.SetPlay();
+                    return retValok + " Player spielt alleine";
+
+
+
+
+                }
+                //Player ist nicht alleine
+                player.BecomeCoordinatorofStandaloneGroup();
+                Thread.Sleep(200);
+                //Es wurde abgespielt und nun soll nichts mehr passieren.
+                if (primaryPlayer.Coordinator.CurrentState.TransportState == PlayerStatus.PLAYING && addToPrimary)
                 {
                     return retValok + " Player ausgeschaltet";
                 }
+                if (playlist == null) return "Playlist konnte nicht geladen werden:" + _Playlist;
+                Boolean loadpl2 = DashHelper.CheckPlaylist(playlist.ContainerID, player);
+                if (loadpl2)
+                {
+                    DashHelper.LoadPlaylist(playlist, player);
+                }
+                player.SetPlay();
+
+                return retValok + " Player spielt alleine";
             }
             catch (Exception exceptio)
             {
                 return retValReload + " MakePlayerFine:Exception:Block1: " + exceptio.Message;
             }
-            try
-            {
-                //Prüfen, ob er abspielt
-                SonosHelper.WaitForTransitioning(player);
-                if (player.CurrentState.TransportState == PlayerStatus.PLAYING)
-                {
-                    player.SetPause();
-                    return retValok + " ist ausgeschaltet";
-                }
-            }
-            catch (Exception exceptio)
-            {
-                return retValReload + " MakePlayerFine:Exception:Block2: " + exceptio.Message;
-            }
-            try
-            {
-                if (player.GetVolume() != _volume)
-                {
-                    player.SetVolume(_volume);
-                }
-                //Prüfen, ob Esszimmer spielt
-                SonosHelper.WaitForTransitioning(primaryPlayer.Coordinator);
-                if (primaryPlayer.Coordinator.CurrentState.TransportState == PlayerStatus.PLAYING && addToPrimary)
-                {
-                    player.SetAVTransportURI(SonosConstants.xrincon + primaryPlayer.CoordinatorUUID);
-                    return retValok + " Player zum Esszimmer zugefügt.";
-                }
-                var playlist = GetAllPlaylist().FirstOrDefault(x => String.Equals(x.Title, _Playlist, StringComparison.CurrentCultureIgnoreCase));
-                //Soll selber etwas abspielen.
-                if (playlist == null) return "Playlist konnte nicht geladen werden:" + _Playlist;
-                Boolean loadpl = DashHelper.CheckPlaylist(playlist.ContainerID, player);
-                if (loadpl)
-                {
-                    DashHelper.LoadPlaylist(playlist, player);
-                }
-                player.SetPlay();
-                return retValok + " Player spielt alleine";
-            }
-            catch (Exception exceptio)
-            {
-                return retValReload + " MakePlayerFine:Exception:Block3: " + exceptio.Message;
-            }
+
+            //return "Ich dürfte an diese Stelle nicht kommen....";
+            //try
+            //{
+            //    //Prüfen, ob er abspielt
+            //    SonosHelper.WaitForTransitioning(player);
+            //    if (player.CurrentState.TransportState == PlayerStatus.PLAYING)
+            //    {
+            //        player.SetPause();
+            //        return retValok + " ist ausgeschaltet";
+            //    }
+            //}
+            //catch (Exception exceptio)
+            //{
+            //    return retValReload + " MakePlayerFine:Exception:Block2: " + exceptio.Message;
+            //}
+            //try
+            //{
+            //    if (player.GetVolume() != _volume)
+            //    {
+            //        player.SetVolume(_volume);
+            //    }
+            //    //Prüfen, ob Esszimmer spielt
+            //    SonosHelper.WaitForTransitioning(primaryPlayer.Coordinator);
+            //    if (primaryPlayer.Coordinator.CurrentState.TransportState == PlayerStatus.PLAYING && addToPrimary)
+            //    {
+            //        player.SetAVTransportURI(SonosConstants.xrincon + primaryPlayer.CoordinatorUUID);
+            //        return retValok + " Player zum Esszimmer zugefügt.";
+            //    }
+            //    var playlist = GetAllPlaylist().FirstOrDefault(x => String.Equals(x.Title, _Playlist, StringComparison.CurrentCultureIgnoreCase));
+            //    //Soll selber etwas abspielen.
+            //    if (playlist == null) return "Playlist konnte nicht geladen werden:" + _Playlist;
+            //    Boolean loadpl = DashHelper.CheckPlaylist(playlist.ContainerID, player);
+            //    if (loadpl)
+            //    {
+            //        DashHelper.LoadPlaylist(playlist, player);
+            //    }
+            //    player.SetPlay();
+            //    return retValok + " Player spielt alleine";
+            //}
+            //catch (Exception exceptio)
+            //{
+            //    return retValReload + " MakePlayerFine:Exception:Block3: " + exceptio.Message;
+            //}
         }
     }
 

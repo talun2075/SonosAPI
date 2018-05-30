@@ -126,7 +126,7 @@
     #AktSongInfo {
         /* ReSharper disable once InvalidValue */
         top: initial;
-        bottom: 140px;
+        bottom: 120px;
         left: 30px;
     }
     #CurrentMeta {
@@ -195,7 +195,7 @@
     #BewertungN {
         /* ReSharper disable once InvalidValue */
         top: initial;
-        bottom: 100px;
+        bottom: 80px;
         left: 20px;
     }
     #PlaylistCount {
