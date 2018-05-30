@@ -11,7 +11,7 @@ namespace NanoleafAurora
     public static class AuroraWrapper
     {
         #region ClassVariables
-
+        public static event EventHandler errorEventHandler;
         private static  Timer keepAliveTimer;
         private static List<AuroraKnowingDevices> _knowingAuroras;
         private static List<String> _groupScenarios; 
@@ -39,7 +39,10 @@ namespace NanoleafAurora
             }
             catch (Exception ex)
             {
-                ErrorMessage = "error in private FindAurora Method: " + ex.Message;
+                if (errorEventHandler != null)
+                {
+                    errorEventHandler.Invoke("error in private FindAurora Method: " + ex.Message, EventArgs.Empty);
+                }
                 return null;
             }
         }
@@ -82,6 +85,8 @@ namespace NanoleafAurora
                                 }
                                 else
                                 {
+                                    if(errorEventHandler !=null)
+                                    a.errorEventHandler += errorEventHandler.Invoke;
                                     AurorasList.Add(a);
                                 }
                                 
@@ -93,6 +98,8 @@ namespace NanoleafAurora
                             var t = AurorasList.FirstOrDefault(x => x.Ip == asrResults.IP);
                             if (t == null)
                             {
+                                if (errorEventHandler != null)
+                                    a.errorEventHandler += errorEventHandler.Invoke;
                                 AurorasList.Add(a);
                             }
                         }
@@ -113,6 +120,8 @@ namespace NanoleafAurora
                             {
                                 //FindAurora havent Found this Aurora so add this to list
                                 Aurora a = new Aurora(auroraKnowingDevice.AuthToken, auroraKnowingDevice.KnowingIP, auroraKnowingDevice.DeviceName);
+                                if (errorEventHandler != null)
+                                    a.errorEventHandler += errorEventHandler.Invoke;
                                 AurorasList.Add(a);
                             }
 
@@ -129,7 +138,10 @@ namespace NanoleafAurora
             }
             catch (Exception ex)
             {
-                ErrorMessage = "error in private Discovery Method: " + ex.Message;
+                if (errorEventHandler != null)
+                {
+                    errorEventHandler.Invoke("error in private Discovery Method: " + ex.Message, EventArgs.Empty);
+                }
                 return null;
             }
 
@@ -170,7 +182,10 @@ namespace NanoleafAurora
             }
             catch (Exception ex)
             {
-                ErrorMessage = ex.Message;
+                if (errorEventHandler != null)
+                {
+                    errorEventHandler.Invoke("GetAurorabySerial Method: " + ex.Message, EventArgs.Empty);
+                }
                 return null;
             }
         }
@@ -260,10 +275,6 @@ namespace NanoleafAurora
         /// </summary>
         #region Propertys
         public static List<Aurora> AurorasList { get; private set; }
-        /// <summary>
-        /// ErrorMesages on Discovery
-        /// </summary>
-        public static String ErrorMessage { get; private set; }
         /// <summary>
         /// List of Knowing Aurora Devices
         /// </summary>

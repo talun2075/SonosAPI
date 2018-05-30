@@ -6,7 +6,6 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace NanoleafAurora
 {
@@ -120,6 +119,7 @@ namespace NanoleafAurora
         /// <param name="saturation">Saturation</param>
         /// <param name="brightness">Brightness</param>
         /// <returns></returns>
+        // ReSharper disable once UnusedMember.Global
         public Boolean SetHSV(int hue, int saturation, int brightness)
         {
             try
@@ -160,7 +160,7 @@ namespace NanoleafAurora
         /// </summary>
         public Boolean PowerOn
         {
-            get { return NLJ.State.Powerstate.Value; }
+            get => NLJ.State.Powerstate.Value;
             set
             {
                 try
@@ -185,7 +185,7 @@ namespace NanoleafAurora
         /// </summary>
         public String SelectedScenario
         {
-            get { return NLJ.Effects.Selected; }
+            get => NLJ.Effects.Selected;
             set
             {
                 try
@@ -222,7 +222,7 @@ namespace NanoleafAurora
         /// </summary>
         public int Brightness
         {
-            get { return NLJ.State.Brightness.Value; }
+            get => NLJ.State.Brightness.Value;
             set
             {
                 try
@@ -249,7 +249,7 @@ namespace NanoleafAurora
         /// </summary>
         public int Hue
         {
-            get { return NLJ.State.Hue.Value; }
+            get => NLJ.State.Hue.Value;
             set
             {
                 try
@@ -278,7 +278,7 @@ namespace NanoleafAurora
         /// </summary>
         public int Saturation
         {
-            get { return NLJ.State.Saturation.Value; }
+            get => NLJ.State.Saturation.Value;
             set
             {
                 try
@@ -306,7 +306,7 @@ namespace NanoleafAurora
         /// </summary>
         public int ColorTemperature
         {
-            get { return NLJ.State.ColorTemperature.Value; }
+            get => NLJ.State.ColorTemperature.Value;
             set
             {
                 try
@@ -361,7 +361,7 @@ namespace NanoleafAurora
         public String Name { get; set; }
 
         [DataMember]
-        public String OpenAPIFirmwareVersion => "2.3.0";
+        public String OpenAPISupportetFirmwareVersion => "3.0.0";
 
         #endregion PublicProperties
 
