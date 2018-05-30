@@ -610,10 +610,11 @@ namespace SonosAPI.Controllers
                 if (currZone != null)
                 {
                     //Player alleine und Spielt Musik soll beendet werden.
+                    SonosHelper.WaitForTransitioning(currZone.Coordinator);
                     if (currZone.Coordinator.CurrentState.TransportState == PlayerStatus.PLAYING)
                     {
                         currZone.Coordinator.SetPause();
-                        return retValok + " Player ausgeschaltet";
+                        return retValok + " Player als Zone ausgeschaltet";
                     }
                     SonosHelper.WaitForTransitioning(primaryPlayer.Coordinator);
                     //Player alleine und soll dem primären zugefügt werden, wenn dieser abspielt.
@@ -640,6 +641,7 @@ namespace SonosAPI.Controllers
                 player.BecomeCoordinatorofStandaloneGroup();
                 Thread.Sleep(200);
                 //Es wurde abgespielt und nun soll nichts mehr passieren.
+                SonosHelper.WaitForTransitioning(primaryPlayer.Coordinator);
                 if (primaryPlayer.Coordinator.CurrentState.TransportState == PlayerStatus.PLAYING && addToPrimary)
                 {
                     return retValok + " Player ausgeschaltet";

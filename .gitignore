@@ -241,3 +241,5 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 /SonosAPI/Logging/DashTest_Log_2018_4_26.txt
+/SonosAPI/Errors
+*.dll
