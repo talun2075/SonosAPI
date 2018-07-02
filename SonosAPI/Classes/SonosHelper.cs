@@ -195,7 +195,7 @@ namespace SonosAPI.Classes
 
         internal static void TraceLogAuroraEvent(object sender, EventArgs evt)
         {
-            TraceLog("AuroraErrors:",sender.ToString());
+            TraceLog("AuroraErrors",sender.ToString());
         }
         /// <summary>
         /// Internal Logging to Debug on Server.

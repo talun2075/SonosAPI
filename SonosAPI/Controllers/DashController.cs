@@ -638,11 +638,11 @@ namespace SonosAPI.Controllers
 
                 }
                 //Player ist nicht alleine
-                player.BecomeCoordinatorofStandaloneGroup();
+                SonosHelper.CheckIsZoneCord(player);
                 Thread.Sleep(200);
                 //Es wurde abgespielt und nun soll nichts mehr passieren.
                 SonosHelper.WaitForTransitioning(primaryPlayer.Coordinator);
-                if (primaryPlayer.Coordinator.CurrentState.TransportState == PlayerStatus.PLAYING && addToPrimary)
+                if (primaryPlayer.Coordinator.CurrentState.TransportState == PlayerStatus.PLAYING)
                 {
                     return retValok + " Player ausgeschaltet";
                 }

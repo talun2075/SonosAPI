@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using NanoleafAurora;
+using SonosAPI.Classes;
 
 namespace SonosAPI.Controllers
 {
@@ -33,6 +34,8 @@ namespace SonosAPI.Controllers
             {
               return await AuroraWrapper.InitAuroraWrapper();
             }
+            AuroraWrapper.errorEventHandler +=SonosHelper.TraceLogAuroraEvent;
+            AuroraWrapper.KeepAliveWithoutAsync();
             return AuroraWrapper.AurorasList;
         }
 
