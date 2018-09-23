@@ -14,7 +14,7 @@ namespace SonosAPI
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
-
+            GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();//Um JSons nicht als XML Fehler zu sehen.https://stackoverflow.com/questions/12904972/mvc-4-web-api-and-json
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

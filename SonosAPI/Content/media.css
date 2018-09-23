@@ -95,6 +95,7 @@
 @media screen and (max-width: 500px) {
     #Bodydiv {
         width: 99%;
+        min-height: 655px
     }
     #Currentplaylist,#Playlist {
         display: none;
@@ -126,7 +127,7 @@
     #AktSongInfo {
         /* ReSharper disable once InvalidValue */
         top: initial;
-        bottom: 120px;
+        bottom: 140px;
         left: 30px;
     }
     #CurrentMeta {
@@ -195,7 +196,7 @@
     #BewertungN {
         /* ReSharper disable once InvalidValue */
         top: initial;
-        bottom: 80px;
+        bottom: 100px;
         left: 20px;
     }
     #PlaylistCount {

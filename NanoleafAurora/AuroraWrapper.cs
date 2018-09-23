@@ -50,7 +50,7 @@ namespace NanoleafAurora
         /// KeepAlaive Call Method from Timer
         /// </summary>
         /// <param name="state"></param>
-        private static async void KeepAlive(object state)
+        private static async void KeepAliveEvent(object state)
         {
             await Discovery();
         }
@@ -59,14 +59,20 @@ namespace NanoleafAurora
         /// Build List of Auroras include New and knowed Devices
         /// </summary>
         /// <returns>List of All Auroras</returns>
-        private static async Task<List<Aurora>> Discovery()
+        private static async Task<List<Aurora>> Discovery(Boolean withDiscovery = true)
         {
             try
             {
                 if(AurorasList == null || AurorasList.Count == 0)
                     AurorasList = new List<Aurora>();
                 //Start to Search
-                List<AuroraSearchResults> lasr = await FindAuroras();
+                
+                List<AuroraSearchResults> lasr = new List<AuroraSearchResults>();
+
+                if (withDiscovery)
+                {
+                    lasr = await FindAuroras();
+                }
                 if (lasr.Count > 0)
                 {
 
@@ -131,9 +137,13 @@ namespace NanoleafAurora
                 }
 
                 // Avoid multiple state changes and consolidate them
-                if (keepAliveTimer != null)
-                    keepAliveTimer.Dispose();
-                keepAliveTimer = new Timer(KeepAlive, null, TimeSpan.FromSeconds(3600), TimeSpan.FromMilliseconds(-1));
+                if (KeepAlive)
+                {
+                    if (keepAliveTimer != null)
+                        keepAliveTimer.Dispose();
+                    keepAliveTimer = new Timer(KeepAliveEvent, null, TimeSpan.FromSeconds(3600),TimeSpan.FromMilliseconds(-1));
+                }
+
                 return AurorasList;
             }
             catch (Exception ex)
@@ -148,17 +158,24 @@ namespace NanoleafAurora
         }
         #endregion Private Methods
         #region Public Methods
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="KnowingAuroras"></param>
+        /// <param name="withDiscovery">DEfault True, False mean there is noch searching Auroras, You need KnowingAuroras</param>
         /// <returns></returns>
-        public static async Task<List<Aurora>> InitAuroraWrapper(List<AuroraKnowingDevices> KnowingAuroras = null)
+        public static async Task<List<Aurora>> InitAuroraWrapper(List<AuroraKnowingDevices> KnowingAuroras = null, Boolean withDiscovery = true)
         {
             _knowingAuroras = KnowingAuroras ?? ListAuroraKnowingDeviceses;
-            await Discovery();
+            await Discovery(withDiscovery);
             return AurorasList;
         }
+
+        /// <summary>
+        /// If set to false, no Keep Alive Call will make. 
+        /// </summary>
+        public static Boolean KeepAlive { get; set; } = true;
         /// <summary>
         /// Get Aurora Object by Serial
         /// </summary>
@@ -189,15 +206,17 @@ namespace NanoleafAurora
                 return null;
             }
         }
+
         /// <summary>
         /// Init /KeepAlive without Retunr and Async
         /// </summary>
         /// <param name="KnowingAuroras"></param>
-        public static void KeepAliveWithoutAsync(List<AuroraKnowingDevices> KnowingAuroras = null)
+        /// <param name="withDiscovery"></param>
+        public static void KeepAliveWithoutAsync(List<AuroraKnowingDevices> KnowingAuroras = null, Boolean withDiscovery = true)
         {
             _knowingAuroras = KnowingAuroras ?? ListAuroraKnowingDeviceses;
 #pragma warning disable CS4014 // Da dieser Aufruf nicht abgewartet wird, wird die Ausführung der aktuellen Methode fortgesetzt, bevor der Aufruf abgeschlossen ist
-            Discovery();
+            Discovery(withDiscovery);
 #pragma warning restore CS4014 // Da dieser Aufruf nicht abgewartet wird, wird die Ausführung der aktuellen Methode fortgesetzt, bevor der Aufruf abgeschlossen ist
         }
         /// <summary>

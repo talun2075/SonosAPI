@@ -50,11 +50,12 @@ namespace SonosAPI.Classes
                     serverErrors.Clear();
                     sccoList.Clear();
                     //Auroras
+                    
+                    //if (AuroraWrapper.AurorasList == null || AuroraWrapper.AurorasList.Count == 0)
+                    //{
+                    //    AuroraWrapper.KeepAliveWithoutAsync();
+                    //}
                     AuroraWrapper.errorEventHandler += TraceLogAuroraEvent;
-                    if (AuroraWrapper.AurorasList == null || AuroraWrapper.AurorasList.Count == 0)
-                    {
-                        AuroraWrapper.KeepAliveWithoutAsync();
-                    }
                     retval = InitialSonos();
                     Sonos_TopologyChanged();
                     WasInitialed = retval;

@@ -29,13 +29,12 @@ namespace SonosAPI.Controllers
         {
             //var ls = AuroraWrapper.StaticListWithoutDiscovery(listAuroraKnowingDeviceses);
             //if (ls.Count > 0) return ls;
-
+            AuroraWrapper.KeepAlive = false;
             if (AuroraWrapper.AurorasList == null || AuroraWrapper.AurorasList.Count == 0)
             {
-              return await AuroraWrapper.InitAuroraWrapper();
+              return await AuroraWrapper.InitAuroraWrapper(null, false);
             }
             AuroraWrapper.errorEventHandler +=SonosHelper.TraceLogAuroraEvent;
-            AuroraWrapper.KeepAliveWithoutAsync();
             return AuroraWrapper.AurorasList;
         }
 

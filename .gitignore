@@ -243,3 +243,4 @@ ModelManifest.xml
 /SonosAPI/Logging/DashTest_Log_2018_4_26.txt
 /SonosAPI/Errors
 *.dll
+/SonosAPI/Logging/AuroraErrors_Log_2018_7_6.txt

@@ -335,7 +335,7 @@ namespace SonosAPI.Controllers
                 }
                 try
                 {
-                    primaryplayer.SetPlay();
+                   primaryplayer.SetPlay();
                 }
                 catch (Exception ex)
                 {
@@ -362,7 +362,7 @@ namespace SonosAPI.Controllers
              */
             try
             {
-                return MakePlayerFine(SonosConstants.AnkleidezimmerName, SonosConstants.AnkleidezimmerVolume);
+                return MakePlayerFine(SonosConstants.IanzimmerName, SonosConstants.IanzimmerVolume);
             }
             catch (Exception exceptio)
             {

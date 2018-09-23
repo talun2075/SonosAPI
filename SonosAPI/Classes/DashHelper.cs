@@ -14,9 +14,14 @@ namespace SonosAPI.Classes
         /// <summary>
         /// Auroras einschalten
         /// </summary>
-        public static void PowerOnAruroras()
+        public static async void PowerOnAruroras()
         {
-            if (AuroraWrapper.AurorasList.Count > 0)
+            if (AuroraWrapper.AurorasList == null || AuroraWrapper.AurorasList.Count == 0)
+            {
+               await AuroraWrapper.InitAuroraWrapper(null, false);
+            }
+
+            if (AuroraWrapper.AurorasList != null && AuroraWrapper.AurorasList.Count > 0)
             {
                 foreach (Aurora aurora in AuroraWrapper.AurorasList)
                 {
@@ -27,18 +32,26 @@ namespace SonosAPI.Classes
                     }
                 }
             }
+
         }
         /// <summary>
         /// Auroras ausschalten
         /// </summary>
-        public static void PowerOffAruroras()
+        public static async void PowerOffAruroras()
         {
-            if (AuroraWrapper.AurorasList.Count > 0)
+            if (AuroraWrapper.AurorasList == null || AuroraWrapper.AurorasList.Count == 0)
+            {
+                await AuroraWrapper.InitAuroraWrapper(null, false);
+            }
+
+            if (AuroraWrapper.AurorasList != null && AuroraWrapper.AurorasList.Count > 0)
             {
                 foreach (Aurora aurora in AuroraWrapper.AurorasList)
                 {
                     if (aurora.PowerOn)
+                    {
                         aurora.PowerOn = false;
+                    }
                 }
             }
         }
@@ -67,9 +80,9 @@ namespace SonosAPI.Classes
             {
                 Marantz.PowerOn = true;
             }
-            if (Marantz.Volume != "-30.0")
+            if (Marantz.Volume != "-40.0")
             {
-                Marantz.Volume = "-30.0";
+                Marantz.Volume = "-40.0";
             }
         }
         /// <summary>

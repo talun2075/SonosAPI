@@ -6,15 +6,15 @@
         public const string KücheName = "Küche";
         public const int KücheVolume = relativerVolWert + 4;
         public const string EsszimmerName = "Esszimmer";
-        public const int EsszimmerVolume = relativerVolWert + 8;
+        public const int EsszimmerVolume = relativerVolWert + 11;
         public const string WohnzimmerName = "Wohnzimmer";
         public const int WohnzimmerVolume = relativerVolWert + 54;
         public const string GästezimmerName = "Gästezimmer";
         public const int GästezimmerVolume = 1;
         public const string SchlafzimmerName = "Schlafzimmer";
         public const int SchlafzimmerVolume = 9;
-        public const string AnkleidezimmerName = "Ankleidezimmer";
-        public const int AnkleidezimmerVolume = 7;
+        public const string IanzimmerName = "Ians Zimmer";
+        public const int IanzimmerVolume = 7;
         public const string ArbeitszimmerName = "Arbeitszimmer";
         public const int ArbeitzimmerVolume = 10;
         /// <summary>
@@ -61,7 +61,7 @@
         /// </summary>
         public const string aAlbumArtist = "A:ALBUMARTIST";
 
-        public const string MarantzUrl = "http://192.168.0.243";
+        public const string MarantzUrl = "http://192.168.0.4";
     }
     /// <summary>
     /// Constants for Messagequeue

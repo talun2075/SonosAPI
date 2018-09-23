@@ -36,7 +36,8 @@ namespace SonosConsole
             dashlist.Add(PhysicalAddress.Parse("AC63BE3AC1CF"));//Seriennummer 832769
             dashlist.Add(PhysicalAddress.Parse("AC63BE0EA91A"));//Seriennummer 823671
             dashlist.Add(PhysicalAddress.Parse("50F5DA5B814D"));//Seriennummer 455294
-            dashlist.Add(PhysicalAddress.Parse("6837E921DD21"));//Seriennummer 735888
+            dashlist.Add(PhysicalAddress.Parse("6C5697D41EA7"));//Seriennummer 772385
+            
             foreach (var macstring in dashlist)
             {
                 DiclastEventTime.Add(macstring.ToString(), DateTime.Now.AddSeconds(-100));
@@ -176,6 +177,10 @@ namespace SonosConsole
                 var mactostring = arpPacket.SenderHardwareAddress.ToString();
                 switch (mactostring)
                 {
+                    //case "6C5697D41EA7":
+                    //    Console.WriteLine("Testerfolgreich");
+                    //    break;
+
                     //Dashbutton 1
                     case "50F5DAEB018B":
                         var now = DateTime.Now;
@@ -210,7 +215,7 @@ namespace SonosConsole
                             }
                         }
                         break;
-                    case "6837E921DD21":
+                    case "6C5697D41EA7":
                     case "AC63BE3AC1CF":
                         var nowAC63BE1A3548 = DateTime.Now;
                         if (nowAC63BE1A3548 - DuplicateIgnoreInterval > DiclastEventTime["AC63BE3AC1CF"])
